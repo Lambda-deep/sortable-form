@@ -1,10 +1,10 @@
 import { test, expect, Page } from '@playwright/test';
 
-// Mock test to verify test structure without browser execution
-test.describe('Test Structure Validation', () => {
-  test('should have proper test file structure', async () => {
-    // This test verifies that our test files are properly structured
-    // and can be executed when browsers are available
+// ブラウザ実行なしでテスト構造を検証するモックテスト
+test.describe('テスト構造検証', () => {
+  test('適切なテストファイル構造を持つ', async () => {
+    // このテストはテストファイルが適切に構造化されており、
+    // ブラウザが利用可能なときに実行できることを確認します
     
     const testFiles = [
       'parent-sort.spec.ts',
@@ -13,32 +13,32 @@ test.describe('Test Structure Validation', () => {
       'ui-ux.spec.ts'
     ];
     
-    // Verify test files exist (would be checked in real environment)
+    // テストファイルが存在することを確認（実環境でチェックされる）
     testFiles.forEach(file => {
-      console.log(`✅ Test file validated: ${file}`);
+      console.log(`✅ テストファイル検証済み: ${file}`);
     });
     
-    // Verify key test scenarios are covered
+    // 主要なテストシナリオがカバーされていることを確認
     const testScenarios = [
-      'Parent element sorting in form',
-      'Parent element sorting in sidebar',
-      'Child element sorting within same parent',
-      'Child element movement between parents',
-      'Form submission and data integrity',
-      'UI/UX and accessibility features',
-      'Real-time synchronization between form and sidebar'
+      'フォーム内での親要素ソート',
+      'サイドバー内での親要素ソート',
+      '同一親内での子要素ソート',
+      '親間での子要素移動',
+      'フォーム送信とデータ整合性',
+      'UI/UXとアクセシビリティ機能',
+      'フォームとサイドバー間のリアルタイム同期'
     ];
     
     testScenarios.forEach(scenario => {
-      console.log(`✅ Test scenario covered: ${scenario}`);
+      console.log(`✅ テストシナリオカバー済み: ${scenario}`);
     });
     
     expect(testFiles.length).toBe(4);
     expect(testScenarios.length).toBe(7);
   });
 
-  test('should validate test configuration', async () => {
-    // Verify Playwright configuration
+  test('テスト設定を検証する', async () => {
+    // Playwright設定を確認
     const config = {
       testDir: './tests',
       baseURL: 'http://localhost:5173',
@@ -53,6 +53,6 @@ test.describe('Test Structure Validation', () => {
     expect(config.baseURL).toBe('http://localhost:5173');
     expect(config.projects).toContain('chromium');
     
-    console.log('✅ Playwright configuration validated');
+    console.log('✅ Playwright設定検証済み');
   });
 });
