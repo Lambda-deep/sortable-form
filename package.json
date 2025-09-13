@@ -17,16 +17,16 @@
     "@remix-run/react": "^2.17.0",
     "@remix-run/serve": "^2.17.0",
     "@types/sortablejs": "^1.15.8",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-hook-form": "^7.62.0",
     "sortablejs": "^1.15.6"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.17.0",
-    "@types/react": "^19.1.12",
-    "@types/react-dom": "^19.1.9",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
     "typescript": "^5.9.2",
-    "vite": "^7.1.5"
+    "vite": "^6.0.0"
   }
 }
