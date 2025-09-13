@@ -135,6 +135,29 @@ export default function App() {
               border-radius: 4px;
               font-size: 14px;
             }
+            .sidebar-parent-header {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              cursor: move;
+            }
+            .sidebar-parent-drag-handle {
+              color: #666;
+              font-size: 16px;
+              line-height: 1;
+            }
+            .sidebar-child-item {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              padding: 4px 0;
+              cursor: move;
+            }
+            .sidebar-child-drag-handle {
+              color: #666;
+              font-size: 14px;
+              line-height: 1;
+            }
             .nested-index {
               margin-left: 20px;
               margin-top: 4px;

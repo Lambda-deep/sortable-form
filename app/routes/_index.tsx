@@ -37,6 +37,10 @@ export default function Index() {
   const watchedData = watch();
   const parentContainerRef = useRef<HTMLDivElement>(null);
   const childContainerRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
+  
+  // Sidebar refs for sortable functionality
+  const sidebarParentContainerRef = useRef<HTMLUListElement>(null);
+  const sidebarChildContainerRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
   // Initialize sortable for parents
   useEffect(() => {
@@ -75,6 +79,90 @@ export default function Index() {
             if (evt.oldIndex !== undefined && evt.newIndex !== undefined) {
               const fromParentIndex = parseInt(evt.from.dataset.parentIndex || "0");
               const toParentIndex = parseInt(evt.to.dataset.parentIndex || "0");
+              
+              // Get current data
+              const currentData = watchedData.parentArray;
+              
+              if (fromParentIndex === toParentIndex) {
+                // Same parent - just reorder
+                const newParentArray = [...currentData];
+                const childArray = [...newParentArray[fromParentIndex].childArray];
+                const [movedChild] = childArray.splice(evt.oldIndex, 1);
+                childArray.splice(evt.newIndex, 0, movedChild);
+                newParentArray[fromParentIndex] = {
+                  ...newParentArray[fromParentIndex],
+                  childArray,
+                };
+                setValue("parentArray", newParentArray);
+              } else {
+                // Different parent - move between parents
+                const newParentArray = [...currentData];
+                const fromChildArray = [...newParentArray[fromParentIndex].childArray];
+                const toChildArray = [...newParentArray[toParentIndex].childArray];
+                
+                const [movedChild] = fromChildArray.splice(evt.oldIndex, 1);
+                toChildArray.splice(evt.newIndex, 0, movedChild);
+                
+                newParentArray[fromParentIndex] = {
+                  ...newParentArray[fromParentIndex],
+                  childArray: fromChildArray,
+                };
+                newParentArray[toParentIndex] = {
+                  ...newParentArray[toParentIndex],
+                  childArray: toChildArray,
+                };
+                
+                setValue("parentArray", newParentArray);
+              }
+            }
+          },
+        });
+        sortables.push(sortable);
+      }
+    });
+
+    return () => {
+      sortables.forEach(sortable => sortable.destroy());
+    };
+  }, [parentFields, setValue, watchedData.parentArray]);
+
+  // Initialize sortable for sidebar parents
+  useEffect(() => {
+    if (sidebarParentContainerRef.current) {
+      const sortable = Sortable.create(sidebarParentContainerRef.current, {
+        handle: ".sidebar-parent-drag-handle",
+        animation: 150,
+        ghostClass: "sortable-ghost",
+        chosenClass: "sortable-chosen",
+        onEnd: (evt) => {
+          if (evt.oldIndex !== undefined && evt.newIndex !== undefined) {
+            moveParent(evt.oldIndex, evt.newIndex);
+          }
+        },
+      });
+
+      return () => {
+        sortable.destroy();
+      };
+    }
+  }, [moveParent]);
+
+  // Initialize sortable for sidebar children
+  useEffect(() => {
+    const sortables: Sortable[] = [];
+
+    parentFields.forEach((_, parentIndex) => {
+      const container = sidebarChildContainerRefs.current[parentIndex];
+      if (container) {
+        const sortable = Sortable.create(container, {
+          group: "sidebar-children", // Allow moving between different parents
+          animation: 150,
+          ghostClass: "sortable-ghost",
+          chosenClass: "sortable-chosen",
+          onEnd: (evt) => {
+            if (evt.oldIndex !== undefined && evt.newIndex !== undefined) {
+              const fromParentIndex = parseInt(evt.from.dataset.sidebarParentIndex || "0");
+              const toParentIndex = parseInt(evt.to.dataset.sidebarParentIndex || "0");
               
               // Get current data
               const currentData = watchedData.parentArray;
@@ -248,14 +336,22 @@ export default function Index() {
 
       <div className="sidebar">
         <h3>Index Information</h3>
-        <ul className="index-list">
+        <ul className="index-list" ref={sidebarParentContainerRef}>
           {watchedData.parentArray.map((parent: Parent, parentIndex: number) => (
             <li key={parentIndex} className="index-item">
-              <strong>[{parentIndex}] {parent.parentKey}</strong>
-              <div className="nested-index">
+              <div className="sidebar-parent-header">
+                <span className="drag-handle sidebar-parent-drag-handle">⋮⋮</span>
+                <strong>[{parentIndex}] {parent.parentKey}</strong>
+              </div>
+              <div 
+                className="nested-index"
+                ref={(el) => { sidebarChildContainerRefs.current[parentIndex] = el; }}
+                data-sidebar-parent-index={parentIndex}
+              >
                 {parent.childArray.map((child: Child, childIndex: number) => (
-                  <div key={childIndex}>
-                    [{parentIndex}.{childIndex}] {child.childKey}
+                  <div key={childIndex} className="sidebar-child-item">
+                    <span className="drag-handle sidebar-child-drag-handle">⋮</span>
+                    <span>[{parentIndex}.{childIndex}] {child.childKey}</span>
                   </div>
                 ))}
               </div>
