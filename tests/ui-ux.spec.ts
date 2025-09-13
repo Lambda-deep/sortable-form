@@ -1,13 +1,13 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Sortable Form - UI/UX and Accessibility', () => {
+test.describe('ソート可能フォーム - UI/UXとアクセシビリティ', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display proper drag handles', async ({ page }) => {
-    // Check parent drag handles
+  test('適切なドラッグハンドルが表示される', async ({ page }) => {
+    // 親要素のドラッグハンドルを確認
     const parentHandles = page.locator('.parent-drag-handle');
     await expect(parentHandles).toHaveCount(2);
     
@@ -16,12 +16,12 @@ test.describe('Sortable Form - UI/UX and Accessibility', () => {
       await expect(parentHandles.nth(i)).toBeVisible();
     }
     
-    // Check child drag handles
+    // 子要素のドラッグハンドルを確認
     const childHandles = page.locator('.child-item .drag-handle');
     await expect(childHandles.first()).toContainText('⋮');
     await expect(childHandles.first()).toBeVisible();
     
-    // Check sidebar drag handles
+    // サイドバーのドラッグハンドルを確認
     const sidebarParentHandles = page.locator('.sidebar-parent-drag-handle');
     await expect(sidebarParentHandles).toHaveCount(2);
     
@@ -32,42 +32,42 @@ test.describe('Sortable Form - UI/UX and Accessibility', () => {
     }
   });
 
-  test('should show visual feedback during drag operations', async ({ page }) => {
-    // Start dragging a parent element
+  test('ドラッグ操作中に視覚的フィードバックが表示される', async ({ page }) => {
+    // 親要素のドラッグを開始
     const firstParentHandle = page.locator('.parent-drag-handle').first();
     
-    // Hover over the handle to check cursor style
+    // ハンドルにホバーしてカーソルスタイルを確認
     await firstParentHandle.hover();
     
-    // The handle should be visible and interactive
+    // ハンドルが表示され、インタラクティブであることを確認
     await expect(firstParentHandle).toBeVisible();
     
-    // Check that drag handles are properly styled as interactive elements
+    // ドラッグハンドルがインタラクティブ要素として適切にスタイル設定されていることを確認
     const handleStyles = await firstParentHandle.evaluate(el => {
       const computed = window.getComputedStyle(el);
       return computed.cursor;
     });
     
-    // The cursor should indicate the element is draggable (might be 'grab', 'move', or 'pointer')
+    // カーソルが要素がドラッグ可能であることを示すことを確認（'grab'、'move'、'pointer'のいずれか）
     expect(['grab', 'move', 'pointer', 'auto'].includes(handleStyles)).toBe(true);
   });
 
-  test('should maintain proper layout during drag operations', async ({ page }) => {
-    // Take initial screenshot to compare layout
+  test('ドラッグ操作中に適切なレイアウトが維持される', async ({ page }) => {
+    // レイアウト比較のため初期スクリーンショットを撮影
     const initialScreenshot = await page.screenshot({ fullPage: true });
     
-    // Perform drag operation
+    // ドラッグ操作を実行
     const firstParentHandle = page.locator('.parent-drag-handle').first();
     const secondParentItem = page.locator('.parent-item').nth(1);
     
     await firstParentHandle.dragTo(secondParentItem);
     await page.waitForTimeout(500);
     
-    // Verify layout is still intact after drag
+    // ドラッグ後もレイアウトが損なわれていないことを確認
     const parentItems = page.locator('.parent-item');
     await expect(parentItems).toHaveCount(2);
     
-    // Verify all form elements are still properly displayed
+    // すべてのフォーム要素が適切に表示されていることを確認
     const parentInputs = page.locator('input[placeholder="Parent Key"]');
     const childInputs = page.locator('input[placeholder="Child Key"]');
     
@@ -79,26 +79,26 @@ test.describe('Sortable Form - UI/UX and Accessibility', () => {
       await expect(childInputs.nth(i)).toBeVisible();
     }
     
-    // Verify sidebar is still properly displayed
+    // サイドバーが適切に表示されていることを確認
     const sidebarItems = page.locator('.sidebar .index-item');
     await expect(sidebarItems).toHaveCount(2);
     await expect(sidebarItems.first()).toBeVisible();
     await expect(sidebarItems.nth(1)).toBeVisible();
   });
 
-  test('should have proper responsive layout', async ({ page }) => {
-    // Test desktop layout
+  test('適切なレスポンシブレイアウトを持つ', async ({ page }) => {
+    // デスクトップレイアウトをテスト
     await page.setViewportSize({ width: 1200, height: 800 });
     await page.waitForTimeout(200);
     
-    // Verify form and sidebar are side by side
+    // フォームとサイドバーが横並びになっていることを確認
     const formSection = page.locator('.form-section');
     const sidebar = page.locator('.sidebar');
     
     await expect(formSection).toBeVisible();
     await expect(sidebar).toBeVisible();
     
-    // Check that both sections are properly positioned
+    // 両セクションが適切に配置されていることを確認
     const formBox = await formSection.boundingBox();
     const sidebarBox = await sidebar.boundingBox();
     
@@ -106,51 +106,51 @@ test.describe('Sortable Form - UI/UX and Accessibility', () => {
     expect(sidebarBox).toBeTruthy();
     
     if (formBox && sidebarBox) {
-      // Sidebar should be to the right of the form (or at least not overlap completely)
+      // サイドバーがフォームの右側にある（または少なくとも完全に重複していない）ことを確認
       expect(sidebarBox.x >= formBox.x).toBe(true);
     }
     
-    // Test smaller viewport
+    // 小さなビューポートをテスト
     await page.setViewportSize({ width: 800, height: 600 });
     await page.waitForTimeout(200);
     
-    // Elements should still be visible
+    // 要素がまだ表示されていることを確認
     await expect(formSection).toBeVisible();
     await expect(sidebar).toBeVisible();
   });
 
-  test('should handle keyboard navigation for form elements', async ({ page }) => {
-    // Focus on first parent key input
+  test('フォーム要素のキーボードナビゲーションを処理する', async ({ page }) => {
+    // 最初の親キー入力にフォーカス
     await page.locator('input[placeholder="Parent Key"]').first().focus();
     
-    // Navigate through form using Tab
+    // Tabを使用してフォーム内をナビゲート
     await page.keyboard.press('Tab');
     await expect(page.locator('input[placeholder="Parent Value"]').first()).toBeFocused();
     
-    // Continue tabbing to verify form is keyboard navigable
+    // タブ移動を続けてフォームがキーボードナビゲート可能であることを確認
     await page.keyboard.press('Tab');
-    // Should focus on Remove button or next input
+    // 削除ボタンまたは次の入力にフォーカスするはず
     
-    // Verify form inputs accept keyboard input
+    // フォーム入力がキーボード入力を受け入れることを確認
     await page.locator('input[placeholder="Parent Key"]').first().focus();
-    await page.keyboard.type('test-key');
+    await page.keyboard.type('テストキー');
     
     const value = await page.locator('input[placeholder="Parent Key"]').first().inputValue();
-    expect(value).toContain('test-key');
+    expect(value).toContain('テストキー');
   });
 
-  test('should show proper error states and validation', async ({ page }) => {
-    // Clear required fields and check for validation
+  test('適切なエラー状態とバリデーションを表示する', async ({ page }) => {
+    // 必須フィールドをクリアしてバリデーションを確認
     await page.locator('input[placeholder="Parent Key"]').first().clear();
     await page.locator('input[placeholder="Parent Value"]').first().clear();
     
-    // Try to submit form
+    // フォーム送信を試行
     await page.click('button:text("Submit Form")');
     
-    // The form should still be functional even with empty fields
-    // (Based on the current implementation, there's no strict validation, but form should handle gracefully)
+    // 空のフィールドがあってもフォームは正常に機能するはず
+    // （現在の実装では厳密なバリデーションはないが、フォームは適切に処理するはず）
     
-    // Verify add/remove operations still work
+    // 追加/削除操作がまだ動作することを確認
     await page.click('button:text("Add Parent")');
     await page.waitForTimeout(200);
     
@@ -158,34 +158,34 @@ test.describe('Sortable Form - UI/UX and Accessibility', () => {
     await expect(parentItems).toHaveCount(3);
   });
 
-  test('should maintain consistent styling across operations', async ({ page }) => {
-    // Check initial styling
+  test('操作間で一貫したスタイリングを維持する', async ({ page }) => {
+    // 初期スタイリングを確認
     const firstParentItem = page.locator('.parent-item').first();
     const initialClasses = await firstParentItem.getAttribute('class');
     
-    // Perform operations
+    // 操作を実行
     await page.click('button:text("Add Parent")');
     await page.waitForTimeout(200);
     
-    // Drag operation
+    // ドラッグ操作
     const firstParentHandle = page.locator('.parent-drag-handle').first();
     const secondParentItem = page.locator('.parent-item').nth(1);
     await firstParentHandle.dragTo(secondParentItem);
     await page.waitForTimeout(500);
     
-    // Check that styling remains consistent
+    // スタイリングが一貫していることを確認
     const parentItems = page.locator('.parent-item');
     
     for (let i = 0; i < await parentItems.count(); i++) {
       const item = parentItems.nth(i);
       await expect(item).toHaveClass(/parent-item/);
       
-      // Check that child containers maintain their structure
+      // 子コンテナが構造を維持していることを確認
       const childrenContainer = item.locator('.children-container');
       await expect(childrenContainer).toBeVisible();
     }
     
-    // Verify buttons maintain their styling
+    // ボタンがスタイリングを維持していることを確認
     const addButtons = page.locator('button:text("Add Child")');
     const removeButtons = page.locator('button:text("Remove")');
     

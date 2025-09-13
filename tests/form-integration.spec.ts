@@ -1,26 +1,26 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Sortable Form - Form Submission and Data Integrity', () => {
+test.describe('ソート可能フォーム - フォーム送信とデータ整合性', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should maintain data integrity after multiple operations', async ({ page }) => {
-    // Perform a series of operations and verify data consistency
+  test('複数操作後のデータ整合性が維持される', async ({ page }) => {
+    // 一連の操作を実行してデータの一貫性を確認
     
-    // 1. Add a new parent
+    // 1. 新しい親要素を追加
     await page.click('button:text("Add Parent")');
     await page.waitForTimeout(200);
     
-    // 2. Add children to the new parent
+    // 2. 新しい親要素に子要素を追加
     const thirdParent = page.locator('.parent-item').nth(2);
     await thirdParent.locator('button:text("Add Child")').click();
     await page.waitForTimeout(200);
     await thirdParent.locator('button:text("Add Child")').click();
     await page.waitForTimeout(200);
     
-    // 3. Modify some input values
+    // 3. 入力値を変更
     await thirdParent.locator('input[placeholder="Parent Key"]').fill('parent3');
     await thirdParent.locator('input[placeholder="Parent Value"]').fill('Parent 3');
     
@@ -32,7 +32,7 @@ test.describe('Sortable Form - Form Submission and Data Integrity', () => {
     
     await page.waitForTimeout(300);
     
-    // 4. Verify sidebar updates in real-time
+    // 4. サイドバーがリアルタイムで更新されることを確認
     const sidebarItems = page.locator('.sidebar .index-item');
     await expect(sidebarItems).toHaveCount(3);
     await expect(sidebarItems.nth(2).locator('strong')).toContainText('[2] parent3');
@@ -42,7 +42,7 @@ test.describe('Sortable Form - Form Submission and Data Integrity', () => {
     await expect(thirdParentSidebarChildren.first()).toContainText('[2.0] child3-1');
     await expect(thirdParentSidebarChildren.nth(1)).toContainText('[2.1] child3-2');
     
-    // 5. Move child between parents
+    // 5. 親要素間で子要素を移動
     const firstParent = page.locator('.parent-item').first();
     const firstParentChildren = firstParent.locator('.child-item');
     const childToMove = firstParentChildren.first();
@@ -52,17 +52,17 @@ test.describe('Sortable Form - Form Submission and Data Integrity', () => {
     await childHandle.dragTo(thirdParentContainer);
     await page.waitForTimeout(500);
     
-    // 6. Verify final state
+    // 6. 最終状態を確認
     await expect(firstParent.locator('.child-item')).toHaveCount(1);
     await expect(thirdParent.locator('.child-item')).toHaveCount(3);
     
-    // Verify sidebar reflects the changes
+    // サイドバーが変更を反映していることを確認
     const updatedThirdParentSidebarChildren = sidebarItems.nth(2).locator('.sidebar-child-item');
     await expect(updatedThirdParentSidebarChildren).toHaveCount(3);
   });
 
-  test('should submit form with current data', async ({ page }) => {
-    // Listen for console messages (form submission logs to console)
+  test('現在のデータでフォーム送信ができる', async ({ page }) => {
+    // コンソールメッセージをリッスン（フォーム送信はコンソールにログ出力）
     const consoleMessages: string[] = [];
     page.on('console', msg => {
       if (msg.type() === 'log') {
@@ -70,32 +70,32 @@ test.describe('Sortable Form - Form Submission and Data Integrity', () => {
       }
     });
 
-    // Listen for alert dialog
+    // アラートダイアログをリッスン
     page.on('dialog', async dialog => {
       expect(dialog.message()).toContain('Form submitted!');
       await dialog.accept();
     });
 
-    // Modify some data before submission
-    await page.locator('input[placeholder="Parent Value"]').first().fill('Modified Parent 1');
-    await page.locator('.child-item').first().locator('input[placeholder="Child Value"]').fill('Modified Child 1-1');
+    // 送信前にデータを変更
+    await page.locator('input[placeholder="Parent Value"]').first().fill('変更された親要素 1');
+    await page.locator('.child-item').first().locator('input[placeholder="Child Value"]').fill('変更された子要素 1-1');
     
-    // Submit form
+    // フォーム送信
     await page.click('button:text("Submit Form")');
     
-    // Wait for submission to complete
+    // 送信完了を待機
     await page.waitForTimeout(1000);
     
-    // Verify console log contains form data
+    // コンソールログにフォームデータが含まれることを確認
     expect(consoleMessages.some(msg => msg.includes('Form data:'))).toBe(true);
   });
 
-  test('should handle rapid drag operations without losing data', async ({ page }) => {
-    // Perform multiple rapid drag operations
+  test('高速ドラッグ操作でデータが失われない', async ({ page }) => {
+    // 複数の高速ドラッグ操作を実行
     const firstParent = page.locator('.parent-item').first();
     const secondParent = page.locator('.parent-item').nth(1);
     
-    // Rapid parent reordering
+    // 高速親要素並び替え
     const firstParentHandle = page.locator('.parent-drag-handle').first();
     await firstParentHandle.dragTo(secondParent);
     await page.waitForTimeout(100);
@@ -105,11 +105,11 @@ test.describe('Sortable Form - Form Submission and Data Integrity', () => {
     await newFirstParentHandle.dragTo(newSecondParent);
     await page.waitForTimeout(100);
     
-    // Verify data integrity after rapid operations
+    // 高速操作後のデータ整合性を確認
     const parentItems = page.locator('.parent-item');
     await expect(parentItems).toHaveCount(2);
     
-    // Verify all inputs still have values
+    // すべての入力がまだ値を持っていることを確認
     const parentKeyInputs = page.locator('input[placeholder="Parent Key"]');
     const childKeyInputs = page.locator('input[placeholder="Child Key"]');
     
@@ -124,41 +124,41 @@ test.describe('Sortable Form - Form Submission and Data Integrity', () => {
     }
   });
 
-  test('should maintain proper indexing in sidebar after complex operations', async ({ page }) => {
-    // Start with known state
+  test('複雑な操作後にサイドバーでの適切なインデックス付けが維持される', async ({ page }) => {
+    // 既知の状態から開始
     let sidebarItems = page.locator('.sidebar .index-item');
     await expect(sidebarItems).toHaveCount(2);
     
-    // Add a third parent
+    // 3番目の親要素を追加
     await page.click('button:text("Add Parent")');
     await page.waitForTimeout(200);
     
-    // Add child to third parent
+    // 3番目の親要素に子要素を追加
     const thirdParent = page.locator('.parent-item').nth(2);
     await thirdParent.locator('button:text("Add Child")').click();
     await page.waitForTimeout(200);
     
-    // Move parent to middle position
+    // 親要素を中間位置に移動
     const thirdParentHandle = page.locator('.parent-drag-handle').nth(2);
     const secondParentItem = page.locator('.parent-item').nth(1);
     await thirdParentHandle.dragTo(secondParentItem);
     await page.waitForTimeout(500);
     
-    // Verify sidebar indexing is correct
+    // サイドバーのインデックス付けが正しいことを確認
     sidebarItems = page.locator('.sidebar .index-item');
     await expect(sidebarItems).toHaveCount(3);
     
-    // Check parent indices
+    // 親要素のインデックスを確認
     await expect(sidebarItems.first().locator('strong')).toContainText('[0]');
     await expect(sidebarItems.nth(1).locator('strong')).toContainText('[1]');
     await expect(sidebarItems.nth(2).locator('strong')).toContainText('[2]');
     
-    // Check child indices are also updated correctly
+    // 子要素のインデックスも正しく更新されているかを確認
     const firstParentChildren = sidebarItems.first().locator('.sidebar-child-item');
     const secondParentChildren = sidebarItems.nth(1).locator('.sidebar-child-item');
     const thirdParentChildren = sidebarItems.nth(2).locator('.sidebar-child-item');
     
-    // Verify child indexing follows parent indexing
+    // 子要素のインデックス付けが親要素のインデックス付けに従っていることを確認
     if (await firstParentChildren.count() > 0) {
       await expect(firstParentChildren.first()).toContainText('[0.0]');
     }
