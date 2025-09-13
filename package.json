@@ -8,7 +8,9 @@
     "dev": "remix vite:dev",
     "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc",
-    "test": "playwright test",
+    "test": "playwright test --workers=1",
+    "test:headed": "playwright test --headed --workers=1",
+    "test:single": "playwright test --workers=1 --max-failures=1",
     "test:ui": "playwright test --ui",
     "test:report": "playwright show-report"
   },
