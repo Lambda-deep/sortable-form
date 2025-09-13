@@ -6,6 +6,7 @@ node_modules/
 # Production builds
 /build
 /dist
+public/build/
 
 # Environment variables
 .env
@@ -60,3 +61,5 @@ Thumbs.db
 
 playwright-report
 test-results
+.playwright-mcp
+.cache

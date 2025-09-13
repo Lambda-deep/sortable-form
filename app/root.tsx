@@ -1,23 +1,27 @@
 import {
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-  LiveReload,
+    Links,
+    Meta,
+    Outlet,
+    Scripts,
+    ScrollRestoration,
+    LiveReload,
 } from "@remix-run/react";
 
 export default function App() {
-  return (
-    <html lang="en">
-      <head>
-        <Meta />
-        <Links />
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Sortable Form</title>
-        <style dangerouslySetInnerHTML={{
-          __html: `
+    return (
+        <html lang="en">
+            <head>
+                <Meta />
+                <Links />
+                <meta charSet="utf-8" />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
+                <title>Sortable Form</title>
+                <style
+                    dangerouslySetInnerHTML={{
+                        __html: `
             * {
               box-sizing: border-box;
             }
@@ -170,15 +174,17 @@ export default function App() {
             .sortable-chosen {
               background: #e3f2fd !important;
             }
-          `
-        }} />
-      </head>
-      <body>
-        <Outlet />
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
-      </body>
-    </html>
-  );
+          `,
+                    }}
+                />
+            </head>
+            <body>
+                <Outlet />
+                <ScrollRestoration />
+                <Scripts />
+                {/* LiveReload disabled in development to avoid WebSocket conflicts with Vite HMR */}
+                {process.env.NODE_ENV === "development" ? null : <LiveReload />}
+            </body>
+        </html>
+    );
 }

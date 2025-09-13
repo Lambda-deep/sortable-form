@@ -158,6 +158,7 @@ export function useSortableForm() {
 
                     if (activeParentIndex === overParentIndex) {
                         // Same parent reordering
+                        console.log("Same parent reordering");
                         const currentData = getValues("parentArray");
                         const newParentArray = [...currentData];
                         const childArray = [
@@ -175,6 +176,48 @@ export function useSortableForm() {
                             childArray: newChildArray,
                         };
 
+                        setValue("parentArray", newParentArray);
+                    } else {
+                        // Different parent reordering - move child between parents
+                        console.log(
+                            "Different parent reordering - moving child between parents"
+                        );
+                        console.log(
+                            `Moving child from parent ${activeParentIndex} index ${activeChildIndex} to parent ${overParentIndex} index ${overChildIndex}`
+                        );
+
+                        const currentData = getValues("parentArray");
+                        const newParentArray = [...currentData];
+
+                        // Get the child to move
+                        const childToMove = {
+                            ...newParentArray[activeParentIndex].childArray[
+                                activeChildIndex
+                            ],
+                        };
+                        console.log("Child to move:", childToMove);
+
+                        // Remove child from source parent
+                        const sourceChildArray = [
+                            ...newParentArray[activeParentIndex].childArray,
+                        ];
+                        sourceChildArray.splice(activeChildIndex, 1);
+                        newParentArray[activeParentIndex] = {
+                            ...newParentArray[activeParentIndex],
+                            childArray: sourceChildArray,
+                        };
+
+                        // Add child to target parent
+                        const targetChildArray = [
+                            ...newParentArray[overParentIndex].childArray,
+                        ];
+                        targetChildArray.splice(overChildIndex, 0, childToMove);
+                        newParentArray[overParentIndex] = {
+                            ...newParentArray[overParentIndex],
+                            childArray: targetChildArray,
+                        };
+
+                        console.log("Updated parent array:", newParentArray);
                         setValue("parentArray", newParentArray);
                     }
                 }
