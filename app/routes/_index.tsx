@@ -101,12 +101,6 @@ export default function Index() {
                     </SortableContext>
                 </div>
             </div>
-
-            <DragOverlay>
-                {activeId ? (
-                    <div className="drag-overlay">Dragging...</div>
-                ) : null}
-            </DragOverlay>
         </DndContext>
     );
 }
