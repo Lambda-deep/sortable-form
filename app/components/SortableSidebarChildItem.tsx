@@ -21,11 +21,11 @@ export function SortableSidebarChildItem({
             ref={setNodeRef}
             style={style}
             data-testid="sidebar-child-item"
-            className="sidebar-child-item"
+            className="flex items-center gap-2 py-1"
         >
             <span
                 data-testid="sidebar-child-drag-handle"
-                className="drag-handle sidebar-child-drag-handle"
+                className="cursor-move text-gray-600 text-sm"
                 {...attributes}
                 {...listeners}
             >

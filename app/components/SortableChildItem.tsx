@@ -23,11 +23,11 @@ export function SortableChildItem({
             ref={setNodeRef}
             style={style}
             data-testid="child-item"
-            className="child-item"
+            className="flex gap-2 items-center p-2 mb-2 bg-gray-50 border border-gray-300 rounded cursor-move"
         >
             <span
                 data-testid="drag-handle"
-                className="drag-handle"
+                className="cursor-move text-gray-600 text-lg"
                 {...attributes}
                 {...listeners}
             >
@@ -37,19 +37,19 @@ export function SortableChildItem({
                 {...register(
                     `parentArray.${parentIndex}.childArray.${childIndex}.childKey`
                 )}
-                className="child-input"
+                className="flex-1 px-1 py-1 border border-gray-400 rounded-sm"
                 placeholder="Child Key"
             />
             <input
                 {...register(
                     `parentArray.${parentIndex}.childArray.${childIndex}.childValue`
                 )}
-                className="child-input"
+                className="flex-1 px-1 py-1 border border-gray-400 rounded-sm"
                 placeholder="Child Value"
             />
             <button
                 type="button"
-                className="remove-button"
+                className="bg-red-600 text-white border-none px-2 py-1 rounded-sm cursor-pointer text-xs hover:bg-red-700"
                 onClick={() => removeChild(parentIndex, childIndex)}
             >
                 ×

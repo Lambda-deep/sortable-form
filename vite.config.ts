@@ -3,7 +3,14 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-    plugins: [remix(), tailwindcss()],
+    plugins: [
+        remix({
+            future: {
+                v3_relativeSplatPath: true,
+            },
+        }),
+        tailwindcss(),
+    ],
     server: {
         hmr: {
             port: 5173,

@@ -25,16 +25,16 @@ export function SortableSidebarParentItem({
             ref={setNodeRef}
             style={style}
             data-testid="index-item"
-            className="index-item"
+            className="p-2 mb-1 bg-gray-100 border border-gray-400 rounded text-sm"
         >
             <div
-                className="sidebar-parent-header"
+                className="flex items-center gap-2 cursor-move"
                 {...attributes}
                 {...listeners}
             >
                 <span
                     data-testid="sidebar-parent-drag-handle"
-                    className="drag-handle sidebar-parent-drag-handle"
+                    className="cursor-move text-gray-600 text-base"
                 >
                     ⋮⋮
                 </span>
@@ -50,7 +50,10 @@ export function SortableSidebarParentItem({
                 }
                 strategy={verticalListSortingStrategy}
             >
-                <div data-testid="nested-index" className="nested-index">
+                <div
+                    data-testid="nested-index"
+                    className="ml-5 mt-1 text-xs text-gray-600"
+                >
                     {parent.childArray.map(
                         (child: Child, childIndex: number) => (
                             <SortableSidebarChildItem

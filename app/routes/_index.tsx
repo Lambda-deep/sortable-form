@@ -28,13 +28,20 @@ export default function Index() {
 
     return (
         <DndContext
+            id="sortable-form-dnd-context"
             sensors={sensors}
             collisionDetection={customCollisionDetection}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
         >
-            <div data-testid="container" className="container">
-                <div data-testid="form-section" className="form-section">
+            <div
+                data-testid="container"
+                className="max-w-6xl mx-auto grid grid-cols-[1fr_300px] gap-5"
+            >
+                <div
+                    data-testid="form-section"
+                    className="bg-white p-5 rounded-lg shadow-sm"
+                >
                     <h2>Sortable Form</h2>
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <SortableContext
@@ -59,7 +66,7 @@ export default function Index() {
                             <button
                                 type="button"
                                 data-testid="add-parent-button"
-                                className="add-button"
+                                className="bg-blue-600 text-white border-none px-3 py-2 rounded cursor-pointer hover:bg-blue-700"
                                 onClick={addParent}
                             >
                                 Add Parent
@@ -67,11 +74,7 @@ export default function Index() {
                             <button
                                 type="submit"
                                 data-testid="submit-button"
-                                className="add-button"
-                                style={{
-                                    marginLeft: "10px",
-                                    backgroundColor: "#28a745",
-                                }}
+                                className="bg-green-600 text-white border-none px-3 py-2 rounded cursor-pointer hover:bg-green-700 ml-2"
                             >
                                 Submit Form
                             </button>
@@ -79,13 +82,16 @@ export default function Index() {
                     </form>
                 </div>
 
-                <div data-testid="sidebar" className="sidebar">
+                <div
+                    data-testid="sidebar"
+                    className="bg-white p-5 rounded-lg shadow-sm h-fit"
+                >
                     <h3>Index Information</h3>
                     <SortableContext
                         items={parentFields.map((field) => field.id)}
                         strategy={verticalListSortingStrategy}
                     >
-                        <ul data-testid="index-list" className="index-list">
+                        <ul data-testid="index-list" className="list-none p-0">
                             {watchedData.parentArray.map(
                                 (parent: Parent, parentIndex: number) => (
                                     <SortableSidebarParentItem

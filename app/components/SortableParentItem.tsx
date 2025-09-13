@@ -29,28 +29,32 @@ export function SortableParentItem({
             ref={setNodeRef}
             style={style}
             data-testid="parent-item"
-            className="parent-item"
+            className="border border-gray-300 p-4 mb-4 rounded bg-gray-50"
         >
-            <div className="parent-header" {...attributes} {...listeners}>
+            <div
+                className="flex gap-2 items-center mb-2"
+                {...attributes}
+                {...listeners}
+            >
                 <span
                     data-testid="parent-drag-handle"
-                    className="drag-handle parent-drag-handle"
+                    className="cursor-move text-gray-600 text-lg"
                 >
                     ⋮⋮
                 </span>
                 <input
                     {...register(`parentArray.${parentIndex}.parentKey`)}
-                    className="parent-input"
+                    className="flex-1 px-2 py-1 border border-gray-400 rounded"
                     placeholder="Parent Key"
                 />
                 <input
                     {...register(`parentArray.${parentIndex}.parentValue`)}
-                    className="parent-input"
+                    className="flex-1 px-2 py-1 border border-gray-400 rounded"
                     placeholder="Parent Value"
                 />
                 <button
                     type="button"
-                    className="remove-button"
+                    className="bg-red-600 text-white border-none px-2 py-1 rounded-sm cursor-pointer text-xs hover:bg-red-700"
                     onClick={() => removeParent(parentIndex)}
                 >
                     Remove
@@ -59,7 +63,7 @@ export function SortableParentItem({
 
             <div
                 data-testid="children-container"
-                className="children-container"
+                className="mt-4 p-2 bg-white rounded border border-gray-300"
             >
                 <h4>Children:</h4>
                 <SortableContext
@@ -87,7 +91,7 @@ export function SortableParentItem({
                 </SortableContext>
                 <button
                     type="button"
-                    className="add-button"
+                    className="bg-blue-600 text-white border-none px-3 py-2 rounded cursor-pointer hover:bg-blue-700"
                     onClick={() => addChild(parentIndex)}
                 >
                     Add Child
