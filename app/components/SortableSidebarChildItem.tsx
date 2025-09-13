@@ -17,8 +17,14 @@ export function SortableSidebarChildItem({
     };
 
     return (
-        <div ref={setNodeRef} style={style} className="sidebar-child-item">
+        <div
+            ref={setNodeRef}
+            style={style}
+            data-testid="sidebar-child-item"
+            className="sidebar-child-item"
+        >
             <span
+                data-testid="sidebar-child-drag-handle"
                 className="drag-handle sidebar-child-drag-handle"
                 {...attributes}
                 {...listeners}

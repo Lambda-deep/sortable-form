@@ -11,7 +11,7 @@ test.describe("ソート可能フォーム - 親要素", () => {
         await expect(page.locator("h2")).toContainText("Sortable Form");
 
         // 親要素が存在することを確認
-        const parentItems = page.locator(".parent-item");
+        const parentItems = page.locator('[data-testid="parent-item"]');
         await expect(parentItems).toHaveCount(2);
 
         // 親要素の値を確認
@@ -40,8 +40,12 @@ test.describe("ソート可能フォーム - 親要素", () => {
         expect(secondParentKey).toBe("parent2");
 
         // 最初の親要素を2番目の位置にドラッグ&ドロップ
-        const firstParentHandle = page.locator(".parent-drag-handle").first();
-        const secondParentItem = page.locator(".parent-item").nth(1);
+        const firstParentHandle = page
+            .locator('[data-testid="parent-drag-handle"]')
+            .first();
+        const secondParentItem = page
+            .locator('[data-testid="parent-item"]')
+            .nth(1);
 
         await firstParentHandle.dragTo(secondParentItem);
 
@@ -58,7 +62,9 @@ test.describe("ソート可能フォーム - 親要素", () => {
         page,
     }) => {
         // 初期サイドバー順序を確認
-        const sidebarItems = page.locator(".sidebar .index-item");
+        const sidebarItems = page.locator(
+            '[data-testid="sidebar"] [data-testid="index-item"]'
+        );
         await expect(sidebarItems.first().locator("strong")).toContainText(
             "[0] parent1"
         );
@@ -68,9 +74,11 @@ test.describe("ソート可能フォーム - 親要素", () => {
 
         // サイドバー内でドラッグ&ドロップを実行
         const firstSidebarHandle = page
-            .locator(".sidebar-parent-drag-handle")
+            .locator('[data-testid="sidebar-parent-drag-handle"]')
             .first();
-        const secondSidebarItem = page.locator(".sidebar .index-item").nth(1);
+        const secondSidebarItem = page
+            .locator('[data-testid="sidebar"] [data-testid="index-item"]')
+            .nth(1);
 
         await firstSidebarHandle.dragTo(secondSidebarItem);
 
@@ -100,25 +108,25 @@ test.describe("ソート可能フォーム - 親要素", () => {
 
     test("親要素の追加と削除ができる", async ({ page }) => {
         // 初期数
-        let parentItems = page.locator(".parent-item");
+        let parentItems = page.locator('[data-testid="parent-item"]');
         await expect(parentItems).toHaveCount(2);
 
         // 親要素を追加
         await page.click('button:text("Add Parent")');
 
         // 新しい数を確認（条件ベース待機）
-        parentItems = page.locator(".parent-item");
+        parentItems = page.locator('[data-testid="parent-item"]');
         await expect(parentItems).toHaveCount(3, { timeout: 10000 });
 
         // 親要素を削除
         await page
-            .locator(".parent-item")
+            .locator('[data-testid="parent-item"]')
             .first()
             .locator('button:text("Remove")')
             .click();
 
         // 削除後の数を確認（条件ベース待機）
-        parentItems = page.locator(".parent-item");
+        parentItems = page.locator('[data-testid="parent-item"]');
         await expect(parentItems).toHaveCount(2, { timeout: 10000 });
     });
 });

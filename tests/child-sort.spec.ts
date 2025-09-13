@@ -9,9 +9,9 @@ test.describe("ソート可能フォーム - 子要素", () => {
     test("初期子要素構造が正しく表示される", async ({ page }) => {
         // 最初の親要素内の初期子要素を確認
         const firstParentChildren = page
-            .locator(".parent-item")
+            .locator('[data-testid="parent-item"]')
             .first()
-            .locator(".child-item");
+            .locator('[data-testid="child-item"]');
         await expect(firstParentChildren).toHaveCount(2);
 
         // 子要素の値を確認
@@ -26,9 +26,9 @@ test.describe("ソート可能フォーム - 子要素", () => {
 
         // 2番目の親要素に1つの子要素があることを確認
         const secondParentChildren = page
-            .locator(".parent-item")
+            .locator('[data-testid="parent-item"]')
             .nth(1)
-            .locator(".child-item");
+            .locator('[data-testid="child-item"]');
         await expect(secondParentChildren).toHaveCount(1);
         await expect(
             secondParentChildren
@@ -39,8 +39,8 @@ test.describe("ソート可能フォーム - 子要素", () => {
 
     test("フォーム内で同じ親内での子要素並び替えができる", async ({ page }) => {
         // 最初の親要素内の子要素の初期順序を取得
-        const firstParent = page.locator(".parent-item").first();
-        const children = firstParent.locator(".child-item");
+        const firstParent = page.locator('[data-testid="parent-item"]').first();
+        const children = firstParent.locator('[data-testid="child-item"]');
 
         const firstChildKey = await children
             .first()
@@ -55,7 +55,9 @@ test.describe("ソート可能フォーム - 子要素", () => {
         expect(secondChildKey).toBe("child1-2");
 
         // 最初の子要素を2番目の位置にドラッグ
-        const firstChildHandle = children.first().locator(".drag-handle");
+        const firstChildHandle = children
+            .first()
+            .locator('[data-testid="drag-handle"]');
         const secondChild = children.nth(1);
 
         await firstChildHandle.dragTo(secondChild);
@@ -79,9 +81,11 @@ test.describe("ソート可能フォーム - 子要素", () => {
         page,
     }) => {
         // 初期サイドバー子要素順序を確認
-        const firstParentSidebar = page.locator(".sidebar .index-item").first();
+        const firstParentSidebar = page
+            .locator('[data-testid="sidebar"] [data-testid="index-item"]')
+            .first();
         const sidebarChildren = firstParentSidebar.locator(
-            ".sidebar-child-item"
+            '[data-testid="sidebar-child-item"]'
         );
 
         await expect(sidebarChildren.first()).toContainText("[0.0] child1-1");
@@ -90,7 +94,7 @@ test.describe("ソート可能フォーム - 子要素", () => {
         // サイドバー内で最初の子要素を2番目の位置にドラッグ
         const firstChildSidebarHandle = sidebarChildren
             .first()
-            .locator(".sidebar-child-drag-handle");
+            .locator('[data-testid="sidebar-child-drag-handle"]');
         const secondChildSidebar = sidebarChildren.nth(1);
 
         await firstChildSidebarHandle.dragTo(secondChildSidebar);
@@ -104,8 +108,8 @@ test.describe("ソート可能フォーム - 子要素", () => {
         });
 
         // フォームも更新されていることを確認
-        const firstParent = page.locator(".parent-item").first();
-        const children = firstParent.locator(".child-item");
+        const firstParent = page.locator('[data-testid="parent-item"]').first();
+        const children = firstParent.locator('[data-testid="child-item"]');
 
         const newFirstChildKey = await children
             .first()
@@ -122,11 +126,15 @@ test.describe("ソート可能フォーム - 子要素", () => {
 
     test("フォーム内で異なる親間での子要素移動ができる", async ({ page }) => {
         // 初期状態: parent1に2つの子要素、parent2に1つの子要素
-        const firstParent = page.locator(".parent-item").first();
-        const secondParent = page.locator(".parent-item").nth(1);
+        const firstParent = page.locator('[data-testid="parent-item"]').first();
+        const secondParent = page.locator('[data-testid="parent-item"]').nth(1);
 
-        let firstParentChildren = firstParent.locator(".child-item");
-        let secondParentChildren = secondParent.locator(".child-item");
+        let firstParentChildren = firstParent.locator(
+            '[data-testid="child-item"]'
+        );
+        let secondParentChildren = secondParent.locator(
+            '[data-testid="child-item"]'
+        );
 
         await expect(firstParentChildren).toHaveCount(2);
         await expect(secondParentChildren).toHaveCount(1);
@@ -138,17 +146,19 @@ test.describe("ソート可能フォーム - 子要素", () => {
             .inputValue();
         expect(childKey).toBe("child1-1");
 
-        const childHandle = childToMove.locator(".drag-handle");
+        const childHandle = childToMove.locator('[data-testid="drag-handle"]');
         const secondParentContainer = secondParent.locator(
-            ".children-container > div[data-parent-index]"
+            '[data-testid="children-container"] > div[data-parent-index]'
         );
 
         await childHandle.dragTo(secondParentContainer);
         await page.waitForTimeout(500);
 
         // 新しい数と順序を確認
-        firstParentChildren = firstParent.locator(".child-item");
-        secondParentChildren = secondParent.locator(".child-item");
+        firstParentChildren = firstParent.locator('[data-testid="child-item"]');
+        secondParentChildren = secondParent.locator(
+            '[data-testid="child-item"]'
+        );
 
         await expect(firstParentChildren).toHaveCount(1);
         await expect(secondParentChildren).toHaveCount(2);
@@ -163,14 +173,18 @@ test.describe("ソート可能フォーム - 子要素", () => {
 
     test("サイドバー内で異なる親間での子要素移動ができる", async ({ page }) => {
         // 初期サイドバー状態を確認
-        const firstParentSidebar = page.locator(".sidebar .index-item").first();
-        const secondParentSidebar = page.locator(".sidebar .index-item").nth(1);
+        const firstParentSidebar = page
+            .locator('[data-testid="sidebar"] [data-testid="index-item"]')
+            .first();
+        const secondParentSidebar = page
+            .locator('[data-testid="sidebar"] [data-testid="index-item"]')
+            .nth(1);
 
         let firstParentSidebarChildren = firstParentSidebar.locator(
-            ".sidebar-child-item"
+            '[data-testid="sidebar-child-item"]'
         );
         let secondParentSidebarChildren = secondParentSidebar.locator(
-            ".sidebar-child-item"
+            '[data-testid="sidebar-child-item"]'
         );
 
         await expect(firstParentSidebarChildren).toHaveCount(2);
@@ -181,19 +195,20 @@ test.describe("ソート可能フォーム - 子要素", () => {
         await expect(childToMoveSidebar).toContainText("[0.0] child1-1");
 
         const childSidebarHandle = childToMoveSidebar.locator(
-            ".sidebar-child-drag-handle"
+            '[data-testid="sidebar-child-drag-handle"]'
         );
-        const secondParentSidebarContainer =
-            secondParentSidebar.locator(".nested-index");
+        const secondParentSidebarContainer = secondParentSidebar.locator(
+            '[data-testid="nested-index"]'
+        );
 
         await childSidebarHandle.dragTo(secondParentSidebarContainer);
 
         // 新しいサイドバー状態を確認（条件ベース待機）
         firstParentSidebarChildren = firstParentSidebar.locator(
-            ".sidebar-child-item"
+            '[data-testid="sidebar-child-item"]'
         );
         secondParentSidebarChildren = secondParentSidebar.locator(
-            ".sidebar-child-item"
+            '[data-testid="sidebar-child-item"]'
         );
 
         await expect(firstParentSidebarChildren).toHaveCount(1, {
@@ -210,11 +225,15 @@ test.describe("ソート可能フォーム - 子要素", () => {
         );
 
         // フォームも更新されていることを確認
-        const firstParent = page.locator(".parent-item").first();
-        const secondParent = page.locator(".parent-item").nth(1);
+        const firstParent = page.locator('[data-testid="parent-item"]').first();
+        const secondParent = page.locator('[data-testid="parent-item"]').nth(1);
 
-        const firstParentChildren = firstParent.locator(".child-item");
-        const secondParentChildren = secondParent.locator(".child-item");
+        const firstParentChildren = firstParent.locator(
+            '[data-testid="child-item"]'
+        );
+        const secondParentChildren = secondParent.locator(
+            '[data-testid="child-item"]'
+        );
 
         await expect(firstParentChildren).toHaveCount(1);
         await expect(secondParentChildren).toHaveCount(2);
@@ -227,10 +246,10 @@ test.describe("ソート可能フォーム - 子要素", () => {
     });
 
     test("子要素の追加と削除ができる", async ({ page }) => {
-        const firstParent = page.locator(".parent-item").first();
+        const firstParent = page.locator('[data-testid="parent-item"]').first();
 
         // 初期数
-        let children = firstParent.locator(".child-item");
+        let children = firstParent.locator('[data-testid="child-item"]');
         await expect(children).toHaveCount(2);
 
         // 子要素を追加
@@ -238,7 +257,7 @@ test.describe("ソート可能フォーム - 子要素", () => {
         await page.waitForTimeout(200);
 
         // 新しい数を確認
-        children = firstParent.locator(".child-item");
+        children = firstParent.locator('[data-testid="child-item"]');
         await expect(children).toHaveCount(3);
 
         // 子要素を削除
@@ -246,7 +265,7 @@ test.describe("ソート可能フォーム - 子要素", () => {
         await page.waitForTimeout(200);
 
         // 削除後の数を確認
-        children = firstParent.locator(".child-item");
+        children = firstParent.locator('[data-testid="child-item"]');
         await expect(children).toHaveCount(2);
     });
 });

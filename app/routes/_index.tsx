@@ -33,8 +33,8 @@ export default function Index() {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
         >
-            <div className="container">
-                <div className="form-section">
+            <div data-testid="container" className="container">
+                <div data-testid="form-section" className="form-section">
                     <h2>Sortable Form</h2>
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <SortableContext
@@ -58,6 +58,7 @@ export default function Index() {
                         <div style={{ marginTop: "20px" }}>
                             <button
                                 type="button"
+                                data-testid="add-parent-button"
                                 className="add-button"
                                 onClick={addParent}
                             >
@@ -65,6 +66,7 @@ export default function Index() {
                             </button>
                             <button
                                 type="submit"
+                                data-testid="submit-button"
                                 className="add-button"
                                 style={{
                                     marginLeft: "10px",
@@ -77,13 +79,13 @@ export default function Index() {
                     </form>
                 </div>
 
-                <div className="sidebar">
+                <div data-testid="sidebar" className="sidebar">
                     <h3>Index Information</h3>
                     <SortableContext
                         items={parentFields.map((field) => field.id)}
                         strategy={verticalListSortingStrategy}
                     >
-                        <ul className="index-list">
+                        <ul data-testid="index-list" className="index-list">
                             {watchedData.parentArray.map(
                                 (parent: Parent, parentIndex: number) => (
                                     <SortableSidebarParentItem

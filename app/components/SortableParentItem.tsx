@@ -25,9 +25,19 @@ export function SortableParentItem({
     };
 
     return (
-        <div ref={setNodeRef} style={style} className="parent-item">
+        <div
+            ref={setNodeRef}
+            style={style}
+            data-testid="parent-item"
+            className="parent-item"
+        >
             <div className="parent-header" {...attributes} {...listeners}>
-                <span className="drag-handle parent-drag-handle">⋮⋮</span>
+                <span
+                    data-testid="parent-drag-handle"
+                    className="drag-handle parent-drag-handle"
+                >
+                    ⋮⋮
+                </span>
                 <input
                     {...register(`parentArray.${parentIndex}.parentKey`)}
                     className="parent-input"
@@ -47,7 +57,10 @@ export function SortableParentItem({
                 </button>
             </div>
 
-            <div className="children-container">
+            <div
+                data-testid="children-container"
+                className="children-container"
+            >
                 <h4>Children:</h4>
                 <SortableContext
                     items={

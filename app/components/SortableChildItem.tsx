@@ -19,8 +19,18 @@ export function SortableChildItem({
     };
 
     return (
-        <div ref={setNodeRef} style={style} className="child-item">
-            <span className="drag-handle" {...attributes} {...listeners}>
+        <div
+            ref={setNodeRef}
+            style={style}
+            data-testid="child-item"
+            className="child-item"
+        >
+            <span
+                data-testid="drag-handle"
+                className="drag-handle"
+                {...attributes}
+                {...listeners}
+            >
                 ⋮
             </span>
             <input
