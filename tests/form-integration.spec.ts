@@ -102,14 +102,14 @@ test.describe("ソート可能フォーム - フォーム送信とデータ整�
     test("現在のデータでフォーム送信ができる", async ({ page }) => {
         // コンソールメッセージをリッスン（フォーム送信はコンソールにログ出力）
         const consoleMessages: string[] = [];
-        page.on("console", (msg) => {
+        page.on("console", msg => {
             if (msg.type() === "log") {
                 consoleMessages.push(msg.text());
             }
         });
 
         // アラートダイアログをリッスン
-        page.on("dialog", async (dialog) => {
+        page.on("dialog", async dialog => {
             expect(dialog.message()).toContain("Form submitted!");
             await dialog.accept();
         });
@@ -132,7 +132,7 @@ test.describe("ソート可能フォーム - フォーム送信とデータ整�
         await page.waitForTimeout(1000);
 
         // コンソールログにフォームデータが含まれることを確認
-        expect(consoleMessages.some((msg) => msg.includes("Form data:"))).toBe(
+        expect(consoleMessages.some(msg => msg.includes("Form data:"))).toBe(
             true
         );
     });

@@ -26,7 +26,7 @@
 
 ```typescript
 useEffect(() => {
-  // サイドバー子要素用Sortable初期化
+    // サイドバー子要素用Sortable初期化
 }, [parentFields, setValue, watchedData.parentArray]);
 ```
 
@@ -34,7 +34,7 @@ useEffect(() => {
 
 ```typescript
 useEffect(() => {
-  // サイドバー子要素用Sortable初期化
+    // サイドバー子要素用Sortable初期化
 }, [parentFields.length]);
 ```
 
@@ -51,7 +51,9 @@ await page.waitForTimeout(500);
 **修正後**:
 
 ```typescript
-await expect(sidebarChildren.first()).toContainText('[0.0] child1-2', { timeout: 10000 });
+await expect(sidebarChildren.first()).toContainText("[0.0] child1-2", {
+    timeout: 10000,
+});
 ```
 
 **理由**: 固定時間ではなく、条件ベースの待機でテストの安定性を向上させる。
@@ -61,78 +63,83 @@ await expect(sidebarChildren.first()).toContainText('[0.0] child1-2', { timeout:
 ### 1. 統一されたデータ更新関数
 
 ```typescript
-const updateChildOrder = useCallback((
-  fromParentIndex: number,
-  toParentIndex: number,
-  fromChildIndex: number,
-  toChildIndex: number
-) => {
-  const currentData = watchedData.parentArray;
-  
-  if (fromParentIndex === toParentIndex) {
-    // 同一親内での並び替え
-    const newParentArray = [...currentData];
-    const childArray = [...newParentArray[fromParentIndex].childArray];
-    const [movedChild] = childArray.splice(fromChildIndex, 1);
-    childArray.splice(toChildIndex, 0, movedChild);
-    
-    newParentArray[fromParentIndex] = {
-      ...newParentArray[fromParentIndex],
-      childArray,
-    };
-    
-    setValue("parentArray", newParentArray, { 
-      shouldDirty: true, 
-      shouldTouch: true 
-    });
-  } else {
-    // 異なる親間での移動
-    const newParentArray = [...currentData];
-    const fromChildArray = [...newParentArray[fromParentIndex].childArray];
-    const toChildArray = [...newParentArray[toParentIndex].childArray];
-    
-    const [movedChild] = fromChildArray.splice(fromChildIndex, 1);
-    toChildArray.splice(toChildIndex, 0, movedChild);
-    
-    newParentArray[fromParentIndex] = {
-      ...newParentArray[fromParentIndex],
-      childArray: fromChildArray,
-    };
-    newParentArray[toParentIndex] = {
-      ...newParentArray[toParentIndex],
-      childArray: toChildArray,
-    };
-    
-    setValue("parentArray", newParentArray, {
-      shouldDirty: true,
-      shouldTouch: true
-    });
-  }
-}, [setValue, watchedData.parentArray]);
+const updateChildOrder = useCallback(
+    (
+        fromParentIndex: number,
+        toParentIndex: number,
+        fromChildIndex: number,
+        toChildIndex: number
+    ) => {
+        const currentData = watchedData.parentArray;
+
+        if (fromParentIndex === toParentIndex) {
+            // 同一親内での並び替え
+            const newParentArray = [...currentData];
+            const childArray = [...newParentArray[fromParentIndex].childArray];
+            const [movedChild] = childArray.splice(fromChildIndex, 1);
+            childArray.splice(toChildIndex, 0, movedChild);
+
+            newParentArray[fromParentIndex] = {
+                ...newParentArray[fromParentIndex],
+                childArray,
+            };
+
+            setValue("parentArray", newParentArray, {
+                shouldDirty: true,
+                shouldTouch: true,
+            });
+        } else {
+            // 異なる親間での移動
+            const newParentArray = [...currentData];
+            const fromChildArray = [
+                ...newParentArray[fromParentIndex].childArray,
+            ];
+            const toChildArray = [...newParentArray[toParentIndex].childArray];
+
+            const [movedChild] = fromChildArray.splice(fromChildIndex, 1);
+            toChildArray.splice(toChildIndex, 0, movedChild);
+
+            newParentArray[fromParentIndex] = {
+                ...newParentArray[fromParentIndex],
+                childArray: fromChildArray,
+            };
+            newParentArray[toParentIndex] = {
+                ...newParentArray[toParentIndex],
+                childArray: toChildArray,
+            };
+
+            setValue("parentArray", newParentArray, {
+                shouldDirty: true,
+                shouldTouch: true,
+            });
+        }
+    },
+    [setValue, watchedData.parentArray]
+);
 ```
 
 ### 2. Sortable 設定の統一
 
 ```typescript
 const commonSortableConfig = {
-  animation: 150,
-  ghostClass: "sortable-ghost",
-  chosenClass: "sortable-chosen",
-  forceFallback: true, // より一貫した動作のため
-  fallbackOnBody: true,
-  swapThreshold: 0.65,
+    animation: 150,
+    ghostClass: "sortable-ghost",
+    chosenClass: "sortable-chosen",
+    forceFallback: true, // より一貫した動作のため
+    fallbackOnBody: true,
+    swapThreshold: 0.65,
 };
 
 // フォーム用
 const formSortableConfig = {
-  ...commonSortableConfig,
-  group: "children",
+    ...commonSortableConfig,
+    group: "children",
 };
 
 // サイドバー用
 const sidebarSortableConfig = {
-  ...commonSortableConfig,
-  group: "children", // 同じグループ名を使用
+    ...commonSortableConfig,
+    group: "children", // 同じグループ名を使用
 };
 ```
 
@@ -162,22 +169,22 @@ onEnd: (evt) => {
 
 ```typescript
 const useSortableChildren = (parentFields: any[], setValue: Function) => {
-  const sortableRefs = useRef<{ [key: number]: HTMLElement | null }>({});
-  const sortableInstances = useRef<{ [key: number]: Sortable }>({});
-  
-  const initializeSortable = useCallback((parentIndex: number) => {
-    // Sortable初期化ロジック
-  }, []);
-  
-  const cleanupSortable = useCallback((parentIndex: number) => {
-    // クリーンアップロジック
-  }, []);
-  
-  return {
-    sortableRefs,
-    initializeSortable,
-    cleanupSortable,
-  };
+    const sortableRefs = useRef<{ [key: number]: HTMLElement | null }>({});
+    const sortableInstances = useRef<{ [key: number]: Sortable }>({});
+
+    const initializeSortable = useCallback((parentIndex: number) => {
+        // Sortable初期化ロジック
+    }, []);
+
+    const cleanupSortable = useCallback((parentIndex: number) => {
+        // クリーンアップロジック
+    }, []);
+
+    return {
+        sortableRefs,
+        initializeSortable,
+        cleanupSortable,
+    };
 };
 ```
 
@@ -186,24 +193,29 @@ const useSortableChildren = (parentFields: any[], setValue: Function) => {
 ```typescript
 // Zustand を使用した例
 interface FormState {
-  parentArray: Parent[];
-  updateParentOrder: (fromIndex: number, toIndex: number) => void;
-  updateChildOrder: (fromParent: number, toParent: number, fromChild: number, toChild: number) => void;
+    parentArray: Parent[];
+    updateParentOrder: (fromIndex: number, toIndex: number) => void;
+    updateChildOrder: (
+        fromParent: number,
+        toParent: number,
+        fromChild: number,
+        toChild: number
+    ) => void;
 }
 
-const useFormStore = create<FormState>((set) => ({
-  parentArray: initialData.parentArray,
-  updateParentOrder: (fromIndex, toIndex) =>
-    set((state) => {
-      const newArray = [...state.parentArray];
-      const [moved] = newArray.splice(fromIndex, 1);
-      newArray.splice(toIndex, 0, moved);
-      return { parentArray: newArray };
-    }),
-  updateChildOrder: (fromParent, toParent, fromChild, toChild) =>
-    set((state) => {
-      // 子要素移動ロジック
-    }),
+const useFormStore = create<FormState>(set => ({
+    parentArray: initialData.parentArray,
+    updateParentOrder: (fromIndex, toIndex) =>
+        set(state => {
+            const newArray = [...state.parentArray];
+            const [moved] = newArray.splice(fromIndex, 1);
+            newArray.splice(toIndex, 0, moved);
+            return { parentArray: newArray };
+        }),
+    updateChildOrder: (fromParent, toParent, fromChild, toChild) =>
+        set(state => {
+            // 子要素移動ロジック
+        }),
 }));
 ```
 
@@ -212,7 +224,7 @@ const useFormStore = create<FormState>((set) => ({
 #### A. データ属性の追加
 
 ```tsx
-<div 
+<div
   key={uniqueKey}
   className="sidebar-child-item"
   data-testid={`sidebar-child-${parentIndex}-${childIndex}`}
@@ -224,45 +236,51 @@ const useFormStore = create<FormState>((set) => ({
 
 ```typescript
 class SortableFormTestHelper {
-  constructor(private page: Page) {}
-  
-  async waitForChildOrder(parentIndex: number, expectedOrder: string[]) {
-    for (let i = 0; i < expectedOrder.length; i++) {
-      await expect(
-        this.page.locator(`[data-testid="sidebar-child-${parentIndex}-${i}"]`)
-      ).toContainText(expectedOrder[i], { timeout: 10000 });
+    constructor(private page: Page) {}
+
+    async waitForChildOrder(parentIndex: number, expectedOrder: string[]) {
+        for (let i = 0; i < expectedOrder.length; i++) {
+            await expect(
+                this.page.locator(
+                    `[data-testid="sidebar-child-${parentIndex}-${i}"]`
+                )
+            ).toContainText(expectedOrder[i], { timeout: 10000 });
+        }
     }
-  }
-  
-  async dragChildToPosition(
-    fromParent: number,
-    fromChild: number,
-    toParent: number,
-    toChild: number
-  ) {
-    const source = this.page.locator(`[data-testid="sidebar-child-${fromParent}-${fromChild}"] .drag-handle`);
-    const target = this.page.locator(`[data-testid="sidebar-child-${toParent}-${toChild}"]`);
-    
-    await source.dragTo(target);
-    await this.page.waitForLoadState('networkidle');
-  }
+
+    async dragChildToPosition(
+        fromParent: number,
+        fromChild: number,
+        toParent: number,
+        toChild: number
+    ) {
+        const source = this.page.locator(
+            `[data-testid="sidebar-child-${fromParent}-${fromChild}"] .drag-handle`
+        );
+        const target = this.page.locator(
+            `[data-testid="sidebar-child-${toParent}-${toChild}"]`
+        );
+
+        await source.dragTo(target);
+        await this.page.waitForLoadState("networkidle");
+    }
 }
 ```
 
 #### C. 改善されたテストコード
 
 ```typescript
-test('サイドバー内で同じ親内での子要素並び替えができる', async ({ page }) => {
-  const helper = new SortableFormTestHelper(page);
-  
-  // 初期状態確認
-  await helper.waitForChildOrder(0, ['[0.0] child1-1', '[0.1] child1-2']);
-  
-  // ドラッグ操作
-  await helper.dragChildToPosition(0, 0, 0, 1);
-  
-  // 結果確認
-  await helper.waitForChildOrder(0, ['[0.0] child1-2', '[0.1] child1-1']);
+test("サイドバー内で同じ親内での子要素並び替えができる", async ({ page }) => {
+    const helper = new SortableFormTestHelper(page);
+
+    // 初期状態確認
+    await helper.waitForChildOrder(0, ["[0.0] child1-1", "[0.1] child1-2"]);
+
+    // ドラッグ操作
+    await helper.dragChildToPosition(0, 0, 0, 1);
+
+    // 結果確認
+    await helper.waitForChildOrder(0, ["[0.0] child1-2", "[0.1] child1-1"]);
 });
 ```
 

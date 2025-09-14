@@ -75,13 +75,13 @@ export function SidebarParentItem({
                 className="p-2 mb-1 bg-gray-100 border border-gray-400 rounded text-sm"
             >
                 <div
-                    className="flex items-center gap-2 cursor-move"
+                    className="flex items-center gap-2 cursor-grab"
                     {...attributes}
                     {...listeners}
                 >
                     <span
                         data-testid="sidebar-parent-drag-handle"
-                        className="cursor-move text-gray-600 text-base"
+                        className="cursor-grab text-gray-600 text-base"
                     >
                         ⋮⋮
                     </span>

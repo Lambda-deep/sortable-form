@@ -1,0 +1,33 @@
+# Build outputs
+build/
+dist/
+public/build/
+
+# Dependencies
+node_modules/
+
+# Testing reports
+test-results/
+playwright-report/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Configuration files
+*.config.js
+*.config.ts
+
+# Package lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

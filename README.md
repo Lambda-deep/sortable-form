@@ -8,17 +8,17 @@
 
 ```typescript
 type Data = {
-  parentArray: Parent[];
-}
+    parentArray: Parent[];
+};
 type Parent = {
-  parentKey: string;
-  parentValue: string
-  childArray: Child[];
-}
+    parentKey: string;
+    parentValue: string;
+    childArray: Child[];
+};
 type Child = {
-  childKey: string;
-  childValue: string;
-}
+    childKey: string;
+    childValue: string;
+};
 ```
 
 ## 要求仕様

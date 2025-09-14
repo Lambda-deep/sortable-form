@@ -55,7 +55,7 @@ test.describe("ソート可能フォーム - UI/UXとアクセシビリティ", 
         await expect(firstParentHandle).toBeVisible();
 
         // ドラッグハンドルがインタラクティブ要素として適切にスタイル設定されていることを確認
-        const handleStyles = await firstParentHandle.evaluate((el) => {
+        const handleStyles = await firstParentHandle.evaluate(el => {
             const computed = window.getComputedStyle(el);
             return computed.cursor;
         });

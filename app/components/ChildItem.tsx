@@ -52,11 +52,11 @@ export function ChildItem({
                 data-testid="child-item"
                 data-sortable-id={id}
                 data-drag-source="form"
-                className="flex gap-2 items-center p-2 mb-2 bg-gray-50 border border-gray-300 rounded cursor-move"
+                className="flex gap-2 items-center p-2 mb-2 bg-gray-50 border border-gray-300 rounded cursor-grab"
             >
                 <span
                     data-testid="drag-handle"
-                    className="cursor-move text-gray-600 text-lg"
+                    className="cursor-grab text-gray-600 text-lg"
                     {...attributes}
                     {...listeners}
                 >

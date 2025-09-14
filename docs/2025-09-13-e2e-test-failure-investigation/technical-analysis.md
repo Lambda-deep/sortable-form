@@ -22,7 +22,7 @@ Received string: "⋮[0.1] child1-1"
 ```
 - textbox "Child Key": child1-2
 - textbox "Child Value": Child 1-2
-- textbox "Child Key": child1-1  
+- textbox "Child Key": child1-1
 - textbox "Child Value": Child 1-1
 ```
 
@@ -30,7 +30,7 @@ Received string: "⋮[0.1] child1-1"
 
 ```
 - "[0.1] child1-1"
-- "[0.0] child1-2" 
+- "[0.0] child1-2"
 ```
 
 #### 問題の詳細
@@ -64,27 +64,27 @@ Received: 0
 
 ```typescript
 Sortable.create(container, {
-  group: "children",
-  animation: 150,
-  ghostClass: "sortable-ghost",
-  chosenClass: "sortable-chosen",
-  onEnd: (evt) => {
-    // データ更新ロジック
-  },
+    group: "children",
+    animation: 150,
+    ghostClass: "sortable-ghost",
+    chosenClass: "sortable-chosen",
+    onEnd: evt => {
+        // データ更新ロジック
+    },
 });
 ```
 
-#### サイドバー用設定  
+#### サイドバー用設定
 
 ```typescript
 Sortable.create(container, {
-  group: "sidebar-children", // 異なるグループ名
-  animation: 150,
-  ghostClass: "sortable-ghost", 
-  chosenClass: "sortable-chosen",
-  onEnd: (evt) => {
-    // 同様のデータ更新ロジック
-  },
+    group: "sidebar-children", // 異なるグループ名
+    animation: 150,
+    ghostClass: "sortable-ghost",
+    chosenClass: "sortable-chosen",
+    onEnd: evt => {
+        // 同様のデータ更新ロジック
+    },
 });
 ```
 
@@ -99,8 +99,8 @@ Sortable.create(container, {
 
 ```typescript
 const { fields: parentFields, move: moveParent } = useFieldArray({
-  control,
-  name: "parentArray",
+    control,
+    name: "parentArray",
 });
 ```
 
@@ -137,7 +137,7 @@ setValue("parentArray", newParentArray);
 
 ```typescript
 useEffect(() => {
-  // Sortable初期化
+    // Sortable初期化
 }, [parentFields, setValue, watchedData.parentArray]);
 ```
 
@@ -156,7 +156,9 @@ useEffect(() => {
 ### XSS脆弱性の可能性
 
 ```tsx
-<span>[{parentIndex}.{childIndex}] {child.childKey}</span>
+<span>
+    [{parentIndex}.{childIndex}] {child.childKey}
+</span>
 ```
 
 `child.childKey`が直接レンダリングされているため、適切なサニタイゼーションが必要。
@@ -181,7 +183,7 @@ useEffect(() => {
 1. キー属性をユニークな値に変更
 2. テストタイムアウト値の調整
 
-### 高優先度（1週間以内）  
+### 高優先度（1週間以内）
 
 1. Sortableグループ設定の統一
 2. データ更新ロジックの単一化

@@ -138,7 +138,7 @@ export function ParentItem({
                 >
                     <span
                         data-testid="parent-drag-handle"
-                        className="cursor-move text-gray-600 text-lg"
+                        className="flex items-center justify-center cursor-grab text-gray-600 w-4 h-4 text-lg"
                     >
                         ⋮⋮
                     </span>
