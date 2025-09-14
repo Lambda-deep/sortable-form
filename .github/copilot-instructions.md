@@ -58,7 +58,7 @@ npm run test:single            # Stop on first failure
 npm run test:ui               # Playwright UI mode
 ```
 
-**⚠️ Important**: Do not restart the development server (`npm run dev`) after making changes. The server is always running at http://localhost:5173/ with hot module reload (HMR) enabled.
+**⚠️ Important**: Never restart the development server (`npm run dev`) after making changes. The server is always running at http://localhost:5173/ with hot module reload (HMR) enabled. Also never `cd /c/Users/satok/sortable-form && npm run dev`
 
 ### Testing Architecture
 

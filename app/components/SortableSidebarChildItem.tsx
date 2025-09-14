@@ -7,6 +7,7 @@ export function SortableSidebarChildItem({
     child,
     parentIndex,
     childIndex,
+    dragSource,
 }: SortableSidebarChildItemProps) {
     const { attributes, listeners, setNodeRef, transform, transition } =
         useSortable({ id });
@@ -21,6 +22,8 @@ export function SortableSidebarChildItem({
             ref={setNodeRef}
             style={style}
             data-testid="sidebar-child-item"
+            data-sortable-id={id}
+            data-drag-source="sidebar"
             className="flex items-center gap-2 py-1"
         >
             <span

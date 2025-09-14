@@ -11,6 +11,9 @@ export function SortableSidebarParentItem({
     parentField,
     parent,
     parentIndex,
+    dragSource,
+    getSidebarChildId = (parentIndex, childIndex) =>
+        `sidebar-${parentIndex}-${childIndex}`,
 }: SortableSidebarParentItemProps) {
     const { attributes, listeners, setNodeRef, transform, transition } =
         useSortable({ id: parentField.id });
@@ -25,6 +28,8 @@ export function SortableSidebarParentItem({
             ref={setNodeRef}
             style={style}
             data-testid="index-item"
+            data-sortable-id={parentField.id}
+            data-drag-source="sidebar"
             className="p-2 mb-1 bg-gray-100 border border-gray-400 rounded text-sm"
         >
             <div
@@ -42,14 +47,38 @@ export function SortableSidebarParentItem({
                     [{parentIndex}] {parent.parentKey}
                 </strong>
             </div>
-            <SortableContext
-                items={
-                    parent.childArray?.map(
-                        (_, childIndex) => `${parentIndex}-${childIndex}`
-                    ) || []
-                }
-                strategy={verticalListSortingStrategy}
-            >
+            {dragSource !== "form" && (
+                <SortableContext
+                    items={
+                        parent.childArray?.map((_, childIndex) =>
+                            getSidebarChildId(parentIndex, childIndex)
+                        ) || []
+                    }
+                    strategy={verticalListSortingStrategy}
+                >
+                    <div
+                        data-testid="nested-index"
+                        className="ml-5 mt-1 text-xs text-gray-600"
+                    >
+                        {parent.childArray.map(
+                            (child: Child, childIndex: number) => (
+                                <SortableSidebarChildItem
+                                    key={`sidebar-child-${parentIndex}-${child.childKey}`}
+                                    id={getSidebarChildId(
+                                        parentIndex,
+                                        childIndex
+                                    )}
+                                    child={child}
+                                    parentIndex={parentIndex}
+                                    childIndex={childIndex}
+                                    dragSource={dragSource}
+                                />
+                            )
+                        )}
+                    </div>
+                </SortableContext>
+            )}
+            {dragSource === "form" && (
                 <div
                     data-testid="nested-index"
                     className="ml-5 mt-1 text-xs text-gray-600"
@@ -58,15 +87,16 @@ export function SortableSidebarParentItem({
                         (child: Child, childIndex: number) => (
                             <SortableSidebarChildItem
                                 key={`sidebar-child-${parentIndex}-${child.childKey}`}
-                                id={`${parentIndex}-${childIndex}`}
+                                id={getSidebarChildId(parentIndex, childIndex)}
                                 child={child}
                                 parentIndex={parentIndex}
                                 childIndex={childIndex}
+                                dragSource={dragSource}
                             />
                         )
                     )}
                 </div>
-            </SortableContext>
+            )}
         </li>
     );
 }

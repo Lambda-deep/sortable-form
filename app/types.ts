@@ -14,7 +14,7 @@ export type Child = {
 };
 
 // Component Props Types
-export type SortableParentItemProps = {
+export type ParentItemProps = {
     parentField: any;
     parentIndex: number;
     register: any;
@@ -22,6 +22,8 @@ export type SortableParentItemProps = {
     watchedData: Data;
     addChild: (parentIndex: number) => void;
     removeChild: (parentIndex: number, childIndex: number) => void;
+    dragSource: "form" | "sidebar" | null;
+    getChildId?: (parentIndex: number, childIndex: number) => string;
 };
 
 export type SortableChildItemProps = {
@@ -31,12 +33,15 @@ export type SortableChildItemProps = {
     childIndex: number;
     register: any;
     removeChild: (parentIndex: number, childIndex: number) => void;
+    dragSource: "form" | "sidebar" | null;
 };
 
 export type SortableSidebarParentItemProps = {
     parentField: any;
     parent: Parent;
     parentIndex: number;
+    dragSource: "form" | "sidebar" | null;
+    getSidebarChildId?: (parentIndex: number, childIndex: number) => string;
 };
 
 export type SortableSidebarChildItemProps = {
@@ -44,4 +49,5 @@ export type SortableSidebarChildItemProps = {
     child: Child;
     parentIndex: number;
     childIndex: number;
+    dragSource: "form" | "sidebar" | null;
 };

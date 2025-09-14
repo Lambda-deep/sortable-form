@@ -9,6 +9,7 @@ export function SortableChildItem({
     childIndex,
     register,
     removeChild,
+    dragSource,
 }: SortableChildItemProps) {
     const { attributes, listeners, setNodeRef, transform, transition } =
         useSortable({ id });
@@ -23,6 +24,8 @@ export function SortableChildItem({
             ref={setNodeRef}
             style={style}
             data-testid="child-item"
+            data-sortable-id={id}
+            data-drag-source="form"
             className="flex gap-2 items-center p-2 mb-2 bg-gray-50 border border-gray-300 rounded cursor-move"
         >
             <span

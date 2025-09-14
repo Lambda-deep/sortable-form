@@ -4,7 +4,7 @@ import {
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { useSortableForm } from "../hooks/useSortableForm";
-import { SortableParentItem } from "../components/SortableParentItem";
+import { ParentItem } from "../components/ParentItem";
 import { SortableSidebarParentItem } from "../components/SortableSidebarParentItem";
 import type { Parent } from "../types";
 
@@ -15,6 +15,7 @@ export default function Index() {
         parentFields,
         watchedData,
         activeId,
+        dragSource,
         sensors,
         customCollisionDetection,
         handleDragStart,
@@ -24,6 +25,10 @@ export default function Index() {
         removeChild,
         removeParent,
         onSubmit,
+        getParentId,
+        getChildId,
+        getSidebarParentId,
+        getSidebarChildId,
     } = useSortableForm();
 
     return (
@@ -44,23 +49,58 @@ export default function Index() {
                 >
                     <h2>Sortable Form</h2>
                     <form onSubmit={handleSubmit(onSubmit)}>
-                        <SortableContext
-                            items={parentFields.map((field) => field.id)}
-                            strategy={verticalListSortingStrategy}
-                        >
-                            {parentFields.map((parentField, parentIndex) => (
-                                <SortableParentItem
-                                    key={parentField.id}
-                                    parentField={parentField}
-                                    parentIndex={parentIndex}
-                                    register={register}
-                                    removeParent={removeParent}
-                                    watchedData={watchedData}
-                                    addChild={addChild}
-                                    removeChild={removeChild}
-                                />
-                            ))}
-                        </SortableContext>
+                        {dragSource !== "sidebar" && (
+                            <SortableContext
+                                id="form-sortable-context"
+                                items={parentFields.map((_, index) =>
+                                    getParentId(index)
+                                )}
+                                strategy={verticalListSortingStrategy}
+                            >
+                                {parentFields.map(
+                                    (parentField, parentIndex) => (
+                                        <ParentItem
+                                            key={getParentId(parentIndex)}
+                                            parentField={{
+                                                ...parentField,
+                                                id: getParentId(parentIndex),
+                                            }}
+                                            parentIndex={parentIndex}
+                                            register={register}
+                                            removeParent={removeParent}
+                                            watchedData={watchedData}
+                                            addChild={addChild}
+                                            removeChild={removeChild}
+                                            dragSource={dragSource}
+                                            getChildId={getChildId}
+                                        />
+                                    )
+                                )}
+                            </SortableContext>
+                        )}
+                        {dragSource === "sidebar" && (
+                            <div>
+                                {parentFields.map(
+                                    (parentField, parentIndex) => (
+                                        <ParentItem
+                                            key={getParentId(parentIndex)}
+                                            parentField={{
+                                                ...parentField,
+                                                id: getParentId(parentIndex),
+                                            }}
+                                            parentIndex={parentIndex}
+                                            register={register}
+                                            removeParent={removeParent}
+                                            watchedData={watchedData}
+                                            addChild={addChild}
+                                            removeChild={removeChild}
+                                            dragSource={dragSource}
+                                            getChildId={getChildId}
+                                        />
+                                    )
+                                )}
+                            </div>
+                        )}
 
                         <div style={{ marginTop: "20px" }}>
                             <button
@@ -87,26 +127,61 @@ export default function Index() {
                     className="bg-white p-5 rounded-lg shadow-sm h-fit"
                 >
                     <h3>Index Information</h3>
-                    <SortableContext
-                        items={parentFields.map((field) => field.id)}
-                        strategy={verticalListSortingStrategy}
-                    >
+                    {dragSource !== "form" && (
+                        <SortableContext
+                            id="sidebar-sortable-context"
+                            items={parentFields.map((_, index) =>
+                                getSidebarParentId(index)
+                            )}
+                            strategy={verticalListSortingStrategy}
+                        >
+                            <ul
+                                data-testid="index-list"
+                                className="list-none p-0"
+                            >
+                                {watchedData.parentArray.map(
+                                    (parent: Parent, parentIndex: number) => (
+                                        <SortableSidebarParentItem
+                                            key={getSidebarParentId(
+                                                parentIndex
+                                            )}
+                                            parentField={{
+                                                ...parentFields[parentIndex],
+                                                id: getSidebarParentId(
+                                                    parentIndex
+                                                ),
+                                            }}
+                                            parent={parent}
+                                            parentIndex={parentIndex}
+                                            dragSource={dragSource}
+                                            getSidebarChildId={
+                                                getSidebarChildId
+                                            }
+                                        />
+                                    )
+                                )}
+                            </ul>
+                        </SortableContext>
+                    )}
+                    {dragSource === "form" && (
                         <ul data-testid="index-list" className="list-none p-0">
                             {watchedData.parentArray.map(
                                 (parent: Parent, parentIndex: number) => (
                                     <SortableSidebarParentItem
-                                        key={
-                                            parentFields[parentIndex]?.id ||
-                                            parentIndex
-                                        }
-                                        parentField={parentFields[parentIndex]}
+                                        key={getSidebarParentId(parentIndex)}
+                                        parentField={{
+                                            ...parentFields[parentIndex],
+                                            id: getSidebarParentId(parentIndex),
+                                        }}
                                         parent={parent}
                                         parentIndex={parentIndex}
+                                        dragSource={dragSource}
+                                        getSidebarChildId={getSidebarChildId}
                                     />
                                 )
                             )}
                         </ul>
-                    </SortableContext>
+                    )}
                 </div>
             </div>
         </DndContext>

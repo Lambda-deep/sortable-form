@@ -31,10 +31,17 @@ const initialData: Data = {
 };
 
 export function useSortableForm() {
-    const { control, register, watch, setValue, getValues, handleSubmit } =
-        useForm<Data>({
-            defaultValues: initialData,
-        });
+    const {
+        control,
+        register,
+        watch,
+        setValue,
+        getValues,
+        handleSubmit,
+        trigger,
+    } = useForm<Data>({
+        defaultValues: initialData,
+    });
 
     const {
         fields: parentFields,
@@ -48,6 +55,20 @@ export function useSortableForm() {
 
     const watchedData = watch();
     const [activeId, setActiveId] = useState<string | null>(null);
+    const [dragSource, setDragSource] = useState<"form" | "sidebar" | null>(
+        null
+    );
+
+    // インデックスベースの安定したIDを生成
+    const getParentId = (index: number) => `parent-${index}`;
+    const getChildId = (parentIndex: number, childIndex: number) =>
+        `${parentIndex}-${childIndex}`;
+    const getSidebarParentId = (index: number) => `sidebar-parent-${index}`;
+    const getSidebarChildId = (parentIndex: number, childIndex: number) =>
+        `sidebar-${parentIndex}-${childIndex}`;
+
+    // IDがサイドバー由来かを判定
+    const isSidebarId = (id: string) => id.startsWith("sidebar-");
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -87,6 +108,43 @@ export function useSortableForm() {
 
     function handleDragStart(event: DragStartEvent) {
         setActiveId(String(event.active.id));
+
+        // ドラッグソースを識別（data属性から判定）
+        const element = document.querySelector(
+            `[data-sortable-id="${event.active.id}"]`
+        );
+        let detectedSource: "form" | "sidebar" | null = null;
+
+        if (element) {
+            const dragSourceAttr = element.getAttribute("data-drag-source");
+            if (dragSourceAttr === "form") {
+                detectedSource = "form";
+            } else if (dragSourceAttr === "sidebar") {
+                detectedSource = "sidebar";
+            } else {
+                // fallback: DOMからの識別
+                const formElement = element.closest(
+                    '[data-testid="form-section"]'
+                );
+                const sidebarElement = element.closest(
+                    '[data-testid="sidebar"]'
+                );
+
+                if (formElement) {
+                    detectedSource = "form";
+                } else if (sidebarElement) {
+                    detectedSource = "sidebar";
+                }
+            }
+        }
+
+        setDragSource(detectedSource);
+        console.log(
+            "Drag started from:",
+            detectedSource,
+            "Element ID:",
+            event.active.id
+        );
     }
 
     function handleDragEnd(event: DragEndEvent) {
@@ -111,10 +169,15 @@ export function useSortableForm() {
             if (typeof active.id === "string" && typeof over?.id === "string") {
                 console.log("Both IDs are strings");
 
-                // 子要素のIDパターン: 数字-数字 (例: "0-0", "1-2")
+                // 子要素のIDパターン: 数字-数字 (例: "0-0", "1-2") またはサイドバー子要素 (例: "sidebar-0-0")
                 const childIdPattern = /^\d+-\d+$/;
-                const isActiveChild = childIdPattern.test(active.id);
-                const isOverChild = childIdPattern.test(over.id);
+                const sidebarChildIdPattern = /^sidebar-\d+-\d+$/;
+                const isActiveChild =
+                    childIdPattern.test(active.id) ||
+                    sidebarChildIdPattern.test(active.id);
+                const isOverChild =
+                    childIdPattern.test(over.id) ||
+                    sidebarChildIdPattern.test(over.id);
 
                 console.log(
                     "Active is child:",
@@ -124,21 +187,36 @@ export function useSortableForm() {
                 );
 
                 if (!isActiveChild && !isOverChild) {
-                    // Parent item drag
+                    // Parent item drag - インデックスベースIDから実際のインデックスを取得
                     console.log("Parent drag detected");
-                    console.log(
-                        "ParentFields IDs:",
-                        parentFields.map((f) => f.id)
-                    );
-                    const oldIndex = parentFields.findIndex(
-                        (field) => field.id === active.id
-                    );
-                    const newIndex = parentFields.findIndex(
-                        (field) => field.id === over.id
-                    );
+
+                    let oldIndex: number, newIndex: number;
+
+                    // サイドバーIDかフォームIDかで処理を分ける
+                    if (isSidebarId(active.id)) {
+                        oldIndex = parseInt(
+                            active.id.replace("sidebar-parent-", "")
+                        );
+                    } else {
+                        oldIndex = parseInt(active.id.replace("parent-", ""));
+                    }
+
+                    if (isSidebarId(over.id)) {
+                        newIndex = parseInt(
+                            over.id.replace("sidebar-parent-", "")
+                        );
+                    } else {
+                        newIndex = parseInt(over.id.replace("parent-", ""));
+                    }
+
                     console.log("Parent indices:", { oldIndex, newIndex });
 
-                    if (oldIndex !== -1 && newIndex !== -1) {
+                    if (
+                        oldIndex !== -1 &&
+                        newIndex !== -1 &&
+                        oldIndex < parentFields.length &&
+                        newIndex < parentFields.length
+                    ) {
                         console.log(
                             "Moving parent from",
                             oldIndex,
@@ -147,23 +225,82 @@ export function useSortableForm() {
                         );
                         moveParent(oldIndex, newIndex);
                     } else {
-                        console.log("Failed to find parent indices");
+                        console.log("Invalid parent indices");
                     }
                 } else if (isActiveChild && isOverChild) {
-                    // Child item drag - same parent reordering
-                    const activeParentIndex = parseInt(active.id.split("-")[0]);
-                    const activeChildIndex = parseInt(active.id.split("-")[1]);
-                    const overParentIndex = parseInt(over.id.split("-")[0]);
-                    const overChildIndex = parseInt(over.id.split("-")[1]);
+                    // Child item drag - サイドバーの子要素IDに対応
+                    console.log(
+                        "Processing child drag. Active ID:",
+                        active.id,
+                        "Over ID:",
+                        over.id
+                    );
+
+                    let activeParentIndex: number, activeChildIndex: number;
+                    let overParentIndex: number, overChildIndex: number;
+
+                    // サイドバーIDかフォームIDかで処理を分ける
+                    if (isSidebarId(active.id)) {
+                        const parts = active.id
+                            .replace("sidebar-", "")
+                            .split("-");
+                        activeParentIndex = parseInt(parts[0]);
+                        activeChildIndex = parseInt(parts[1]);
+                        console.log("Active is sidebar child. Parts:", parts);
+                    } else {
+                        activeParentIndex = parseInt(active.id.split("-")[0]);
+                        activeChildIndex = parseInt(active.id.split("-")[1]);
+                        console.log(
+                            "Active is form child. Split:",
+                            active.id.split("-")
+                        );
+                    }
+
+                    if (isSidebarId(over.id)) {
+                        const parts = over.id
+                            .replace("sidebar-", "")
+                            .split("-");
+                        overParentIndex = parseInt(parts[0]);
+                        overChildIndex = parseInt(parts[1]);
+                        console.log("Over is sidebar child. Parts:", parts);
+                    } else {
+                        overParentIndex = parseInt(over.id.split("-")[0]);
+                        overChildIndex = parseInt(over.id.split("-")[1]);
+                        console.log(
+                            "Over is form child. Split:",
+                            over.id.split("-")
+                        );
+                    }
 
                     if (activeParentIndex === overParentIndex) {
                         // Same parent reordering
                         console.log("Same parent reordering");
+                        console.log(
+                            "Active parent index:",
+                            activeParentIndex,
+                            "Active child index:",
+                            activeChildIndex
+                        );
+                        console.log(
+                            "Over parent index:",
+                            overParentIndex,
+                            "Over child index:",
+                            overChildIndex
+                        );
+
                         const currentData = getValues("parentArray");
                         const newParentArray = [...currentData];
                         const childArray = [
                             ...newParentArray[activeParentIndex].childArray,
                         ];
+
+                        console.log("Original child array:", childArray);
+                        console.log(
+                            "Moving from index",
+                            activeChildIndex,
+                            "to index",
+                            overChildIndex
+                        );
 
                         const newChildArray = arrayMove(
                             childArray,
@@ -171,12 +308,25 @@ export function useSortableForm() {
                             overChildIndex
                         );
 
+                        console.log("New child array:", newChildArray);
+
                         newParentArray[activeParentIndex] = {
                             ...newParentArray[activeParentIndex],
                             childArray: newChildArray,
                         };
 
-                        setValue("parentArray", newParentArray);
+                        console.log(
+                            "Setting new parent array:",
+                            newParentArray
+                        );
+                        setValue("parentArray", newParentArray, {
+                            shouldDirty: true,
+                            shouldTouch: true,
+                            shouldValidate: true,
+                        });
+
+                        // 強制的にwatchの更新をトリガー
+                        trigger("parentArray");
                     } else {
                         // Different parent reordering - move child between parents
                         console.log(
@@ -224,8 +374,9 @@ export function useSortableForm() {
             }
         }
 
-        // ドラッグ終了時にactiveIdをリセット
+        // ドラッグ終了時にactiveIdとdragSourceをリセット
         setActiveId(null);
+        setDragSource(null);
     }
 
     const addParent = () => {
@@ -286,6 +437,7 @@ export function useSortableForm() {
         // State
         watchedData,
         activeId,
+        dragSource,
 
         // Drag & Drop
         sensors,
@@ -298,5 +450,9 @@ export function useSortableForm() {
         addChild,
         removeChild,
         onSubmit,
+        getParentId,
+        getChildId,
+        getSidebarParentId,
+        getSidebarChildId,
     };
 }
