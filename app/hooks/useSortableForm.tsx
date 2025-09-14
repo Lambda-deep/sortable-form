@@ -523,6 +523,134 @@ export function useSortableForm() {
         });
     };
 
+    // サイドバー専用のドラッグオーバーハンドラー
+    const handleSidebarDragOver = (event: DragOverEvent) => {
+        const { over, active } = event;
+
+        console.log("🎯 サイドバー: handleSidebarDragOver called:", {
+            activeId: active.id,
+            overId: over?.id,
+            event,
+        });
+
+        if (!over) {
+            setDragState(prev => ({ ...prev, dropIndicator: null }));
+            return;
+        }
+
+        // 自分自身の上にドラッグしている場合はインジケーターを表示しない
+        if (active.id === over.id) {
+            setDragState(prev => ({ ...prev, dropIndicator: null }));
+            return;
+        }
+
+        const activeIdStr = active.id as string;
+        const overIdStr = over.id as string;
+
+        // サイドバーChild要素かどうかの判定
+        const sidebarChildPattern = /^sidebar-\d+-\d+$/;
+        const isActiveSidebarChild = sidebarChildPattern.test(activeIdStr);
+        const isOverSidebarChild = sidebarChildPattern.test(overIdStr);
+
+        console.log("🎯 サイドバー: ドロップインジケーター判定:", {
+            isActiveSidebarChild,
+            isOverSidebarChild,
+            activeId: active.id,
+            overId: over.id,
+        });
+
+        if (isActiveSidebarChild && isOverSidebarChild) {
+            // サイドバー内でのChild要素ドラッグ
+            const [activeParentIndex] = activeIdStr
+                .replace("sidebar-", "")
+                .split("-")
+                .map(Number);
+            const [overParentIndex, overChildIndex] = overIdStr
+                .replace("sidebar-", "")
+                .split("-")
+                .map(Number);
+
+            console.log("🎯 サイドバー: Child要素間のドラッグ:", {
+                activeParentIndex,
+                overParentIndex,
+                overChildIndex,
+            });
+
+            // 同一Parent内でのみドロップインジケーターを表示
+            if (activeParentIndex === overParentIndex) {
+                const [, activeChildIndex] = activeIdStr
+                    .replace("sidebar-", "")
+                    .split("-")
+                    .map(Number);
+                const position =
+                    activeChildIndex < overChildIndex ? "after" : "before";
+
+                console.log(
+                    "🎯 サイドバー: Child ドロップインジケーター表示:",
+                    {
+                        targetId: over.id,
+                        position,
+                        activeChildIndex,
+                        overChildIndex,
+                    }
+                );
+
+                setDragState(prev => ({
+                    ...prev,
+                    dropIndicator: {
+                        targetId: over.id as string,
+                        position,
+                    },
+                }));
+            } else {
+                console.log("🎯 サイドバー: 異なるParent間のChild移動は無効");
+                setDragState(prev => ({ ...prev, dropIndicator: null }));
+            }
+        } else if (!isActiveSidebarChild && !isOverSidebarChild) {
+            // サイドバー内でのParent要素ドラッグ
+            const activeOriginalId = activeIdStr.replace("sidebar-", "");
+            const overOriginalId = overIdStr.replace("sidebar-", "");
+
+            const activeIndex = parentFields.findIndex(
+                field => field.id === activeOriginalId
+            );
+            const overIndex = parentFields.findIndex(
+                field => field.id === overOriginalId
+            );
+
+            console.log("🎯 サイドバー: Parent ドロップインジケーター:", {
+                activeId: activeOriginalId,
+                overId: overOriginalId,
+                activeIndex,
+                overIndex,
+            });
+
+            if (activeIndex !== -1 && overIndex !== -1) {
+                const position = activeIndex < overIndex ? "after" : "before";
+
+                console.log(
+                    "🎯 サイドバー: Parent ドロップインジケーター表示:",
+                    {
+                        targetId: over.id,
+                        position,
+                    }
+                );
+
+                setDragState(prev => ({
+                    ...prev,
+                    dropIndicator: {
+                        targetId: over.id as string,
+                        position,
+                    },
+                }));
+            }
+        } else {
+            // 異なるタイプ間のドラッグは無効
+            console.log("🎯 サイドバー: 異なるタイプ間のドラッグは無効");
+            setDragState(prev => ({ ...prev, dropIndicator: null }));
+        }
+    };
+
     // サイドバー専用のドラッグハンドラー
     const handleSidebarDragStart = (event: DragStartEvent) => {
         const { active } = event;
@@ -725,6 +853,7 @@ export function useSortableForm() {
             onDragOver: handleDragOver,
             onDragEnd: handleDragEnd,
             onSidebarDragStart: handleSidebarDragStart,
+            onSidebarDragOver: handleSidebarDragOver,
             onSidebarDragEnd: handleSidebarDragEnd,
         },
         dragState,

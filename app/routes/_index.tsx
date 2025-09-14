@@ -68,21 +68,9 @@ export default function Index() {
                 <DndContext
                     sensors={formSensors}
                     modifiers={[restrictToVerticalAxis]}
-                    onDragStart={event => {
-                        console.log(
-                            "📝 フォームDndContext: ドラッグ開始",
-                            event
-                        );
-                        dragHandlers.onDragStart(event);
-                    }}
+                    onDragStart={dragHandlers.onDragStart}
                     onDragOver={dragHandlers.onDragOver}
-                    onDragEnd={event => {
-                        console.log(
-                            "📝 フォームDndContext: ドラッグ終了",
-                            event
-                        );
-                        dragHandlers.onDragEnd(event);
-                    }}
+                    onDragEnd={dragHandlers.onDragEnd}
                 >
                     <div
                         data-testid="form-section"
@@ -155,21 +143,9 @@ export default function Index() {
                     sensors={sidebarSensors}
                     collisionDetection={sidebarCollisionDetection}
                     modifiers={[restrictToVerticalAxis]}
-                    onDragStart={event => {
-                        console.log(
-                            "🎯 サイドバーDndContext: ドラッグ開始",
-                            event
-                        );
-                        dragHandlers.onSidebarDragStart(event);
-                    }}
-                    onDragOver={dragHandlers.onDragOver}
-                    onDragEnd={event => {
-                        console.log(
-                            "🎯 サイドバーDndContext: ドラッグ終了",
-                            event
-                        );
-                        dragHandlers.onSidebarDragEnd(event);
-                    }}
+                    onDragStart={dragHandlers.onSidebarDragStart}
+                    onDragOver={dragHandlers.onSidebarDragOver}
+                    onDragEnd={dragHandlers.onSidebarDragEnd}
                 >
                     <div
                         data-testid="sidebar"
