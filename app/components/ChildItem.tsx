@@ -1,4 +1,5 @@
 import type { ChildItemProps } from "../types";
+import Button from "./Button";
 
 export function ChildItem({
     parentIndex,
@@ -25,13 +26,14 @@ export function ChildItem({
                 className="flex-1 rounded-sm border border-gray-400 px-1 py-1"
                 placeholder="Child Value"
             />
-            <button
+            <Button
                 type="button"
-                className="cursor-pointer rounded-sm border-none bg-red-600 px-2 py-1 text-xs text-white hover:bg-red-700"
+                variant="remove"
+                size="sm"
                 onClick={() => removeChild(parentIndex, childIndex)}
             >
                 ×
-            </button>
+            </Button>
         </div>
     );
 }

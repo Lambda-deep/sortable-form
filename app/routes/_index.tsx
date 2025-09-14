@@ -1,6 +1,7 @@
 import { useSortableForm } from "../hooks/useSortableForm";
 import { ParentItem } from "../components/ParentItem";
 import { SidebarParentItem } from "../components/SidebarParentItem";
+import Button from "../components/Button";
 import type { Parent } from "../types";
 
 export default function Index() {
@@ -40,21 +41,22 @@ export default function Index() {
                     ))}
 
                     <div style={{ marginTop: "20px" }}>
-                        <button
+                        <Button
                             type="button"
+                            variant="add"
                             data-testid="add-parent-button"
-                            className="cursor-pointer rounded border-none bg-blue-600 px-3 py-2 text-white hover:bg-blue-700"
                             onClick={addParent}
                         >
                             Add Parent
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="submit"
+                            variant="submit"
                             data-testid="submit-button"
-                            className="ml-2 cursor-pointer rounded border-none bg-green-600 px-3 py-2 text-white hover:bg-green-700"
+                            className="ml-2"
                         >
                             Submit Form
-                        </button>
+                        </Button>
                     </div>
                 </form>
             </div>

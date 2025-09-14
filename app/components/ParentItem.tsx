@@ -1,5 +1,6 @@
 import type { ParentItemProps } from "../types";
 import { ChildItem } from "./ChildItem";
+import Button from "./Button";
 
 export function ParentItem({
     parentIndex,
@@ -27,13 +28,14 @@ export function ParentItem({
                     className="flex-1 rounded border border-gray-400 px-2 py-1"
                     placeholder="Parent Value"
                 />
-                <button
+                <Button
                     type="button"
-                    className="cursor-pointer rounded-sm border-none bg-red-600 px-2 py-1 text-xs text-white hover:bg-red-700"
+                    variant="remove"
+                    size="sm"
                     onClick={() => removeParent(parentIndex)}
                 >
                     Remove
-                </button>
+                </Button>
             </div>
 
             <div
@@ -49,13 +51,13 @@ export function ParentItem({
                         removeChild={removeChild}
                     />
                 ))}
-                <button
+                <Button
                     type="button"
-                    className="cursor-pointer rounded border-none bg-blue-600 px-3 py-2 text-white hover:bg-blue-700"
+                    variant="add"
                     onClick={() => addChild(parentIndex)}
                 >
                     Add Child
-                </button>
+                </Button>
             </div>
         </div>
     );
