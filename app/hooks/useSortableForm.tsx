@@ -54,10 +54,22 @@ export function useSortableForm() {
         activeId: null,
         draggedItem: null,
         dropIndicator: null,
+        sidebarActiveId: null,
+        sidebarDraggedItem: null,
     });
 
-    // センサーの設定
-    const sensors = useSensors(
+    // センサーの設定（フォーム用）
+    const formSensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8, // 8px移動で開始
+            },
+        }),
+        useSensor(KeyboardSensor)
+    );
+
+    // センサーの設定（サイドバー用）
+    const sidebarSensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
                 distance: 8, // 8px移動で開始
@@ -72,6 +84,11 @@ export function useSortableForm() {
     // ドラッグ開始ハンドラー
     const handleDragStart = (event: DragStartEvent) => {
         const { active } = event;
+
+        console.log("📝 フォーム: ドラッグ開始", {
+            activeId: active.id,
+            activeType: typeof active.id,
+        });
 
         setDragState(prev => ({
             ...prev,
@@ -114,6 +131,12 @@ export function useSortableForm() {
     const handleDragOver = (event: DragOverEvent) => {
         const { over, active } = event;
 
+        console.log("🎯 handleDragOver called:", {
+            activeId: active.id,
+            overId: over?.id,
+            event,
+        });
+
         if (!over) {
             setDragState(prev => ({ ...prev, dropIndicator: null }));
             return;
@@ -128,25 +151,78 @@ export function useSortableForm() {
         const isDraggingChild = childIdPattern.test(active.id as string);
         const isOverChild = childIdPattern.test(over.id as string);
 
+        // サイドバーかどうかの判定
+        const isActiveSidebar = (active.id as string).startsWith("sidebar-");
+        const isOverSidebar = (over.id as string).startsWith("sidebar-");
+
+        console.log("🎯 ドロップインジケーター判定:", {
+            isDraggingChild,
+            isOverChild,
+            isActiveSidebar,
+            isOverSidebar,
+            activeId: active.id,
+            overId: over.id,
+        });
+
         if (!isDraggingChild && !isOverChild) {
             // Parent要素のドラッグ中
-            const activeIndex = parentFields.findIndex(
-                field => field.id === active.id
-            );
-            const overIndex = parentFields.findIndex(
-                field => field.id === over.id
-            );
+            if (isActiveSidebar && isOverSidebar) {
+                // サイドバー内でのParent要素ドラッグ
+                const activeId = (active.id as string).replace("sidebar-", "");
+                const overId = (over.id as string).replace("sidebar-", "");
 
-            if (activeIndex !== -1 && overIndex !== -1) {
-                const position = activeIndex < overIndex ? "after" : "before";
+                const activeIndex = parentFields.findIndex(
+                    field => field.id === activeId
+                );
+                const overIndex = parentFields.findIndex(
+                    field => field.id === overId
+                );
 
-                setDragState(prev => ({
-                    ...prev,
-                    dropIndicator: {
-                        targetId: over.id as string,
+                console.log("🎯 サイドバー Parent ドロップインジケーター:", {
+                    activeId,
+                    overId,
+                    activeIndex,
+                    overIndex,
+                });
+
+                if (activeIndex !== -1 && overIndex !== -1) {
+                    const position =
+                        activeIndex < overIndex ? "after" : "before";
+
+                    console.log("🎯 サイドバー ドロップインジケーター表示:", {
+                        targetId: over.id,
                         position,
-                    },
-                }));
+                    });
+
+                    setDragState(prev => ({
+                        ...prev,
+                        dropIndicator: {
+                            targetId: over.id as string,
+                            position,
+                        },
+                    }));
+                }
+            } else if (!isActiveSidebar && !isOverSidebar) {
+                // フォーム内でのParent要素ドラッグ
+                const activeIndex = parentFields.findIndex(
+                    field => field.id === active.id
+                );
+                const overIndex = parentFields.findIndex(
+                    field => field.id === over.id
+                );
+
+                if (activeIndex !== -1 && overIndex !== -1) {
+                    const position =
+                        activeIndex < overIndex ? "after" : "before";
+
+                    setDragState(prev => ({
+                        ...prev,
+                        dropIndicator: {
+                            targetId: over.id as string,
+                            position,
+                        },
+                    }));
+                }
             }
         } else if (isDraggingChild && isOverChild) {
             // Child要素のドラッグ中（同一Parent内のみ）
@@ -185,6 +261,8 @@ export function useSortableForm() {
                 activeId: null,
                 draggedItem: null,
                 dropIndicator: null,
+                sidebarActiveId: null,
+                sidebarDraggedItem: null,
             });
             return;
         }
@@ -204,6 +282,8 @@ export function useSortableForm() {
             activeId: null,
             draggedItem: null,
             dropIndicator: null,
+            sidebarActiveId: null,
+            sidebarDraggedItem: null,
         });
     };
 
@@ -273,13 +353,15 @@ export function useSortableForm() {
 
     // フォームデータとサイドバーデータの同期（usePrevious pattern）
     const prevWatchedDataRef = useRef<string>("");
-    
+
     useEffect(() => {
         const currentFormDataString = JSON.stringify(watchedData.parentArray);
-        
+
         if (prevWatchedDataRef.current !== currentFormDataString) {
             setSidebarData({
-                parentArray: JSON.parse(JSON.stringify(watchedData.parentArray)),
+                parentArray: JSON.parse(
+                    JSON.stringify(watchedData.parentArray)
+                ),
             });
             prevWatchedDataRef.current = currentFormDataString;
         }
@@ -291,6 +373,108 @@ export function useSortableForm() {
             parentValue: `Parent ${parentFields.length + 1}`,
             childArray: [],
         });
+    };
+
+    // サイドバー専用のドラッグハンドラー
+    const handleSidebarDragStart = (event: DragStartEvent) => {
+        const { active } = event;
+
+        console.log("🎯 サイドバー: ドラッグ開始", {
+            activeId: active.id,
+            activeType: typeof active.id,
+        });
+
+        setDragState(prev => ({
+            ...prev,
+            sidebarActiveId: active.id as string,
+        }));
+
+        const parentIndex = parentFields.findIndex(
+            field => field.id === (active.id as string).replace(/^sidebar-/, "")
+        );
+        if (parentIndex !== -1) {
+            console.log("🎯 サイドバー: Parent要素をドラッグ中", parentIndex);
+            setDragState(prev => ({
+                ...prev,
+                sidebarDraggedItem: {
+                    type: "parent",
+                    parentIndex,
+                    data: watchedData.parentArray[parentIndex],
+                },
+            }));
+        }
+    };
+
+    const handleSidebarDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+
+        console.log("サイドバー: ドラッグ終了", {
+            activeId: active.id,
+            overId: over?.id,
+        });
+
+        // overId が存在しない場合は無効なドロップ
+        if (!over) {
+            console.log("サイドバー: ドロップターゲットなし");
+            setDragState(prev => ({
+                ...prev,
+                sidebarActiveId: null,
+                sidebarDraggedItem: null,
+                dropIndicator: null,
+            }));
+            return;
+        }
+
+        // sidebar-プレフィックスを削除して元のIDを取得
+        const activeOriginalId = (active.id as string).replace(/^sidebar-/, "");
+        const overOriginalId = (over.id as string).replace(/^sidebar-/, "");
+
+        console.log("サイドバー: ID変換", {
+            activeId: active.id,
+            overId: over.id,
+            activeOriginalId,
+            overOriginalId,
+        });
+
+        // インデックスを取得
+        const activeIndex = parentFields.findIndex(
+            field => field.id === activeOriginalId
+        );
+        const overIndex = parentFields.findIndex(
+            field => field.id === overOriginalId
+        );
+
+        console.log("サイドバー: インデックス", {
+            activeIndex,
+            overIndex,
+        });
+
+        // 有効なインデックスで、かつ位置が異なる場合のみ移動を実行
+        if (
+            activeIndex !== -1 &&
+            overIndex !== -1 &&
+            activeIndex !== overIndex
+        ) {
+            console.log("サイドバー: Parent移動処理を実行");
+            move(activeIndex, overIndex);
+        } else {
+            console.log("サイドバー: 移動不要または無効な移動", {
+                reason:
+                    activeIndex === -1
+                        ? "activeIndex not found"
+                        : overIndex === -1
+                          ? "overIndex not found"
+                          : "same index",
+            });
+        }
+
+        // サイドバーの状態をクリーンアップ
+        setDragState(prev => ({
+            ...prev,
+            sidebarActiveId: null,
+            sidebarDraggedItem: null,
+            dropIndicator: null,
+        }));
     };
 
     const addChild = (parentIndex: number) => {
@@ -330,11 +514,14 @@ export function useSortableForm() {
         removeParent,
         onSubmit,
         // ドラッグ関連
-        sensors,
+        formSensors,
+        sidebarSensors,
         dragHandlers: {
             onDragStart: handleDragStart,
             onDragOver: handleDragOver,
             onDragEnd: handleDragEnd,
+            onSidebarDragStart: handleSidebarDragStart,
+            onSidebarDragEnd: handleSidebarDragEnd,
         },
         dragState,
     };

@@ -20,6 +20,9 @@ export interface DragState {
     activeId: string | null;
     draggedItem: DraggedItem | null;
     dropIndicator: DropIndicator | null;
+    // サイドバー専用のドラッグ状態
+    sidebarActiveId: string | null;
+    sidebarDraggedItem: DraggedItem | null;
 }
 
 export interface DraggedItem {
@@ -57,10 +60,13 @@ export type ChildItemProps = {
 export type SidebarParentItemProps = {
     parent: Parent;
     parentIndex: number;
+    parentId: string;
+    dragState: DragState;
 };
 
 export type SidebarChildItemProps = {
     child: Child;
     parentIndex: number;
     childIndex: number;
+    dragState: DragState;
 };

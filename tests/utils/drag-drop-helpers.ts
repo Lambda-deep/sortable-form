@@ -1,7 +1,7 @@
 import { Page, Locator } from "@playwright/test";
 
 /**
- * 低レベルマウス操作を使用してドラッグ&ドロップを実行する共通関数
+ * dragTo関数の代わりに、低レベルマウス操作を使用してドラッグ&ドロップを実行する共通関数
  * @param page Playwrightのページオブジェクト
  * @param sourceElement ドラッグ元の要素（Locator）
  * @param targetElement ドロップ先の要素（Locator）
