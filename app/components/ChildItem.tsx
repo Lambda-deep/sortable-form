@@ -43,11 +43,11 @@ export function ChildItem({
                 data-testid="child-item"
                 data-sortable-id={id}
                 data-drag-source="form"
-                className="flex gap-2 items-center p-2 mb-2 bg-gray-50 border border-gray-300 rounded cursor-grab"
+                className="mb-2 flex cursor-grab items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2"
             >
                 <span
                     data-testid="drag-handle"
-                    className="cursor-grab text-gray-600 text-lg"
+                    className="cursor-grab text-lg text-gray-600"
                     {...attributes}
                     {...listeners}
                 >
@@ -57,19 +57,19 @@ export function ChildItem({
                     {...register(
                         `parentArray.${parentIndex}.childArray.${childIndex}.childKey`
                     )}
-                    className="flex-1 px-1 py-1 border border-gray-400 rounded-sm"
+                    className="flex-1 rounded-sm border border-gray-400 px-1 py-1"
                     placeholder="Child Key"
                 />
                 <input
                     {...register(
                         `parentArray.${parentIndex}.childArray.${childIndex}.childValue`
                     )}
-                    className="flex-1 px-1 py-1 border border-gray-400 rounded-sm"
+                    className="flex-1 rounded-sm border border-gray-400 px-1 py-1"
                     placeholder="Child Value"
                 />
                 <button
                     type="button"
-                    className="bg-red-600 text-white border-none px-2 py-1 rounded-sm cursor-pointer text-xs hover:bg-red-700"
+                    className="cursor-pointer rounded-sm border-none bg-red-600 px-2 py-1 text-xs text-white hover:bg-red-700"
                     onClick={() => removeChild(parentIndex, childIndex)}
                 >
                     ×

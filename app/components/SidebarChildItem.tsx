@@ -46,7 +46,7 @@ export function SidebarChildItem({
             >
                 <span
                     data-testid="sidebar-child-drag-handle"
-                    className="cursor-grab text-gray-600 text-sm"
+                    className="cursor-grab text-sm text-gray-600"
                     {...attributes}
                     {...listeners}
                 >

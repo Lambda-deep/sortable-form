@@ -111,32 +111,32 @@ export function ParentItem({
                 data-testid="parent-item"
                 data-sortable-id={parentField.id}
                 data-drag-source="form"
-                className="border border-gray-300 p-4 mb-4 rounded bg-gray-50"
+                className="mb-4 rounded border border-gray-300 bg-gray-50 p-4"
             >
                 <div
-                    className="flex gap-2 items-center mb-2"
+                    className="mb-2 flex items-center gap-2"
                     {...attributes}
                     {...listeners}
                 >
                     <span
                         data-testid="parent-drag-handle"
-                        className="flex items-center justify-center cursor-grab text-gray-600 w-4 h-4 text-lg"
+                        className="flex h-4 w-4 cursor-grab items-center justify-center text-lg text-gray-600"
                     >
                         ⋮⋮
                     </span>
                     <input
                         {...register(`parentArray.${parentIndex}.parentKey`)}
-                        className="flex-1 px-2 py-1 border border-gray-400 rounded"
+                        className="flex-1 rounded border border-gray-400 px-2 py-1"
                         placeholder="Parent Key"
                     />
                     <input
                         {...register(`parentArray.${parentIndex}.parentValue`)}
-                        className="flex-1 px-2 py-1 border border-gray-400 rounded"
+                        className="flex-1 rounded border border-gray-400 px-2 py-1"
                         placeholder="Parent Value"
                     />
                     <button
                         type="button"
-                        className="bg-red-600 text-white border-none px-2 py-1 rounded-sm cursor-pointer text-xs hover:bg-red-700"
+                        className="cursor-pointer rounded-sm border-none bg-red-600 px-2 py-1 text-xs text-white hover:bg-red-700"
                         onClick={() => removeParent(parentIndex)}
                     >
                         Remove
@@ -145,7 +145,7 @@ export function ParentItem({
 
                 <div
                     data-testid="children-container"
-                    className="mt-4 p-2 bg-white rounded border border-gray-300"
+                    className="mt-4 rounded border border-gray-300 bg-white p-2"
                 >
                     <h4>Children:</h4>
                     {dragSource !== "sidebar" && (
@@ -205,7 +205,7 @@ export function ParentItem({
                     )}
                     <button
                         type="button"
-                        className="bg-blue-600 text-white border-none px-3 py-2 rounded cursor-pointer hover:bg-blue-700"
+                        className="cursor-pointer rounded border-none bg-blue-600 px-3 py-2 text-white hover:bg-blue-700"
                         onClick={() => addChild(parentIndex)}
                     >
                         Add Child

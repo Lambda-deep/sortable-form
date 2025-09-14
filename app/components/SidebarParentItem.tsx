@@ -65,16 +65,16 @@ export function SidebarParentItem({
                 data-testid="index-item"
                 data-sortable-id={parentField.id}
                 data-drag-source="sidebar"
-                className="p-2 mb-1 bg-gray-100 border border-gray-400 rounded text-sm"
+                className="mb-1 rounded border border-gray-400 bg-gray-100 p-2 text-sm"
             >
                 <div
-                    className="flex items-center gap-2 cursor-grab"
+                    className="flex cursor-grab items-center gap-2"
                     {...attributes}
                     {...listeners}
                 >
                     <span
                         data-testid="sidebar-parent-drag-handle"
-                        className="cursor-grab text-gray-600 text-base"
+                        className="cursor-grab text-base text-gray-600"
                     >
                         ⋮⋮
                     </span>
@@ -93,7 +93,7 @@ export function SidebarParentItem({
                     >
                         <div
                             data-testid="nested-index"
-                            className="ml-5 mt-1 text-xs text-gray-600"
+                            className="mt-1 ml-5 text-xs text-gray-600"
                         >
                             {parent.childArray.map(
                                 (child: Child, childIndex: number) => (
@@ -116,7 +116,7 @@ export function SidebarParentItem({
                 {dragSource === "form" && (
                     <div
                         data-testid="nested-index"
-                        className="ml-5 mt-1 text-xs text-gray-600"
+                        className="mt-1 ml-5 text-xs text-gray-600"
                     >
                         {parent.childArray.map(
                             (child: Child, childIndex: number) => (

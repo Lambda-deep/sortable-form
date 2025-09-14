@@ -49,12 +49,12 @@ export default function Index() {
         >
             <div
                 data-testid="container"
-                className="max-w-6xl mx-auto grid grid-cols-[1fr_300px] gap-5"
+                className="mx-auto grid max-w-6xl grid-cols-[1fr_300px] gap-5"
                 style={{ overflow: "visible" }} // ドラッグ要素が範囲外にも表示できるように
             >
                 <div
                     data-testid="form-section"
-                    className="bg-white p-5 rounded-lg shadow-sm"
+                    className="rounded-lg bg-white p-5 shadow-sm"
                     style={{ overflow: "visible" }} // ドラッグ要素が範囲外にも表示できるように
                 >
                     <h2>Sortable Form</h2>
@@ -120,7 +120,7 @@ export default function Index() {
                             <button
                                 type="button"
                                 data-testid="add-parent-button"
-                                className="bg-blue-600 text-white border-none px-3 py-2 rounded cursor-pointer hover:bg-blue-700"
+                                className="cursor-pointer rounded border-none bg-blue-600 px-3 py-2 text-white hover:bg-blue-700"
                                 onClick={addParent}
                             >
                                 Add Parent
@@ -128,7 +128,7 @@ export default function Index() {
                             <button
                                 type="submit"
                                 data-testid="submit-button"
-                                className="bg-green-600 text-white border-none px-3 py-2 rounded cursor-pointer hover:bg-green-700 ml-2"
+                                className="ml-2 cursor-pointer rounded border-none bg-green-600 px-3 py-2 text-white hover:bg-green-700"
                             >
                                 Submit Form
                             </button>
@@ -138,7 +138,7 @@ export default function Index() {
 
                 <div
                     data-testid="sidebar"
-                    className="bg-white p-5 rounded-lg shadow-sm h-fit"
+                    className="h-fit rounded-lg bg-white p-5 shadow-sm"
                     style={{ overflow: "visible" }} // ドラッグ要素が範囲外にも表示できるように
                 >
                     <h3>Index Information</h3>
