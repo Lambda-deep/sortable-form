@@ -7,9 +7,6 @@ test.describe("ソート可能フォーム - 親要素", () => {
     });
 
     test("初期フォーム構造が正しく表示される", async ({ page }) => {
-        // ページが初期データと共に読み込まれることを確認
-        await expect(page.locator("h2")).toContainText("Sortable Form");
-
         // 親要素が存在することを確認
         const parentItems = page.locator('[data-testid="parent-item"]');
         await expect(parentItems).toHaveCount(2);

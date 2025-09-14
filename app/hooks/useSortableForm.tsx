@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import {
     DragEndEvent,
@@ -249,8 +249,15 @@ export function useSortableForm() {
             // フォームに反映
             setValue(
                 `parentArray.${activeParentIndex}.childArray`,
-                newChildArray
+                newChildArray,
+                { shouldValidate: true, shouldDirty: true, shouldTouch: true }
             );
+
+            // サイドバーデータを強制的に更新
+            const currentFormData = getValues();
+            setSidebarData({
+                parentArray: [...currentFormData.parentArray],
+            });
         }
 
         // 異なるParent間の移動は後のフェーズで実装
@@ -264,17 +271,19 @@ export function useSortableForm() {
         parentArray: [...initialData.parentArray],
     }));
 
-    // フォームデータとサイドバーデータの同期（JSON比較で無限ループを防ぐ）
+    // フォームデータとサイドバーデータの同期（usePrevious pattern）
+    const prevWatchedDataRef = useRef<string>("");
+    
     useEffect(() => {
-        const newSidebarData = {
-            parentArray: [...watchedData.parentArray],
-        };
-
-        // JSON文字列の比較で変更を検出
-        if (JSON.stringify(sidebarData) !== JSON.stringify(newSidebarData)) {
-            setSidebarData(newSidebarData);
+        const currentFormDataString = JSON.stringify(watchedData.parentArray);
+        
+        if (prevWatchedDataRef.current !== currentFormDataString) {
+            setSidebarData({
+                parentArray: JSON.parse(JSON.stringify(watchedData.parentArray)),
+            });
+            prevWatchedDataRef.current = currentFormDataString;
         }
-    }, [watchedData.parentArray, sidebarData]);
+    }, [watchedData.parentArray]);
 
     const addParent = () => {
         appendParent({
