@@ -104,6 +104,7 @@ export default [
             '.DS_Store',
             'Thumbs.db',
             '.remix/**',
+            '.prettierrc.cjs',
         ],
     },
 ];
