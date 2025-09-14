@@ -31,3 +31,5 @@ pnpm-lock.yaml
 # OS files
 .DS_Store
 Thumbs.db
+
+*.md
