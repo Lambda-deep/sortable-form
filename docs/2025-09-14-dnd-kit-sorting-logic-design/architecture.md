@@ -98,14 +98,14 @@ const isParentId = (id: string): boolean => !childIdPattern.test(id);
 
 ```typescript
 interface IdUtils {
-  // Child ID から親・子インデックスを抽出
-  parseChildId(childId: string): { parentIndex: number; childIndex: number };
-  
-  // Parent ID から親インデックスを取得
-  findParentIndex(parentId: string, parentFields: FieldArrayWithId[]): number;
-  
-  // Child ID を生成
-  createChildId(parentIndex: number, childIndex: number): string;
+    // Child ID から親・子インデックスを抽出
+    parseChildId(childId: string): { parentIndex: number; childIndex: number };
+
+    // Parent ID から親インデックスを取得
+    findParentIndex(parentId: string, parentFields: FieldArrayWithId[]): number;
+
+    // Child ID を生成
+    createChildId(parentIndex: number, childIndex: number): string;
 }
 ```
 
@@ -115,27 +115,30 @@ interface IdUtils {
 
 ```typescript
 const customCollisionDetection = (args: CollisionDetectionArgs) => {
-  const { active, droppableContainers } = args;
-  
-  // アクティブ要素の種別判定
-  const isDraggingParent = !childIdPattern.test(active.id);
-  
-  if (isDraggingParent) {
-    // Parent ドラッグ時: Parent コンテナのみフィルタリング
-    const parentContainers = filterParentContainers(droppableContainers);
-    return closestCenter({ ...args, droppableContainers: parentContainers });
-  } else {
-    // Child ドラッグ時: Child コンテナのみフィルタリング
-    const childContainers = filterChildContainers(droppableContainers);
-    return closestCenter({ ...args, droppableContainers: childContainers });
-  }
+    const { active, droppableContainers } = args;
+
+    // アクティブ要素の種別判定
+    const isDraggingParent = !childIdPattern.test(active.id);
+
+    if (isDraggingParent) {
+        // Parent ドラッグ時: Parent コンテナのみフィルタリング
+        const parentContainers = filterParentContainers(droppableContainers);
+        return closestCenter({
+            ...args,
+            droppableContainers: parentContainers,
+        });
+    } else {
+        // Child ドラッグ時: Child コンテナのみフィルタリング
+        const childContainers = filterChildContainers(droppableContainers);
+        return closestCenter({ ...args, droppableContainers: childContainers });
+    }
 };
 
 // 優先度付き衝突検出（将来拡張用）
 const prioritizedCollisionDetection = (args: CollisionDetectionArgs) => {
-  // 1. 同一親内の移動を優先
-  // 2. 異なる親への移動を次優先
-  // 3. 無効なドロップを除外
+    // 1. 同一親内の移動を優先
+    // 2. 異なる親への移動を次優先
+    // 3. 無効なドロップを除外
 };
 ```
 
@@ -145,21 +148,21 @@ const prioritizedCollisionDetection = (args: CollisionDetectionArgs) => {
 
 ```typescript
 interface SortableFormState {
-  // フォーム状態（唯一の真実の源）
-  formData: Data;
-  
-  // ドラッグ状態
-  dragState: {
-    activeId: string | null;
-    draggedItem: DraggedItem | null;
-    dropIndicator: DropIndicator | null;
-  };
-  
-  // UI状態
-  uiState: {
-    isFormLoading: boolean;
-    validationErrors: ValidationError[];
-  };
+    // フォーム状態（唯一の真実の源）
+    formData: Data;
+
+    // ドラッグ状態
+    dragState: {
+        activeId: string | null;
+        draggedItem: DraggedItem | null;
+        dropIndicator: DropIndicator | null;
+    };
+
+    // UI状態
+    uiState: {
+        isFormLoading: boolean;
+        validationErrors: ValidationError[];
+    };
 }
 ```
 
@@ -182,31 +185,31 @@ onDragEnd → データ更新 → setValue → watch → 自動同期
 
 ```typescript
 interface UseSortableFormReturn {
-  // フォーム関連
-  register: UseFormRegister<Data>;
-  handleSubmit: UseFormHandleSubmit<Data>;
-  parentFields: FieldArrayWithId<Data, "parentArray", "id">[];
-  watchedData: Data;
-  
-  // ドラッグ関連
-  sensors: SensorDescriptor<SensorOptions>[];
-  dragHandlers: {
-    onDragStart: (event: DragStartEvent) => void;
-    onDragOver: (event: DragOverEvent) => void;
-    onDragEnd: (event: DragEndEvent) => void;
-  };
-  
-  // 状態
-  dragState: DragState;
-  sidebarData: Data;
-  
-  // アクション
-  actions: {
-    addParent: () => void;
-    removeParent: (index: number) => void;
-    addChild: (parentIndex: number) => void;
-    removeChild: (parentIndex: number, childIndex: number) => void;
-  };
+    // フォーム関連
+    register: UseFormRegister<Data>;
+    handleSubmit: UseFormHandleSubmit<Data>;
+    parentFields: FieldArrayWithId<Data, "parentArray", "id">[];
+    watchedData: Data;
+
+    // ドラッグ関連
+    sensors: SensorDescriptor<SensorOptions>[];
+    dragHandlers: {
+        onDragStart: (event: DragStartEvent) => void;
+        onDragOver: (event: DragOverEvent) => void;
+        onDragEnd: (event: DragEndEvent) => void;
+    };
+
+    // 状態
+    dragState: DragState;
+    sidebarData: Data;
+
+    // アクション
+    actions: {
+        addParent: () => void;
+        removeParent: (index: number) => void;
+        addChild: (parentIndex: number) => void;
+        removeChild: (parentIndex: number, childIndex: number) => void;
+    };
 }
 ```
 
@@ -215,24 +218,24 @@ interface UseSortableFormReturn {
 ```typescript
 // フォーム側コンポーネント
 interface SortableParentItemProps {
-  parentIndex: number;
-  // フォーム固有のプロパティ
-  register: UseFormRegister<Data>;
-  onRemove: (index: number) => void;
+    parentIndex: number;
+    // フォーム固有のプロパティ
+    register: UseFormRegister<Data>;
+    onRemove: (index: number) => void;
 }
 
 // サイドバー側コンポーネント
 interface SidebarParentItemProps {
-  parent: Parent;
-  parentIndex: number;
-  // 表示のみ、編集機能なし
+    parent: Parent;
+    parentIndex: number;
+    // 表示のみ、編集機能なし
 }
 
 // 共通ドラッグ機能
 interface DraggableItemProps {
-  id: string;
-  isDragDisabled?: boolean;
-  dragHandle?: ReactNode;
+    id: string;
+    isDragDisabled?: boolean;
+    dragHandle?: ReactNode;
 }
 ```
 
@@ -242,17 +245,17 @@ interface DraggableItemProps {
 
 ```typescript
 class DragEventProcessor {
-  // Phase 1: 検証フェーズ
-  private validateDragStart(event: DragStartEvent): boolean;
-  
-  // Phase 2: 準備フェーズ
-  private prepareDragState(event: DragStartEvent): DragState;
-  
-  // Phase 3: 実行フェーズ
-  private executeDrop(event: DragEndEvent): void;
-  
-  // Phase 4: クリーンアップフェーズ
-  private cleanupDragState(): void;
+    // Phase 1: 検証フェーズ
+    private validateDragStart(event: DragStartEvent): boolean;
+
+    // Phase 2: 準備フェーズ
+    private prepareDragState(event: DragStartEvent): DragState;
+
+    // Phase 3: 実行フェーズ
+    private executeDrop(event: DragEndEvent): void;
+
+    // Phase 4: クリーンアップフェーズ
+    private cleanupDragState(): void;
 }
 ```
 
@@ -260,14 +263,14 @@ class DragEventProcessor {
 
 ```typescript
 interface DragErrorHandler {
-  // 無効なドロップの検出と処理
-  handleInvalidDrop(active: Active, over: Over): void;
-  
-  // データ整合性エラーの処理
-  handleDataIntegrityError(error: DataIntegrityError): void;
-  
-  // パフォーマンス警告の処理
-  handlePerformanceWarning(metrics: PerformanceMetrics): void;
+    // 無効なドロップの検出と処理
+    handleInvalidDrop(active: Active, over: Over): void;
+
+    // データ整合性エラーの処理
+    handleDataIntegrityError(error: DataIntegrityError): void;
+
+    // パフォーマンス警告の処理
+    handlePerformanceWarning(metrics: PerformanceMetrics): void;
 }
 ```
 
@@ -278,18 +281,23 @@ interface DragErrorHandler {
 ```typescript
 // コンポーネントレベル
 const MemoizedSortableParentItem = memo(SortableParentItem, (prev, next) => {
-  return prev.parentIndex === next.parentIndex &&
-         JSON.stringify(prev.watchedData.parentArray[prev.parentIndex]) === 
-         JSON.stringify(next.watchedData.parentArray[next.parentIndex]);
+    return (
+        prev.parentIndex === next.parentIndex &&
+        JSON.stringify(prev.watchedData.parentArray[prev.parentIndex]) ===
+            JSON.stringify(next.watchedData.parentArray[next.parentIndex])
+    );
 });
 
 // Hookレベル
 const useMemoizedDragHandlers = () => {
-  return useMemo(() => ({
-    onDragStart: handleDragStart,
-    onDragOver: handleDragOver,
-    onDragEnd: handleDragEnd
-  }), []);
+    return useMemo(
+        () => ({
+            onDragStart: handleDragStart,
+            onDragOver: handleDragOver,
+            onDragEnd: handleDragEnd,
+        }),
+        []
+    );
 };
 ```
 
@@ -298,15 +306,15 @@ const useMemoizedDragHandlers = () => {
 ```typescript
 // 大量データ対応のための設計拡張点
 interface VirtualizedSortableProps {
-  itemHeight: number;
-  overscan: number;
-  estimatedItemSize: number;
+    itemHeight: number;
+    overscan: number;
+    estimatedItemSize: number;
 }
 
 // react-window との統合インターフェース
 interface VirtualDragContext extends DndContextProps {
-  virtualizer: Virtualizer;
-  scrollElement: HTMLElement;
+    virtualizer: Virtualizer;
+    scrollElement: HTMLElement;
 }
 ```
 
@@ -316,15 +324,15 @@ interface VirtualDragContext extends DndContextProps {
 
 ```typescript
 interface SortablePlugin {
-  name: string;
-  onDragStart?: (event: DragStartEvent) => void;
-  onDragEnd?: (event: DragEndEvent) => void;
-  customCollisionDetection?: CollisionDetection;
+    name: string;
+    onDragStart?: (event: DragStartEvent) => void;
+    onDragEnd?: (event: DragEndEvent) => void;
+    customCollisionDetection?: CollisionDetection;
 }
 
 // プラグイン統合
 const useSortableWithPlugins = (plugins: SortablePlugin[]) => {
-  // プラグインのライフサイクル管理
+    // プラグインのライフサイクル管理
 };
 ```
 
@@ -333,9 +341,9 @@ const useSortableWithPlugins = (plugins: SortablePlugin[]) => {
 ```typescript
 // カスタムデータ型の対応
 interface ExtendableSortableForm<T extends Record<string, any> = Data> {
-  data: T;
-  schema: ZodSchema<T>;
-  customValidation?: (data: T) => ValidationResult;
+    data: T;
+    schema: ZodSchema<T>;
+    customValidation?: (data: T) => ValidationResult;
 }
 ```
 
@@ -345,9 +353,9 @@ interface ExtendableSortableForm<T extends Record<string, any> = Data> {
 
 ```typescript
 interface DataSanitizer {
-  sanitizeParentData(parent: Parent): Parent;
-  sanitizeChildData(child: Child): Child;
-  validateDataStructure(data: Data): boolean;
+    sanitizeParentData(parent: Parent): Parent;
+    sanitizeChildData(child: Child): Child;
+    validateDataStructure(data: Data): boolean;
 }
 ```
 

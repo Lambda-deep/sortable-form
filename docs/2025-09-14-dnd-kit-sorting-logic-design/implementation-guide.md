@@ -41,15 +41,15 @@ npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
 ```typescript
 // app/types.ts
 export interface DragState {
-  activeId: string | null;
-  draggedItem: DraggedItem | null;
-  dropIndicator: DropIndicator | null;
+    activeId: string | null;
+    draggedItem: DraggedItem | null;
+    dropIndicator: DropIndicator | null;
 }
 
 export interface DraggedItem {
-  type: 'parent' | 'child';
-  parentIndex: number;
-  childIndex?: number;
+    type: "parent" | "child";
+    parentIndex: number;
+    childIndex?: number;
 }
 ```
 
@@ -60,12 +60,12 @@ export interface DraggedItem {
 ```typescript
 // app/hooks/useSortableForm.tsx - 主要部分のみ
 const handleDragStart = (event: DragStartEvent) => {
-  // ドラッグ開始時の状態設定
+    // ドラッグ開始時の状態設定
 };
 
 const handleDragEnd = (event: DragEndEvent) => {
-  // 親要素の移動処理
-  // arrayMove を使用してuseFieldArrayの配列を更新
+    // 親要素の移動処理
+    // arrayMove を使用してuseFieldArrayの配列を更新
 };
 ```
 
@@ -79,7 +79,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
 export function ParentItem({ ... }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = 
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: parentId });
 
   const style = {
@@ -104,8 +104,8 @@ export function ParentItem({ ... }) {
 ```typescript
 // app/components/DragHandle.tsx
 interface DragHandleProps {
-  attributes?: DraggableAttributes;
-  listeners?: SyntheticListenerMap;
+    attributes?: DraggableAttributes;
+    listeners?: SyntheticListenerMap;
 }
 ```
 
@@ -138,11 +138,11 @@ interface DragHandleProps {
 ```typescript
 // useSortableForm.tsx に追加
 const handleChildMove = (fromParent, fromChild, toParent, toChild) => {
-  if (fromParent === toParent) {
-    // 同一親内での移動: arrayMove使用
-  } else {
-    // 異なる親への移動: 削除と挿入の組み合わせ
-  }
+    if (fromParent === toParent) {
+        // 同一親内での移動: arrayMove使用
+    } else {
+        // 異なる親への移動: 削除と挿入の組み合わせ
+    }
 };
 ```
 
@@ -166,9 +166,9 @@ React Hook Form の `watch()` を使用して、フォームデータの変更�
 
 ```typescript
 // カスタム衝突検出アルゴリズム
-const customCollisionDetection = (args) => {
-  // 親要素のドラッグ時は親要素のみをターゲット
-  // 子要素のドラッグ時は子要素と親要素をターゲット
+const customCollisionDetection = args => {
+    // 親要素のドラッグ時は親要素のみをターゲット
+    // 子要素のドラッグ時は子要素と親要素をターゲット
 };
 ```
 

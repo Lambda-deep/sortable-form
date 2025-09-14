@@ -1,5 +1,8 @@
 import { useSortable } from "@dnd-kit/sortable";
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+    SortableContext,
+    verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { ParentItemProps } from "../types";
 import { ChildItem } from "./ChildItem";
@@ -57,10 +60,16 @@ export function ParentItem({
             onRemove={() => removeParent(parentIndex)}
             onAddChild={() => addChild(parentIndex)}
             registerParentKey={register(`parentArray.${parentIndex}.parentKey`)}
-            registerParentValue={register(`parentArray.${parentIndex}.parentValue`)}
+            registerParentValue={register(
+                `parentArray.${parentIndex}.parentValue`
+            )}
         >
-            <SortableContext 
-                items={currentParent?.childArray?.map((_, childIndex) => `${parentIndex}-${childIndex}`) || []}
+            <SortableContext
+                items={
+                    currentParent?.childArray?.map(
+                        (_, childIndex) => `${parentIndex}-${childIndex}`
+                    ) || []
+                }
                 strategy={verticalListSortingStrategy}
             >
                 {currentParent?.childArray?.map((_, childIndex: number) => (
