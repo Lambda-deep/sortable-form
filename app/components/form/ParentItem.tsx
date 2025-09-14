@@ -1,4 +1,5 @@
 import { useSortable } from "@dnd-kit/sortable";
+import { useDroppable } from "@dnd-kit/core";
 import {
     SortableContext,
     verticalListSortingStrategy,
@@ -33,6 +34,11 @@ export function ParentItem({
         isSorting,
     } = useSortable({ id: parentId });
 
+    // 子コンテナ用のドロップ可能エリア
+    const { setNodeRef: setDropRef, isOver: isOverContainer } = useDroppable({
+        id: `${parentId}-container`,
+    });
+
     // ドロップインジケーターの表示判定
     const showDropIndicator = dragState.dropIndicator?.targetId === parentId;
     const dropPosition = dragState.dropIndicator?.position || "before";
@@ -63,6 +69,7 @@ export function ParentItem({
             registerParentValue={register(
                 `parentArray.${parentIndex}.parentValue`
             )}
+            childrenContainerRef={setDropRef}
         >
             <SortableContext
                 items={

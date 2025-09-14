@@ -98,6 +98,147 @@ export async function dragParentElement(
 }
 
 /**
+ * 異なる親間でのChild要素移動専用ヘルパー
+ * @param page Playwrightのページオブジェクト
+ * @param sourceParentIndex ドラッグ元の親要素のインデックス
+ * @param sourceChildIndex ドラッグ元の子要素のインデックス
+ * @param targetParentIndex ドロップ先の親要素のインデックス
+ * @param targetChildIndex ドロップ先の子要素のインデックス（既存の子要素にドロップ）
+ */
+export async function dragChildElementBetweenParents(
+    page: Page,
+    sourceParentIndex: number,
+    sourceChildIndex: number,
+    targetParentIndex: number,
+    targetChildIndex: number
+) {
+    const parents = page.locator('[data-testid="parent-item"]');
+
+    // ドラッグ元の子要素
+    const sourceParent = parents.nth(sourceParentIndex);
+    const sourceChildren = sourceParent.locator('[data-testid="child-item"]');
+    const sourceChildHandle = sourceChildren
+        .nth(sourceChildIndex)
+        .locator('[data-testid="child-drag-handle"]');
+
+    // ドロップ先の子要素
+    const targetParent = parents.nth(targetParentIndex);
+    const targetChildren = targetParent.locator('[data-testid="child-item"]');
+    const targetChild = targetChildren.nth(targetChildIndex);
+
+    await performDragAndDrop(page, sourceChildHandle, targetChild);
+}
+
+/**
+ * サイドバーの異なる親間でのChild要素移動専用ヘルパー
+ * @param page Playwrightのページオブジェクト
+ * @param sourceParentIndex ドラッグ元の親要素のインデックス
+ * @param sourceChildIndex ドラッグ元の子要素のインデックス
+ * @param targetParentIndex ドロップ先の親要素のインデックス
+ * @param targetChildIndex ドロップ先の子要素のインデックス（既存の子要素にドロップ）
+ */
+export async function dragSidebarChildElementBetweenParents(
+    page: Page,
+    sourceParentIndex: number,
+    sourceChildIndex: number,
+    targetParentIndex: number,
+    targetChildIndex: number
+) {
+    const sidebarParents = page.locator(
+        '[data-testid="sidebar"] [data-testid="sidebar-parent-item"]'
+    );
+
+    // ドラッグ元の子要素
+    const sourceParent = sidebarParents.nth(sourceParentIndex);
+    const sourceChildren = sourceParent.locator(
+        '[data-testid="sidebar-child-item"]'
+    );
+    const sourceChildHandle = sourceChildren
+        .nth(sourceChildIndex)
+        .locator('[data-testid="sidebar-child-drag-handle"]');
+
+    // ドロップ先の子要素
+    const targetParent = sidebarParents.nth(targetParentIndex);
+    const targetChildren = targetParent.locator(
+        '[data-testid="sidebar-child-item"]'
+    );
+    const targetChild = targetChildren.nth(targetChildIndex);
+
+    await performDragAndDrop(page, sourceChildHandle, targetChild);
+}
+
+/**
+ * 異なる親間でのChild要素を末尾に移動する専用ヘルパー
+ * @param page Playwrightのページオブジェクト
+ * @param sourceParentIndex ドラッグ元の親要素のインデックス
+ * @param sourceChildIndex ドラッグ元の子要素のインデックス
+ * @param targetParentIndex ドロップ先の親要素のインデックス
+ */
+export async function dragChildElementToParentEnd(
+    page: Page,
+    sourceParentIndex: number,
+    sourceChildIndex: number,
+    targetParentIndex: number
+) {
+    const parents = page.locator('[data-testid="parent-item"]');
+
+    // ドラッグ元の子要素
+    const sourceParent = parents.nth(sourceParentIndex);
+    const sourceChildren = sourceParent.locator('[data-testid="child-item"]');
+    const sourceChildHandle = sourceChildren
+        .nth(sourceChildIndex)
+        .locator('[data-testid="child-drag-handle"]');
+
+    // ドロップ先の親要素の子コンテナ（末尾への投下）
+    const targetParent = parents.nth(targetParentIndex);
+    const targetContainer = targetParent.locator(
+        '[data-testid="children-container"]'
+    );
+
+    await performDragAndDrop(page, sourceChildHandle, targetContainer, {
+        targetOffset: { y: -10 }, // コンテナの下端近くにドロップ
+    });
+}
+
+/**
+ * サイドバーの異なる親間でのChild要素を末尾に移動する専用ヘルパー
+ * @param page Playwrightのページオブジェクト
+ * @param sourceParentIndex ドラッグ元の親要素のインデックス
+ * @param sourceChildIndex ドラッグ元の子要素のインデックス
+ * @param targetParentIndex ドロップ先の親要素のインデックス
+ */
+export async function dragSidebarChildElementToParentEnd(
+    page: Page,
+    sourceParentIndex: number,
+    sourceChildIndex: number,
+    targetParentIndex: number
+) {
+    const sidebarParents = page.locator(
+        '[data-testid="sidebar"] [data-testid="sidebar-parent-item"]'
+    );
+
+    // ドラッグ元の子要素
+    const sourceParent = sidebarParents.nth(sourceParentIndex);
+    const sourceChildren = sourceParent.locator(
+        '[data-testid="sidebar-child-item"]'
+    );
+    const sourceChildHandle = sourceChildren
+        .nth(sourceChildIndex)
+        .locator('[data-testid="sidebar-child-drag-handle"]');
+
+    // ドロップ先の親要素の子コンテナ（末尾への投下）
+    const targetParent = sidebarParents.nth(targetParentIndex);
+    const targetContainer = targetParent.locator(
+        '[data-testid="sidebar-children-container"]'
+    );
+
+    // コンテナの下部にドロップするように調整
+    await performDragAndDrop(page, sourceChildHandle, targetContainer, {
+        targetOffset: { y: -10 }, // コンテナの下部寄りにドロップ
+    });
+}
+
+/**
  * サイドバーのParent要素専用のドラッグ&ドロップヘルパー
  * @param page Playwrightのページオブジェクト
  * @param sourceParentIndex ドラッグ元のparent要素のインデックス

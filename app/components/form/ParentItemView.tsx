@@ -25,6 +25,7 @@ interface ParentItemViewProps {
     registerParentKey?: Record<string, unknown>;
     registerParentValue?: Record<string, unknown>;
     isReadOnly?: boolean;
+    childrenContainerRef?: (node: HTMLDivElement | null) => void;
 }
 
 export const ParentItemView = forwardRef<HTMLDivElement, ParentItemViewProps>(
@@ -41,6 +42,7 @@ export const ParentItemView = forwardRef<HTMLDivElement, ParentItemViewProps>(
             registerParentKey,
             registerParentValue,
             isReadOnly = false,
+            childrenContainerRef,
         },
         ref
     ) => {
@@ -97,6 +99,7 @@ export const ParentItemView = forwardRef<HTMLDivElement, ParentItemViewProps>(
                     </div>
 
                     <div
+                        ref={childrenContainerRef}
                         data-testid="children-container"
                         className="mt-2 flex flex-col rounded border border-gray-300 bg-white p-2"
                     >

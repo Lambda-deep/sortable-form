@@ -20,6 +20,7 @@ interface SidebarParentItemViewProps {
     };
     className?: string;
     style?: CSSProperties;
+    childrenContainerRef?: (node: HTMLDivElement | null) => void;
 }
 
 export const SidebarParentItemView = forwardRef<
@@ -35,6 +36,7 @@ export const SidebarParentItemView = forwardRef<
             showDropIndicator = {},
             className = "",
             style,
+            childrenContainerRef,
         },
         ref
     ) => {
@@ -71,6 +73,7 @@ export const SidebarParentItemView = forwardRef<
                         </strong>
                     </div>
                     <div
+                        ref={childrenContainerRef}
                         data-testid="sidebar-children-container"
                         className="mt-1 ml-5 flex flex-col gap-1 rounded border border-gray-300 bg-white p-1"
                     >

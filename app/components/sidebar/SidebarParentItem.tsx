@@ -1,4 +1,5 @@
 import { useSortable } from "@dnd-kit/sortable";
+import { useDroppable } from "@dnd-kit/core";
 import {
     SortableContext,
     verticalListSortingStrategy,
@@ -38,6 +39,11 @@ export function SidebarParentItem({
             type: "parent",
             source: "sidebar",
         },
+    });
+
+    // サイドバー子コンテナ用のドロップ可能エリア
+    const { setNodeRef: setDropRef } = useDroppable({
+        id: `${sidebarId}-container`,
     });
 
     // ドロップインジケーターの表示判定
@@ -81,6 +87,7 @@ export function SidebarParentItem({
                     listeners,
                 }}
                 className={isDragging ? "z-50" : ""}
+                childrenContainerRef={setDropRef}
             >
                 <SortableContext
                     items={sidebarChildIds}
