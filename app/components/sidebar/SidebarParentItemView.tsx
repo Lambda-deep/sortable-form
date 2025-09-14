@@ -1,9 +1,9 @@
 import { forwardRef, type ReactNode, type CSSProperties } from "react";
 import type { DraggableAttributes } from "@dnd-kit/core";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
-import type { Parent } from "../types";
-import DragHandle from "./DragHandle";
-import { DropIndicator } from "./DropIndicator";
+import type { Parent } from "../../types";
+import DragHandle from "../ui/DragHandle";
+import { DropIndicator } from "../ui/DropIndicator";
 
 interface SidebarParentItemViewProps {
     parent: Parent;

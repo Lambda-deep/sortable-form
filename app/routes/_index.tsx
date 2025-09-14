@@ -4,14 +4,14 @@ import {
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { useSortableForm } from "../hooks/useSortableForm";
-import { ParentItem } from "../components/ParentItem";
-import { SidebarParentItem } from "../components/SidebarParentItem";
-import { DragOverlayParentItem } from "../components/DragOverlayParentItem";
-import { DragOverlaySidebarParentItem } from "../components/DragOverlaySidebarParentItem";
-import { DragOverlayChildItem } from "../components/DragOverlayChildItem";
-import { DragOverlaySidebarChildItem } from "../components/DragOverlaySidebarChildItem";
-import { ClientOnly } from "../components/ClientOnly";
-import Button from "../components/Button";
+import { ParentItem } from "../components/form/ParentItem";
+import { SidebarParentItem } from "../components/sidebar/SidebarParentItem";
+import { DragOverlayParentItem } from "../components/drag-overlay/DragOverlayParentItem";
+import { DragOverlaySidebarParentItem } from "../components/drag-overlay/DragOverlaySidebarParentItem";
+import { DragOverlayChildItem } from "../components/drag-overlay/DragOverlayChildItem";
+import { DragOverlaySidebarChildItem } from "../components/drag-overlay/DragOverlaySidebarChildItem";
+import { ClientOnly } from "../components/ui/ClientOnly";
+import Button from "../components/ui/Button";
 import type { Parent } from "../types";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 
@@ -51,10 +51,10 @@ export default function Index() {
         <ClientOnly
             fallback={
                 <div className="mx-auto grid max-w-6xl grid-cols-[1fr_300px] gap-5">
-                    <div className="rounded-lg bg-white p-5 shadow-sm">
+                    <div className="rounded-lg bg-white p-5">
                         <p>Loading...</p>
                     </div>
-                    <div className="h-fit rounded-lg bg-white p-5 shadow-sm">
+                    <div className="h-fit rounded-lg bg-white p-5">
                         <p>Loading...</p>
                     </div>
                 </div>
@@ -86,7 +86,7 @@ export default function Index() {
                 >
                     <div
                         data-testid="form-section"
-                        className="rounded-lg bg-white p-5 shadow-sm"
+                        className="rounded-lg bg-white p-5"
                     >
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <SortableContext
@@ -173,7 +173,7 @@ export default function Index() {
                 >
                     <div
                         data-testid="sidebar"
-                        className="h-fit rounded-lg bg-white p-5 shadow-sm"
+                        className="h-fit rounded-lg bg-white p-5"
                     >
                         <h3>Index Information</h3>
                         <SortableContext

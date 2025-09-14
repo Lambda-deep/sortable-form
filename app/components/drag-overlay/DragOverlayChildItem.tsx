@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
-import type { Child } from "../types";
-import { ChildItemView } from "./ChildItemView";
+import type { Child } from "../../types";
+import { ChildItemView } from "../form/ChildItemView";
 
 interface DragOverlayChildItemProps {
     child: Child;

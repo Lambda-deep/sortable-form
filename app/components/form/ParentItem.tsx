@@ -4,7 +4,7 @@ import {
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { ParentItemProps } from "../types";
+import type { ParentItemProps } from "../../types";
 import { ChildItem } from "./ChildItem";
 import { ParentItemView } from "./ParentItemView";
 
@@ -54,7 +54,7 @@ export function ParentItem({
             ref={setNodeRef}
             parent={currentParent}
             style={style}
-            className={isDragging ? "z-50 shadow-2xl" : ""}
+            className={isDragging ? "z-50" : ""}
             showDropIndicator={showDropIndicatorStates}
             dragHandleProps={{ attributes, listeners }}
             onRemove={() => removeParent(parentIndex)}

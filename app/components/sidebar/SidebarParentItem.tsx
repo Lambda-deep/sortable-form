@@ -4,7 +4,7 @@ import {
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { Child, SidebarParentItemProps } from "../types";
+import type { Child, SidebarParentItemProps } from "../../types";
 import { SidebarParentItemView } from "./SidebarParentItemView";
 import { SidebarChildItem } from "./SidebarChildItem";
 
@@ -80,7 +80,7 @@ export function SidebarParentItem({
                     attributes,
                     listeners,
                 }}
-                className={isDragging ? "z-50 shadow-2xl" : ""}
+                className={isDragging ? "z-50" : ""}
             >
                 <SortableContext
                     items={sidebarChildIds}

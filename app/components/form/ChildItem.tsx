@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { ChildItemProps } from "../types";
+import type { ChildItemProps } from "../../types";
 import { ChildItemView } from "./ChildItemView";
 
 export function ChildItem({
@@ -46,7 +46,7 @@ export function ChildItem({
                 childValue: "",
             }} // これはregisterで実際の値が管理される
             style={style}
-            className={isDragging ? "z-50 shadow-2xl" : ""}
+            className={isDragging ? "z-50" : ""}
             showDropIndicator={showDropIndicatorStates}
             dragHandleProps={{ attributes, listeners }}
             onRemove={() => removeChild(parentIndex, childIndex)}

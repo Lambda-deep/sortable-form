@@ -1,7 +1,7 @@
 import React from "react";
 import type { DraggableAttributes } from "@dnd-kit/core";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
-import { cn } from "../lib/utils";
+import { cn } from "../../lib/utils";
 
 interface DragHandleProps {
     "data-testid"?: string;

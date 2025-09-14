@@ -1,5 +1,5 @@
-import type { Child } from "../types";
-import { SidebarChildItemView } from "./SidebarChildItemView";
+import type { Child } from "../../types";
+import { SidebarChildItemView } from "../sidebar/SidebarChildItemView";
 
 interface DragOverlaySidebarChildItemProps {
     child: Child;
@@ -17,7 +17,7 @@ export function DragOverlaySidebarChildItem({
             child={child}
             parentIndex={parentIndex}
             childIndex={childIndex}
-            className="shadow-lg"
+            className="z-50"
         />
     );
 }

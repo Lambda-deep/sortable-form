@@ -1,10 +1,10 @@
 import { forwardRef, type ReactNode, type CSSProperties } from "react";
 import type { DraggableAttributes } from "@dnd-kit/core";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
-import type { Parent } from "../types";
-import Button from "./Button";
-import DragHandle from "./DragHandle";
-import { DropIndicator } from "./DropIndicator";
+import type { Parent } from "../../types";
+import Button from "../ui/Button";
+import DragHandle from "../ui/DragHandle";
+import { DropIndicator } from "../ui/DropIndicator";
 
 interface ParentItemViewProps {
     parent: Parent;
@@ -58,7 +58,7 @@ export const ParentItemView = forwardRef<HTMLDivElement, ParentItemViewProps>(
                     ref={ref}
                     style={style}
                     data-testid="parent-item"
-                    className={`relative rounded border border-gray-300 bg-gray-50 p-4 shadow-sm ${className}`}
+                    className={`relative rounded border border-gray-300 bg-gray-50 p-4 ${className}`}
                 >
                     {/* ドロップインジケーター - 内部 */}
                     <DropIndicator

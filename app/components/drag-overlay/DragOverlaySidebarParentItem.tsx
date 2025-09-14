@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
-import type { Parent } from "../types";
-import { SidebarParentItemView } from "./SidebarParentItemView";
-import { SidebarChildItemView } from "./SidebarChildItemView";
+import type { Parent } from "../../types";
+import { SidebarParentItemView } from "../sidebar/SidebarParentItemView";
+import { SidebarChildItemView } from "../sidebar/SidebarChildItemView";
 
 interface DragOverlaySidebarParentItemProps {
     parent: Parent;
@@ -18,7 +18,7 @@ export const DragOverlaySidebarParentItem = forwardRef<
             parent={parent}
             parentIndex={parentIndex}
             style={{ opacity: 0.9 }}
-            className="z-50 shadow-2xl"
+            className="z-50"
         >
             {parent.childArray?.map((child, childIndex) => (
                 <SidebarChildItemView

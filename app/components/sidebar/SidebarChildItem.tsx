@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { SidebarChildItemProps } from "../types";
+import type { SidebarChildItemProps } from "../../types";
 import { SidebarChildItemView } from "./SidebarChildItemView";
 
 export function SidebarChildItem({
@@ -52,7 +52,7 @@ export function SidebarChildItem({
             parentIndex={parentIndex}
             childIndex={childIndex}
             style={style}
-            className={isDragging ? "z-50 shadow-2xl" : ""}
+            className={isDragging ? "z-50" : ""}
             showDropIndicator={showDropIndicatorStates}
             dragHandleProps={{ attributes, listeners }}
         />
