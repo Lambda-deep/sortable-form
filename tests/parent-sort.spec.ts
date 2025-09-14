@@ -57,7 +57,7 @@ test.describe("ソート可能フォーム - 親要素", () => {
     }) => {
         // 初期サイドバー順序を確認
         const sidebarItems = page.locator(
-            '[data-testid="sidebar"] [data-testid="index-item"]'
+            '[data-testid="sidebar"] [data-testid="sidebar-parent-item"]'
         );
         await expect(sidebarItems.first().locator("strong")).toContainText(
             "[0] parent1"

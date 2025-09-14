@@ -109,7 +109,7 @@ export async function dragSidebarParentElement(
     targetParentIndex: number
 ) {
     const sidebarParents = page.locator(
-        '[data-testid="sidebar"] [data-testid="index-item"]'
+        '[data-testid="sidebar"] [data-testid="sidebar-parent-item"]'
     );
 
     const sourceSidebarHandle = sidebarParents

@@ -51,7 +51,7 @@ export const SidebarParentItemView = forwardRef<
                 <div
                     ref={ref}
                     style={style}
-                    data-testid="sidebar-item"
+                    data-testid="sidebar-parent-item"
                     className={`relative rounded border border-gray-300 bg-gray-50 p-1 ${className}`}
                 >
                     {/* ドロップインジケーター - 内部 */}
@@ -71,7 +71,7 @@ export const SidebarParentItemView = forwardRef<
                         </strong>
                     </div>
                     <div
-                        data-testid="nested-index"
+                        data-testid="sidebar-children-container"
                         className="mt-1 ml-5 flex flex-col gap-1 rounded border border-gray-300 bg-white p-1 text-xs text-gray-600"
                     >
                         {children}

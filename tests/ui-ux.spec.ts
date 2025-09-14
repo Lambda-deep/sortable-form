@@ -26,7 +26,7 @@ test.describe("ソート可能フォーム - UI/UXとアクセシビリティ", 
 
         // 子要素のドラッグハンドルを確認
         const childHandles = page.locator(
-            '[data-testid="child-item"] [data-testid="drag-handle"]'
+            '[data-testid="child-item"] [data-testid="child-drag-handle"]'
         );
         if ((await childHandles.count()) > 0) {
             const childSvg = childHandles.first().locator("svg");
@@ -113,7 +113,7 @@ test.describe("ソート可能フォーム - UI/UXとアクセシビリティ", 
 
         // サイドバーが適切に表示されていることを確認
         const sidebarItems = page.locator(
-            '[data-testid="sidebar"] [data-testid="index-item"]'
+            '[data-testid="sidebar"] [data-testid="sidebar-parent-item"]'
         );
         await expect(sidebarItems).toHaveCount(2);
         await expect(sidebarItems.first()).toBeVisible();

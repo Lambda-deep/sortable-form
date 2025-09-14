@@ -88,7 +88,9 @@ test.describe("ソート可能フォーム - 子要素", () => {
     }) => {
         // 初期サイドバー子要素順序を確認
         const firstParentSidebar = page
-            .locator('[data-testid="sidebar"] [data-testid="index-item"]')
+            .locator(
+                '[data-testid="sidebar"] [data-testid="sidebar-parent-item"]'
+            )
             .first();
         const sidebarChildren = firstParentSidebar.locator(
             '[data-testid="sidebar-child-item"]'
@@ -211,7 +213,9 @@ test.describe("ソート可能フォーム - 子要素", () => {
             .locator('[data-testid="sidebar"] [data-testid="index-item"]')
             .first();
         const secondParentSidebar = page
-            .locator('[data-testid="sidebar"] [data-testid="index-item"]')
+            .locator(
+                '[data-testid="sidebar"] [data-testid="sidebar-parent-item"]'
+            )
             .nth(1);
 
         let firstParentSidebarChildren = firstParentSidebar.locator(
@@ -232,7 +236,7 @@ test.describe("ソート可能フォーム - 子要素", () => {
             '[data-testid="sidebar-child-drag-handle"]'
         );
         const secondParentSidebarContainer = secondParentSidebar.locator(
-            '[data-testid="nested-index"]'
+            '[data-testid="sidebar-children-container"]'
         );
 
         await childSidebarHandle.dragTo(secondParentSidebarContainer);
