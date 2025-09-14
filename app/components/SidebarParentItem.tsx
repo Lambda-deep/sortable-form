@@ -1,4 +1,8 @@
 import { useSortable } from "@dnd-kit/sortable";
+import {
+    SortableContext,
+    verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { Child, SidebarParentItemProps } from "../types";
 import { SidebarParentItemView } from "./SidebarParentItemView";
@@ -59,6 +63,11 @@ export function SidebarParentItem({
         transform: transform ? "exists" : "null",
     });
 
+    // サイドバーChild要素のIDリストを生成
+    const sidebarChildIds = parent.childArray.map(
+        (_, childIndex) => `sidebar-${parentIndex}-${childIndex}`
+    );
+
     return (
         <li>
             <SidebarParentItemView
@@ -73,15 +82,22 @@ export function SidebarParentItem({
                 }}
                 className={isDragging ? "z-50 shadow-2xl" : ""}
             >
-                {parent.childArray.map((child: Child, childIndex: number) => (
-                    <SidebarChildItem
-                        key={`child-${parentIndex}-${childIndex}`}
-                        child={child}
-                        parentIndex={parentIndex}
-                        childIndex={childIndex}
-                        dragState={dragState}
-                    />
-                ))}
+                <SortableContext
+                    items={sidebarChildIds}
+                    strategy={verticalListSortingStrategy}
+                >
+                    {parent.childArray.map(
+                        (child: Child, childIndex: number) => (
+                            <SidebarChildItem
+                                key={`sidebar-child-${parentIndex}-${childIndex}`}
+                                child={child}
+                                parentIndex={parentIndex}
+                                childIndex={childIndex}
+                                dragState={dragState}
+                            />
+                        )
+                    )}
+                </SortableContext>
             </SidebarParentItemView>
         </li>
     );

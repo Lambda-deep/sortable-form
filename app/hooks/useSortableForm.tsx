@@ -225,29 +225,66 @@ export function useSortableForm() {
                 }
             }
         } else if (isDraggingChild && isOverChild) {
-            // Child要素のドラッグ中（同一Parent内のみ）
-            const [activeParentIndex] = (active.id as string)
-                .split("-")
-                .map(Number);
-            const [overParentIndex, overChildIndex] = (over.id as string)
-                .split("-")
-                .map(Number);
+            // Child要素のドラッグ中
+            const activeIdStr = active.id as string;
+            const overIdStr = over.id as string;
 
-            // 同一Parent内でのみドロップインジケーターを表示
-            if (activeParentIndex === overParentIndex) {
-                const [, activeChildIndex] = (active.id as string)
+            // サイドバーChild要素かどうかの判定
+            const sidebarChildPattern = /^sidebar-\d+-\d+$/;
+            const isActiveSidebarChild = sidebarChildPattern.test(activeIdStr);
+            const isOverSidebarChild = sidebarChildPattern.test(overIdStr);
+
+            if (isActiveSidebarChild && isOverSidebarChild) {
+                // サイドバー内でのChild要素ドラッグ
+                const [activeParentIndex] = activeIdStr
+                    .replace("sidebar-", "")
                     .split("-")
                     .map(Number);
-                const position =
-                    activeChildIndex < overChildIndex ? "after" : "before";
+                const [overParentIndex, overChildIndex] = overIdStr
+                    .replace("sidebar-", "")
+                    .split("-")
+                    .map(Number);
 
-                setDragState(prev => ({
-                    ...prev,
-                    dropIndicator: {
-                        targetId: over.id as string,
-                        position,
-                    },
-                }));
+                // 同一Parent内でのみドロップインジケーターを表示
+                if (activeParentIndex === overParentIndex) {
+                    const [, activeChildIndex] = activeIdStr
+                        .replace("sidebar-", "")
+                        .split("-")
+                        .map(Number);
+                    const position =
+                        activeChildIndex < overChildIndex ? "after" : "before";
+
+                    setDragState(prev => ({
+                        ...prev,
+                        dropIndicator: {
+                            targetId: over.id as string,
+                            position,
+                        },
+                    }));
+                }
+            } else if (!isActiveSidebarChild && !isOverSidebarChild) {
+                // フォーム内でのChild要素ドラッグ（既存の処理）
+                const [activeParentIndex] = activeIdStr.split("-").map(Number);
+                const [overParentIndex, overChildIndex] = overIdStr
+                    .split("-")
+                    .map(Number);
+
+                // 同一Parent内でのみドロップインジケーターを表示
+                if (activeParentIndex === overParentIndex) {
+                    const [, activeChildIndex] = activeIdStr
+                        .split("-")
+                        .map(Number);
+                    const position =
+                        activeChildIndex < overChildIndex ? "after" : "before";
+
+                    setDragState(prev => ({
+                        ...prev,
+                        dropIndicator: {
+                            targetId: over.id as string,
+                            position,
+                        },
+                    }));
+                }
             }
         }
     };
@@ -340,6 +377,144 @@ export function useSortableForm() {
         );
     };
 
+    // サイドバーChild要素移動の処理
+    const handleSidebarChildMove = (active: Active, over: Over) => {
+        const activeChildId = active.id as string;
+        const overChildId = over.id as string;
+
+        // "sidebar-0-1" -> [0, 1] の形式でIDから親と子のインデックスを抽出
+        const [activeParentIndex, activeChildIndex] = activeChildId
+            .replace("sidebar-", "")
+            .split("-")
+            .map(Number);
+        const [overParentIndex, overChildIndex] = overChildId
+            .replace("sidebar-", "")
+            .split("-")
+            .map(Number);
+
+        console.log("サイドバー: Child要素移動", {
+            activeParentIndex,
+            activeChildIndex,
+            overParentIndex,
+            overChildIndex,
+        });
+
+        // 同一Parent内での並び替えのみ対応
+        if (activeParentIndex === overParentIndex) {
+            const currentParent = getValues(`parentArray.${activeParentIndex}`);
+            const newChildArray = [...currentParent.childArray];
+
+            // 配列内での移動
+            const [movedChild] = newChildArray.splice(activeChildIndex, 1);
+            newChildArray.splice(overChildIndex, 0, movedChild);
+
+            console.log("サイドバー: Child要素移動実行", {
+                oldArray: currentParent.childArray,
+                newArray: newChildArray,
+            });
+
+            // フォームに反映
+            setValue(
+                `parentArray.${activeParentIndex}.childArray`,
+                newChildArray,
+                { shouldValidate: true, shouldDirty: true, shouldTouch: true }
+            );
+        } else {
+            console.log("サイドバー: 異なるParent間の移動は未対応");
+        }
+    };
+
+    // サイドバー用カスタム衝突検出
+    const sidebarCollisionDetection = (args: any) => {
+        const { active, collisionRect, droppableContainers } = args;
+
+        if (!active) return [];
+
+        const activeIdStr = active.id as string;
+        const sidebarChildPattern = /^sidebar-\d+-\d+$/;
+        const isActiveSidebarChild = sidebarChildPattern.test(activeIdStr);
+
+        // アクティブな要素がサイドバーChild要素の場合
+        if (isActiveSidebarChild) {
+            // Child要素は同じタイプの要素（他のChild要素）のみに衝突
+            const validContainers = Array.from(
+                droppableContainers.values()
+            ).filter((container: any) => {
+                const containerIdStr = container.id as string;
+                return sidebarChildPattern.test(containerIdStr);
+            });
+
+            return validContainers
+                .filter((container: any) => {
+                    return (
+                        collisionRect &&
+                        container.rect.current &&
+                        collisionRect.left < container.rect.current.right &&
+                        collisionRect.right > container.rect.current.left &&
+                        collisionRect.top < container.rect.current.bottom &&
+                        collisionRect.bottom > container.rect.current.top
+                    );
+                })
+                .sort((a: any, b: any) => {
+                    const aRect = a.rect.current;
+                    const bRect = b.rect.current;
+                    if (!aRect || !bRect) return 0;
+
+                    // 縦方向の距離で並び替え
+                    const aCenterY = aRect.top + aRect.height / 2;
+                    const bCenterY = bRect.top + bRect.height / 2;
+                    const centerY =
+                        collisionRect.top + collisionRect.height / 2;
+
+                    return (
+                        Math.abs(aCenterY - centerY) -
+                        Math.abs(bCenterY - centerY)
+                    );
+                })
+                .map((container: any) => ({ id: container.id }));
+        } else {
+            // Parent要素は他のParent要素のみに衝突
+            const validContainers = Array.from(
+                droppableContainers.values()
+            ).filter((container: any) => {
+                const containerIdStr = container.id as string;
+                return (
+                    containerIdStr.startsWith("sidebar-") &&
+                    !sidebarChildPattern.test(containerIdStr)
+                );
+            });
+
+            return validContainers
+                .filter((container: any) => {
+                    return (
+                        collisionRect &&
+                        container.rect.current &&
+                        collisionRect.left < container.rect.current.right &&
+                        collisionRect.right > container.rect.current.left &&
+                        collisionRect.top < container.rect.current.bottom &&
+                        collisionRect.bottom > container.rect.current.top
+                    );
+                })
+                .sort((a: any, b: any) => {
+                    const aRect = a.rect.current;
+                    const bRect = b.rect.current;
+                    if (!aRect || !bRect) return 0;
+
+                    // 縦方向の距離で並び替え
+                    const aCenterY = aRect.top + aRect.height / 2;
+                    const bCenterY = bRect.top + bRect.height / 2;
+                    const centerY =
+                        collisionRect.top + collisionRect.height / 2;
+
+                    return (
+                        Math.abs(aCenterY - centerY) -
+                        Math.abs(bCenterY - centerY)
+                    );
+                })
+                .map((container: any) => ({ id: container.id }));
+        }
+    };
+
     const addParent = () => {
         appendParent({
             parentKey: `parent${parentFields.length + 1}`,
@@ -362,19 +537,53 @@ export function useSortableForm() {
             sidebarActiveId: active.id as string,
         }));
 
-        const parentIndex = parentFields.findIndex(
-            field => field.id === (active.id as string).replace(/^sidebar-/, "")
-        );
-        if (parentIndex !== -1) {
-            console.log("🎯 サイドバー: Parent要素をドラッグ中", parentIndex);
+        const activeIdStr = active.id as string;
+
+        // サイドバーのChild要素かどうかの判定
+        const sidebarChildPattern = /^sidebar-\d+-\d+$/;
+        const isSidebarChild = sidebarChildPattern.test(activeIdStr);
+
+        if (isSidebarChild) {
+            // "sidebar-0-1" -> [0, 1]
+            const [parentIndex, childIndex] = activeIdStr
+                .replace("sidebar-", "")
+                .split("-")
+                .map(Number);
+
+            console.log("🎯 サイドバー: Child要素をドラッグ中", {
+                parentIndex,
+                childIndex,
+            });
             setDragState(prev => ({
                 ...prev,
                 sidebarDraggedItem: {
-                    type: "parent",
+                    type: "child",
                     parentIndex,
-                    data: watchedData.parentArray[parentIndex],
+                    childIndex,
+                    data: watchedData.parentArray[parentIndex].childArray[
+                        childIndex
+                    ],
                 },
             }));
+        } else {
+            // Parent要素のドラッグ（既存の処理）
+            const parentIndex = parentFields.findIndex(
+                field => field.id === activeIdStr.replace(/^sidebar-/, "")
+            );
+            if (parentIndex !== -1) {
+                console.log(
+                    "🎯 サイドバー: Parent要素をドラッグ中",
+                    parentIndex
+                );
+                setDragState(prev => ({
+                    ...prev,
+                    sidebarDraggedItem: {
+                        type: "parent",
+                        parentIndex,
+                        data: watchedData.parentArray[parentIndex],
+                    },
+                }));
+            }
         }
     };
 
@@ -398,47 +607,64 @@ export function useSortableForm() {
             return;
         }
 
-        // sidebar-プレフィックスを削除して元のIDを取得
-        const activeOriginalId = (active.id as string).replace(/^sidebar-/, "");
-        const overOriginalId = (over.id as string).replace(/^sidebar-/, "");
+        const activeIdStr = active.id as string;
+        const overIdStr = over.id as string;
 
-        console.log("サイドバー: ID変換", {
-            activeId: active.id,
-            overId: over.id,
-            activeOriginalId,
-            overOriginalId,
-        });
+        // サイドバーChild要素かどうかの判定
+        const sidebarChildPattern = /^sidebar-\d+-\d+$/;
+        const isActiveChild = sidebarChildPattern.test(activeIdStr);
+        const isOverChild = sidebarChildPattern.test(overIdStr);
 
-        // インデックスを取得
-        const activeIndex = parentFields.findIndex(
-            field => field.id === activeOriginalId
-        );
-        const overIndex = parentFields.findIndex(
-            field => field.id === overOriginalId
-        );
+        if (isActiveChild && isOverChild) {
+            // サイドバーChild要素の移動処理
+            console.log("サイドバー: Child要素移動処理");
+            handleSidebarChildMove(active, over);
+        } else if (!isActiveChild && !isOverChild) {
+            // サイドバーParent要素の移動処理（既存の処理）
+            console.log("サイドバー: Parent要素移動処理");
 
-        console.log("サイドバー: インデックス", {
-            activeIndex,
-            overIndex,
-        });
+            // sidebar-プレフィックスを削除して元のIDを取得
+            const activeOriginalId = activeIdStr.replace(/^sidebar-/, "");
+            const overOriginalId = overIdStr.replace(/^sidebar-/, "");
 
-        // 有効なインデックスで、かつ位置が異なる場合のみ移動を実行
-        if (
-            activeIndex !== -1 &&
-            overIndex !== -1 &&
-            activeIndex !== overIndex
-        ) {
-            console.log("サイドバー: Parent移動処理を実行");
-            move(activeIndex, overIndex);
-        } else {
-            console.log("サイドバー: 移動不要または無効な移動", {
-                reason:
-                    activeIndex === -1
-                        ? "activeIndex not found"
-                        : overIndex === -1
-                          ? "overIndex not found"
-                          : "same index",
+            console.log("サイドバー: ID変換", {
+                activeId: active.id,
+                overId: over.id,
+                activeOriginalId,
+                overOriginalId,
             });
+
+            // インデックスを取得
+            const activeIndex = parentFields.findIndex(
+                field => field.id === activeOriginalId
+            );
+            const overIndex = parentFields.findIndex(
+                field => field.id === overOriginalId
+            );
+
+            console.log("サイドバー: インデックス", {
+                activeIndex,
+                overIndex,
+            });
+
+            // 有効なインデックスで、かつ位置が異なる場合のみ移動を実行
+            if (
+                activeIndex !== -1 &&
+                overIndex !== -1 &&
+                activeIndex !== overIndex
+            ) {
+                console.log("サイドバー: Parent移動処理を実行");
+                move(activeIndex, overIndex);
+            } else {
+                console.log("サイドバー: 移動不要または無効な移動", {
+                    reason:
+                        activeIndex === -1
+                            ? "activeIndex not found"
+                            : overIndex === -1
+                              ? "overIndex not found"
+                              : "same index",
+                });
+            }
         }
 
         // サイドバーの状態をクリーンアップ
@@ -493,6 +719,7 @@ export function useSortableForm() {
         // ドラッグ関連
         formSensors,
         sidebarSensors,
+        sidebarCollisionDetection,
         dragHandlers: {
             onDragStart: handleDragStart,
             onDragOver: handleDragOver,

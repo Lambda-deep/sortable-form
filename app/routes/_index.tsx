@@ -1,4 +1,4 @@
-import { DndContext, DragOverlay, closestCenter } from "@dnd-kit/core";
+import { DndContext, DragOverlay } from "@dnd-kit/core";
 import {
     SortableContext,
     verticalListSortingStrategy,
@@ -9,6 +9,7 @@ import { SidebarParentItem } from "../components/SidebarParentItem";
 import { DragOverlayParentItem } from "../components/DragOverlayParentItem";
 import { DragOverlaySidebarParentItem } from "../components/DragOverlaySidebarParentItem";
 import { DragOverlayChildItem } from "../components/DragOverlayChildItem";
+import { DragOverlaySidebarChildItem } from "../components/DragOverlaySidebarChildItem";
 import { ClientOnly } from "../components/ClientOnly";
 import Button from "../components/Button";
 import type { Parent } from "../types";
@@ -28,6 +29,7 @@ export default function Index() {
         // ドラッグ関連
         formSensors,
         sidebarSensors,
+        sidebarCollisionDetection,
         dragHandlers,
         dragState,
     } = useSortableForm();
@@ -151,7 +153,7 @@ export default function Index() {
                 {/* サイドバー側のDndContext */}
                 <DndContext
                     sensors={sidebarSensors}
-                    collisionDetection={closestCenter}
+                    collisionDetection={sidebarCollisionDetection}
                     modifiers={[restrictToVerticalAxis]}
                     onDragStart={event => {
                         console.log(
@@ -219,6 +221,20 @@ export default function Index() {
                                     parent={dragState.sidebarDraggedItem.data}
                                     parentIndex={
                                         dragState.sidebarDraggedItem.parentIndex
+                                    }
+                                />
+                            ) : dragState.sidebarActiveId &&
+                              dragState.sidebarDraggedItem?.type === "child" &&
+                              "childKey" in dragState.sidebarDraggedItem.data &&
+                              typeof dragState.sidebarDraggedItem.childIndex ===
+                                  "number" ? (
+                                <DragOverlaySidebarChildItem
+                                    child={dragState.sidebarDraggedItem.data}
+                                    parentIndex={
+                                        dragState.sidebarDraggedItem.parentIndex
+                                    }
+                                    childIndex={
+                                        dragState.sidebarDraggedItem.childIndex
                                     }
                                 />
                             ) : null}
