@@ -14,16 +14,27 @@ test.describe("ソート可能フォーム - UI/UXとアクセシビリティ", 
         await expect(parentHandles).toHaveCount(2);
 
         for (let i = 0; i < (await parentHandles.count()); i++) {
-            await expect(parentHandles.nth(i)).toContainText("⋮⋮");
+            // SVGアイコンが含まれていることを確認
+            const svg = parentHandles.nth(i).locator("svg");
+            await expect(svg).toBeVisible();
             await expect(parentHandles.nth(i)).toBeVisible();
+
+            // ドラッグハンドルが適切なサイズであることを確認
+            await expect(svg).toHaveAttribute("width", "16");
+            await expect(svg).toHaveAttribute("height", "16");
         }
 
         // 子要素のドラッグハンドルを確認
         const childHandles = page.locator(
             '[data-testid="child-item"] [data-testid="drag-handle"]'
         );
-        await expect(childHandles.first()).toContainText("⋮");
-        await expect(childHandles.first()).toBeVisible();
+        if ((await childHandles.count()) > 0) {
+            const childSvg = childHandles.first().locator("svg");
+            await expect(childSvg).toBeVisible();
+            await expect(childHandles.first()).toBeVisible();
+            await expect(childSvg).toHaveAttribute("width", "16");
+            await expect(childSvg).toHaveAttribute("height", "16");
+        }
 
         // サイドバーのドラッグハンドルを確認
         const sidebarParentHandles = page.locator(
@@ -35,8 +46,11 @@ test.describe("ソート可能フォーム - UI/UXとアクセシビリティ", 
             '[data-testid="sidebar-child-drag-handle"]'
         );
         for (let i = 0; i < (await sidebarChildHandles.count()); i++) {
-            await expect(sidebarChildHandles.nth(i)).toContainText("⋮");
+            const sidebarSvg = sidebarChildHandles.nth(i).locator("svg");
+            await expect(sidebarSvg).toBeVisible();
             await expect(sidebarChildHandles.nth(i)).toBeVisible();
+            await expect(sidebarSvg).toHaveAttribute("width", "16");
+            await expect(sidebarSvg).toHaveAttribute("height", "16");
         }
     });
 

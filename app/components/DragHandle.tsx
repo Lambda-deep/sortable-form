@@ -28,7 +28,7 @@ const DragHandle: React.FC<DragHandleProps> = ({
             {...listeners}
         >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                <path d="M6 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM6 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM6 10a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM12 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM12 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM12 10a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM12 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                <path d="M6 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM6 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM6 13a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM12 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM12 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM12 13a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
             </svg>
         </button>
     );
