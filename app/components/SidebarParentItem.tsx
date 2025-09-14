@@ -26,8 +26,9 @@ export function SidebarParentItem({
         });
 
     // ドロップインジケーターの条件を正確に判定
+    // 親要素がドラッグされていて、このparentElementがターゲットの場合のみ表示
     const shouldShowDropIndicator =
-        dragOverId === parentField.id && !isDragging;
+        dragOverId === parentField.id && !isDragging && dragOverPosition;
     const showBeforeIndicator =
         shouldShowDropIndicator && dragOverPosition === "before";
     const showAfterIndicator =
@@ -74,7 +75,7 @@ export function SidebarParentItem({
                 >
                     <span
                         data-testid="sidebar-parent-drag-handle"
-                        className="cursor-grab text-base text-gray-600"
+                        className="flex h-4 w-4 cursor-grab items-center justify-center text-base text-gray-600"
                     >
                         ⋮⋮
                     </span>

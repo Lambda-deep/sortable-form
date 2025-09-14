@@ -135,16 +135,23 @@ export function useSortableForm() {
     const customCollisionDetection = (args: any) => {
         const { active, droppableRects, pointerCoordinates } = args;
 
-        // 子要素のIDパターン: 数字-数字
+        // 子要素のIDパターン: 数字-数字 (例: "0-0", "1-2") またはサイドバー子要素 (例: "sidebar-0-0")
         const childIdPattern = /^\d+-\d+$/;
-        const isDraggingParent =
-            typeof active.id === "string" && !childIdPattern.test(active.id);
+        const sidebarChildIdPattern = /^sidebar-\d+-\d+$/;
+        const isDraggingChild =
+            (typeof active.id === "string" && childIdPattern.test(active.id)) ||
+            (typeof active.id === "string" &&
+                sidebarChildIdPattern.test(active.id));
 
         // 親要素のドラッグ時は親要素のみをターゲットにする
-        if (isDraggingParent) {
+        if (!isDraggingChild) {
             const parentRects = new Map();
             for (const [id, rect] of droppableRects) {
-                if (typeof id === "string" && !childIdPattern.test(id)) {
+                if (
+                    typeof id === "string" &&
+                    !childIdPattern.test(id) &&
+                    !sidebarChildIdPattern.test(id)
+                ) {
                     parentRects.set(id, rect);
                 }
             }
@@ -170,23 +177,36 @@ export function useSortableForm() {
 
                 return collisions;
             }
-        }
+        } else {
+            // 子要素のドラッグ時は子要素のみをターゲットにする
+            const childRects = new Map();
+            for (const [id, rect] of droppableRects) {
+                if (
+                    typeof id === "string" &&
+                    (childIdPattern.test(id) || sidebarChildIdPattern.test(id))
+                ) {
+                    childRects.set(id, rect);
+                }
+            }
 
-        // デフォルトの衝突検出
-        const collisions = closestCenter(args);
-        if (collisions && collisions.length > 0 && pointerCoordinates) {
-            const collision = collisions[0];
-            const targetRect = droppableRects.get(collision.id);
-            if (targetRect) {
-                const centerY = targetRect.top + targetRect.height / 2;
-                const position =
-                    pointerCoordinates.y < centerY ? "before" : "after";
-                setDragOverId(String(collision.id));
-                setDragOverPosition(position);
+            if (childRects.size > 0) {
+                const collisions = closestCenter({
+                    ...args,
+                    droppableRects: childRects,
+                });
+
+                // 子要素の場合はdragOverIdとdragOverPositionをクリア（子要素は個別のisOverでインジケーターを表示）
+                setDragOverId(null);
+                setDragOverPosition(null);
+
+                return collisions;
             }
         }
 
-        return collisions;
+        // fallback: デフォルトの衝突検出（ドロップ位置情報はクリア）
+        setDragOverId(null);
+        setDragOverPosition(null);
+        return closestCenter(args);
     };
 
     function handleDragStart(event: DragStartEvent) {

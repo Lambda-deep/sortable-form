@@ -27,16 +27,21 @@ export function ChildItem({
             opacity: 0.9,
             boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
         }),
-        // ドロップインジケーター（ドラッグ中は表示しない）
-        ...(isOver &&
-            !isDragging && {
-                borderTop: "3px solid #007bff",
-                marginTop: "4px",
-            }),
     };
 
     return (
         <>
+            {/* 子要素のドロップインジケーター：isOverがtrueかつ自分がドラッグ中でない場合のみ表示 */}
+            {isOver && !isDragging && (
+                <div
+                    style={{
+                        height: "3px",
+                        backgroundColor: "#007bff",
+                        marginBottom: "4px",
+                        borderRadius: "1px",
+                    }}
+                />
+            )}
             <div
                 ref={setNodeRef}
                 style={style}
@@ -47,7 +52,7 @@ export function ChildItem({
             >
                 <span
                     data-testid="drag-handle"
-                    className="cursor-grab text-lg text-gray-600"
+                    className="flex h-4 w-4 cursor-grab items-center justify-center text-lg text-gray-600"
                     {...attributes}
                     {...listeners}
                 >

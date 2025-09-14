@@ -26,16 +26,21 @@ export function SidebarChildItem({
             opacity: 0.9,
             boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
         }),
-        // ドロップインジケーター（ドラッグ中のみ表示）
-        ...(isOver &&
-            !isDragging && {
-                borderTop: "3px solid #007bff",
-                marginTop: "2px",
-            }),
     };
 
     return (
         <>
+            {/* サイドバー子要素のドロップインジケーター：isOverがtrueかつ自分がドラッグ中でない場合のみ表示 */}
+            {isOver && !isDragging && (
+                <div
+                    style={{
+                        height: "2px",
+                        backgroundColor: "#007bff",
+                        marginBottom: "2px",
+                        borderRadius: "1px",
+                    }}
+                />
+            )}
             <div
                 ref={setNodeRef}
                 style={style}
@@ -46,7 +51,7 @@ export function SidebarChildItem({
             >
                 <span
                     data-testid="sidebar-child-drag-handle"
-                    className="cursor-grab text-sm text-gray-600"
+                    className="flex h-4 w-4 cursor-grab items-center justify-center text-sm text-gray-600"
                     {...attributes}
                     {...listeners}
                 >

@@ -61,8 +61,9 @@ export function ParentItem({
     }, [isDragging, originalSize]);
 
     // ドロップインジケーターの条件を正確に判定
+    // 親要素がドラッグされていて、このparenetElementがターゲットの場合のみ表示
     const shouldShowDropIndicator =
-        dragOverId === parentField.id && !isDragging;
+        dragOverId === parentField.id && !isDragging && dragOverPosition;
     const showBeforeIndicator =
         shouldShowDropIndicator && dragOverPosition === "before";
     const showAfterIndicator =

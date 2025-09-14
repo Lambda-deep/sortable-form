@@ -28,6 +28,8 @@ type Child = {
 - parentArray内でParent要素の並び替え可能
 - childArray内でChild要素の並び替え可能
 - あるParentから別のParentにChild要素を移動可能
+- Child要素をParent要素の外に出すことはできない
+- Parent要素をChild要素の中に入れることはできない
 
 ### ドラッグ&ドロップ動作
 
