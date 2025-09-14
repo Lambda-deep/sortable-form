@@ -1,4 +1,8 @@
 import { test, expect } from "@playwright/test";
+import {
+    dragParentElement,
+    dragSidebarParentElement,
+} from "./utils/drag-drop-helpers";
 
 test.describe("ソート可能フォーム - 親要素", () => {
     test.beforeEach(async ({ page }) => {
@@ -36,15 +40,8 @@ test.describe("ソート可能フォーム - 親要素", () => {
         expect(firstParentKey).toBe("parent1");
         expect(secondParentKey).toBe("parent2");
 
-        // 最初の親要素を2番目の位置にドラッグ&ドロップ
-        const firstParentHandle = page
-            .locator('[data-testid="parent-drag-handle"]')
-            .first();
-        const secondParentItem = page
-            .locator('[data-testid="parent-item"]')
-            .nth(1);
-
-        await firstParentHandle.dragTo(secondParentItem);
+        // 最初の親要素（index 0）を2番目の位置（index 1）にドラッグ&ドロップ
+        await dragParentElement(page, 0, 1);
 
         // 新しい順序を確認（条件ベース待機）
         await expect(
@@ -69,15 +66,8 @@ test.describe("ソート可能フォーム - 親要素", () => {
             "[1] parent2"
         );
 
-        // サイドバー内でドラッグ&ドロップを実行
-        const firstSidebarHandle = page
-            .locator('[data-testid="sidebar-parent-drag-handle"]')
-            .first();
-        const secondSidebarItem = page
-            .locator('[data-testid="sidebar"] [data-testid="index-item"]')
-            .nth(1);
-
-        await firstSidebarHandle.dragTo(secondSidebarItem);
+        // サイドバー内で最初の親要素（index 0）を2番目の位置（index 1）にドラッグ&ドロップ
+        await dragSidebarParentElement(page, 0, 1);
 
         // 新しいサイドバー順序を確認（条件ベース待機）
         await expect(sidebarItems.first().locator("strong")).toContainText(
