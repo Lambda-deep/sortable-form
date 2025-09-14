@@ -1,14 +1,9 @@
 import { useSortable } from "@dnd-kit/sortable";
-import {
-    SortableContext,
-    verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { ParentItemProps } from "../types";
 import { ChildItem } from "./ChildItem";
-import { DropIndicator } from "./DropIndicator";
-import Button from "./Button";
-import DragHandle from "./DragHandle";
+import { ParentItemView } from "./ParentItemView";
 
 export function ParentItem({
     parentIndex,
@@ -32,124 +27,53 @@ export function ParentItem({
         transform,
         transition,
         isDragging,
-        isSorting, // 追加：ソート中かどうかを判定
+        isSorting,
     } = useSortable({ id: parentId });
 
     // ドロップインジケーターの表示判定
     const showDropIndicator = dragState.dropIndicator?.targetId === parentId;
     const dropPosition = dragState.dropIndicator?.position || "before";
 
-    // 元の場所の空白表示（ドラッグされている要素の場合）
-    const isBeingDragged = dragState.activeId === parentId;
-
     const style = {
-        // isSortingがtrueの場合はtransformを無効化して元の位置に留める
         transform: isSorting ? undefined : CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0 : 1,
     };
 
-    console.log(isDragging, isSorting);
+    const showDropIndicatorStates = {
+        before: showDropIndicator && dropPosition === "before",
+        after: showDropIndicator && dropPosition === "after",
+        inside: showDropIndicator && dropPosition === "inside",
+    };
 
     return (
-        <div className="relative">
-            {/* ドロップインジケーター - 前 */}
-            <div
-                className="absolute -top-1 right-0 left-0 z-10"
-                data-testid="drop-indicator-before"
+        <ParentItemView
+            ref={setNodeRef}
+            parent={currentParent}
+            style={style}
+            className={isDragging ? "z-50 shadow-2xl" : ""}
+            showDropIndicator={showDropIndicatorStates}
+            dragHandleProps={{ attributes, listeners }}
+            onRemove={() => removeParent(parentIndex)}
+            onAddChild={() => addChild(parentIndex)}
+            registerParentKey={register(`parentArray.${parentIndex}.parentKey`)}
+            registerParentValue={register(`parentArray.${parentIndex}.parentValue`)}
+        >
+            <SortableContext 
+                items={currentParent?.childArray?.map((_, childIndex) => `${parentIndex}-${childIndex}`) || []}
+                strategy={verticalListSortingStrategy}
             >
-                <DropIndicator
-                    position="before"
-                    isVisible={showDropIndicator && dropPosition === "before"}
-                />
-            </div>
-
-            <div
-                ref={setNodeRef}
-                style={style}
-                data-testid="parent-item"
-                className={`relative rounded border border-gray-300 bg-gray-50 p-4 ${isDragging ? "z-50 shadow-2xl" : "shadow-sm"} ${isBeingDragged && !isDragging ? "border-dashed opacity-0" : ""}`}
-            >
-                {/* ドロップインジケーター - 内部 */}
-                <DropIndicator
-                    position="inside"
-                    isVisible={showDropIndicator && dropPosition === "inside"}
-                />
-
-                <div className="flex items-center gap-2">
-                    <DragHandle
-                        data-testid="parent-drag-handle"
-                        attributes={attributes}
-                        listeners={listeners}
+                {currentParent?.childArray?.map((_, childIndex: number) => (
+                    <ChildItem
+                        key={`${parentIndex}-${childIndex}`}
+                        parentIndex={parentIndex}
+                        childIndex={childIndex}
+                        register={register}
+                        removeChild={removeChild}
+                        dragState={dragState}
                     />
-                    <input
-                        {...register(`parentArray.${parentIndex}.parentKey`)}
-                        className="flex-1 rounded border border-gray-400 px-2 py-1"
-                        placeholder="Parent Key"
-                    />
-                    <input
-                        {...register(`parentArray.${parentIndex}.parentValue`)}
-                        className="flex-1 rounded border border-gray-400 px-2 py-1"
-                        placeholder="Parent Value"
-                    />
-                    <Button
-                        type="button"
-                        variant="remove"
-                        size="sm"
-                        onClick={() => removeParent(parentIndex)}
-                    >
-                        Remove
-                    </Button>
-                </div>
-
-                <div
-                    data-testid="children-container"
-                    className="mt-2 flex flex-col rounded border border-gray-300 bg-white p-2"
-                >
-                    <SortableContext
-                        items={
-                            currentParent?.childArray?.map(
-                                (_, childIndex) =>
-                                    `${parentIndex}-${childIndex}`
-                            ) || []
-                        }
-                        strategy={verticalListSortingStrategy}
-                    >
-                        {currentParent?.childArray?.map(
-                            (_, childIndex: number) => (
-                                <ChildItem
-                                    key={`${parentIndex}-${childIndex}`}
-                                    parentIndex={parentIndex}
-                                    childIndex={childIndex}
-                                    register={register}
-                                    removeChild={removeChild}
-                                    dragState={dragState}
-                                />
-                            )
-                        )}
-                    </SortableContext>
-                </div>
-                <Button
-                    type="button"
-                    variant="add"
-                    size="sm"
-                    className="mt-2"
-                    onClick={() => addChild(parentIndex)}
-                >
-                    Add Child
-                </Button>
-            </div>
-
-            {/* ドロップインジケーター - 後 */}
-            <div
-                className="absolute right-0 -bottom-1 left-0 z-10"
-                data-testid="drop-indicator-after"
-            >
-                <DropIndicator
-                    position="after"
-                    isVisible={showDropIndicator && dropPosition === "after"}
-                />
-            </div>
-        </div>
+                ))}
+            </SortableContext>
+        </ParentItemView>
     );
 }
