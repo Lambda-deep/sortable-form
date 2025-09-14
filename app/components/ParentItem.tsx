@@ -1,4 +1,8 @@
 import { useSortable } from "@dnd-kit/sortable";
+import {
+    SortableContext,
+    verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { ParentItemProps } from "../types";
 import { ChildItem } from "./ChildItem";
@@ -100,17 +104,30 @@ export function ParentItem({
 
                 <div
                     data-testid="children-container"
-                    className="mt-2 flex flex-col gap-2 rounded border border-gray-300 bg-white p-2"
+                    className="mt-2 flex flex-col rounded border border-gray-300 bg-white p-2"
                 >
-                    {currentParent?.childArray?.map((_, childIndex: number) => (
-                        <ChildItem
-                            key={childIndex}
-                            parentIndex={parentIndex}
-                            childIndex={childIndex}
-                            register={register}
-                            removeChild={removeChild}
-                        />
-                    ))}
+                    <SortableContext
+                        items={
+                            currentParent?.childArray?.map(
+                                (_, childIndex) =>
+                                    `${parentIndex}-${childIndex}`
+                            ) || []
+                        }
+                        strategy={verticalListSortingStrategy}
+                    >
+                        {currentParent?.childArray?.map(
+                            (_, childIndex: number) => (
+                                <ChildItem
+                                    key={`${parentIndex}-${childIndex}`}
+                                    parentIndex={parentIndex}
+                                    childIndex={childIndex}
+                                    register={register}
+                                    removeChild={removeChild}
+                                    dragState={dragState}
+                                />
+                            )
+                        )}
+                    </SortableContext>
                 </div>
                 <Button
                     type="button"

@@ -7,6 +7,7 @@ import { useSortableForm } from "../hooks/useSortableForm";
 import { ParentItem } from "../components/ParentItem";
 import { SidebarParentItem } from "../components/SidebarParentItem";
 import { DragOverlayParentItem } from "../components/DragOverlayParentItem";
+import { DragOverlayChildItem } from "../components/DragOverlayChildItem";
 import { ClientOnly } from "../components/ClientOnly";
 import Button from "../components/Button";
 import type { Parent } from "../types";
@@ -132,6 +133,12 @@ export default function Index() {
                         <DragOverlayParentItem
                             parent={dragState.draggedItem.data}
                             parentIndex={dragState.draggedItem.parentIndex}
+                        />
+                    ) : dragState.activeId &&
+                      dragState.draggedItem?.type === "child" &&
+                      "childKey" in dragState.draggedItem.data ? (
+                        <DragOverlayChildItem
+                            child={dragState.draggedItem.data}
                         />
                     ) : null}
                 </DragOverlay>

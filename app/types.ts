@@ -51,6 +51,7 @@ export type ChildItemProps = {
     childIndex: number;
     register: UseFormRegister<Data>;
     removeChild: (parentIndex: number, childIndex: number) => void;
+    dragState: DragState;
 };
 
 export type SidebarParentItemProps = {

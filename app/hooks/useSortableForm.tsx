@@ -148,6 +148,31 @@ export function useSortableForm() {
                     },
                 }));
             }
+        } else if (isDraggingChild && isOverChild) {
+            // Child要素のドラッグ中（同一Parent内のみ）
+            const [activeParentIndex] = (active.id as string)
+                .split("-")
+                .map(Number);
+            const [overParentIndex, overChildIndex] = (over.id as string)
+                .split("-")
+                .map(Number);
+
+            // 同一Parent内でのみドロップインジケーターを表示
+            if (activeParentIndex === overParentIndex) {
+                const [, activeChildIndex] = (active.id as string)
+                    .split("-")
+                    .map(Number);
+                const position =
+                    activeChildIndex < overChildIndex ? "after" : "before";
+
+                setDragState(prev => ({
+                    ...prev,
+                    dropIndicator: {
+                        targetId: over.id as string,
+                        position,
+                    },
+                }));
+            }
         }
     };
 
@@ -199,13 +224,39 @@ export function useSortableForm() {
         }
     };
 
-    // Child要素移動の処理（Phase 3で実装）
+    // Child要素移動の処理
     const handleChildMove = (active: Active, over: Over) => {
-        // 次のフェーズで実装
-        console.log("Child move will be implemented in Phase 3", {
-            active,
-            over,
-        });
+        const activeChildId = active.id as string;
+        const overChildId = over.id as string;
+
+        // IDから親と子のインデックスを抽出
+        const [activeParentIndex, activeChildIndex] = activeChildId
+            .split("-")
+            .map(Number);
+        const [overParentIndex, overChildIndex] = overChildId
+            .split("-")
+            .map(Number);
+
+        // 同一Parent内での並び替えのみ対応（Phase 2）
+        if (activeParentIndex === overParentIndex) {
+            const currentParent = getValues(`parentArray.${activeParentIndex}`);
+            const newChildArray = [...currentParent.childArray];
+
+            // 配列内での移動
+            const [movedChild] = newChildArray.splice(activeChildIndex, 1);
+            newChildArray.splice(overChildIndex, 0, movedChild);
+
+            // フォームに反映
+            setValue(
+                `parentArray.${activeParentIndex}.childArray`,
+                newChildArray
+            );
+        }
+
+        // 異なるParent間の移動は後のフェーズで実装
+        console.log(
+            "Cross-parent child move will be implemented in next phase"
+        );
     };
 
     // サイドバー用のデータ状態
