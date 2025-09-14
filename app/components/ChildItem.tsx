@@ -11,6 +11,8 @@ export function ChildItem({
     return (
         <div
             data-testid="child-item"
+            data-parent-index={parentIndex}
+            data-child-index={childIndex}
             className="flex items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2"
         >
             <DragHandle data-testid="drag-handle" />

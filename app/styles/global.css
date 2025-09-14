@@ -13,3 +13,16 @@ body {
     padding: 20px;
     background-color: #f5f5f5;
 }
+
+/* SortableJS styles */
+.sortable-ghost {
+    opacity: 0.4;
+    background: #e0e7ff !important;
+    border: 2px dashed #6366f1 !important;
+}
+
+.sortable-chosen {
+    transform: rotate(5deg);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+}
