@@ -49,19 +49,23 @@ export function SortableParentItem({
                 const oldIndex = evt.oldIndex;
                 const newIndex = evt.newIndex;
 
-                if (fromParentIndex === toParentIndex) {
-                    // 同じ親内での移動
+                if (fromParentIndex === toParentIndex && oldIndex !== newIndex) {
+                    // 同じ親内での移動（かつ実際に位置が変わった場合のみ）
                     updateChildOrder(fromParentIndex, oldIndex, newIndex);
-                } else {
+                } else if (fromParentIndex !== toParentIndex) {
                     // 異なる親間での移動
                     moveChildBetweenParents(fromParentIndex, toParentIndex, oldIndex, newIndex);
                 }
             },
         };
 
-        // Sortableインスタンスを作成
-        const sortableInstance = Sortable.create(childrenContainerRef.current, childSortableConfig);
-        childSortableRefs.current[parentIndex] = sortableInstance;
+        try {
+            // Sortableインスタンスを作成
+            const sortableInstance = Sortable.create(childrenContainerRef.current, childSortableConfig);
+            childSortableRefs.current[parentIndex] = sortableInstance;
+        } catch (error) {
+            console.error('Error creating Sortable instance:', error);
+        }
 
         return () => {
             if (childSortableRefs.current[parentIndex]) {
@@ -69,7 +73,7 @@ export function SortableParentItem({
                 delete childSortableRefs.current[parentIndex];
             }
         };
-    }, [parentIndex, updateChildOrder, moveChildBetweenParents, commonSortableConfig, childSortableRefs]);
+    }, [parentIndex, commonSortableConfig]);
 
     return (
         <div
