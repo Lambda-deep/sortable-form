@@ -58,7 +58,7 @@ export const SidebarChildItemView = forwardRef<
                         attributes={dragHandleProps?.attributes}
                         listeners={dragHandleProps?.listeners}
                     />
-                    <span>
+                    <span className="text-xs text-gray-600">
                         [{parentIndex}.{childIndex}] {child.childKey}
                     </span>
                 </div>
