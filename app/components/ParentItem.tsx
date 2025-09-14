@@ -6,7 +6,7 @@ import {
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import type { Data, Child, ParentItemProps } from "../types";
-import { ChildItem } from "./SortableChildItem";
+import { ChildItem } from "./ChildItem";
 
 export function ParentItem({
     parentField,

@@ -5,7 +5,7 @@ import {
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import type { Child, SidebarParentItemProps } from "../types";
-import { SidebarChildItem } from "./SortableSidebarChildItem";
+import { SidebarChildItem } from "./SidebarChildItem";
 
 export function SidebarParentItem({
     parentField,

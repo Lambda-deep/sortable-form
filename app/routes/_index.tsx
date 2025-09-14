@@ -5,7 +5,7 @@ import {
 } from "@dnd-kit/sortable";
 import { useSortableForm } from "../hooks/useSortableForm";
 import { ParentItem } from "../components/ParentItem";
-import { SidebarParentItem } from "../components/SortableSidebarParentItem";
+import { SidebarParentItem } from "../components/SidebarParentItem";
 import type { Parent } from "../types";
 
 export default function Index() {
