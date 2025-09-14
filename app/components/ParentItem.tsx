@@ -1,6 +1,7 @@
 import type { ParentItemProps } from "../types";
 import { ChildItem } from "./ChildItem";
 import Button from "./Button";
+import DragHandle from "./DragHandle";
 
 export function ParentItem({
     parentIndex,
@@ -15,9 +16,10 @@ export function ParentItem({
     return (
         <div
             data-testid="parent-item"
-            className="mb-4 rounded border border-gray-300 bg-gray-50 p-4"
+            className="rounded border border-gray-300 bg-gray-50 p-4"
         >
-            <div className="mb-2 flex items-center gap-2">
+            <div className="flex items-center gap-2">
+                <DragHandle data-testid="parent-drag-handle" />
                 <input
                     {...register(`parentArray.${parentIndex}.parentKey`)}
                     className="flex-1 rounded border border-gray-400 px-2 py-1"
@@ -40,7 +42,7 @@ export function ParentItem({
 
             <div
                 data-testid="children-container"
-                className="mt-4 rounded border border-gray-300 bg-white p-2"
+                className="mt-2 flex flex-col gap-2 rounded border border-gray-300 bg-white p-2"
             >
                 {currentParent?.childArray?.map((_, childIndex: number) => (
                     <ChildItem
@@ -51,14 +53,16 @@ export function ParentItem({
                         removeChild={removeChild}
                     />
                 ))}
-                <Button
-                    type="button"
-                    variant="add"
-                    onClick={() => addChild(parentIndex)}
-                >
-                    Add Child
-                </Button>
             </div>
+            <Button
+                type="button"
+                variant="add"
+                size="sm"
+                className="mt-2"
+                onClick={() => addChild(parentIndex)}
+            >
+                Add Child
+            </Button>
         </div>
     );
 }

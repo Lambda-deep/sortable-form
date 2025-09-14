@@ -28,19 +28,21 @@ export default function Index() {
                 className="rounded-lg bg-white p-5 shadow-sm"
             >
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    {parentFields.map((parentField, parentIndex) => (
-                        <ParentItem
-                            key={parentField.id}
-                            parentIndex={parentIndex}
-                            register={register}
-                            removeParent={removeParent}
-                            watchedData={watchedData}
-                            addChild={addChild}
-                            removeChild={removeChild}
-                        />
-                    ))}
+                    <div className="flex flex-col gap-4">
+                        {parentFields.map((parentField, parentIndex) => (
+                            <ParentItem
+                                key={parentField.id}
+                                parentIndex={parentIndex}
+                                register={register}
+                                removeParent={removeParent}
+                                watchedData={watchedData}
+                                addChild={addChild}
+                                removeChild={removeChild}
+                            />
+                        ))}
+                    </div>
 
-                    <div style={{ marginTop: "20px" }}>
+                    <div className="mt-5 flex gap-2">
                         <Button
                             type="button"
                             variant="add"
@@ -53,7 +55,6 @@ export default function Index() {
                             type="submit"
                             variant="submit"
                             data-testid="submit-button"
-                            className="ml-2"
                         >
                             Submit Form
                         </Button>
@@ -66,7 +67,10 @@ export default function Index() {
                 className="h-fit rounded-lg bg-white p-5 shadow-sm"
             >
                 <h3>Index Information</h3>
-                <ul data-testid="index-list" className="list-none p-0">
+                <ul
+                    data-testid="index-list"
+                    className="flex list-none flex-col gap-2 p-0"
+                >
                     {sidebarData.parentArray.map(
                         (parent: Parent, parentIndex: number) => (
                             <SidebarParentItem

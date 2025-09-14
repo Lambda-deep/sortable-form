@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "../lib/utils";
 
 export type ButtonVariant = "add" | "remove" | "submit";
 export type ButtonSize = "sm" | "md";
@@ -48,11 +49,11 @@ const Button: React.FC<ButtonProps> = ({
     const variantClasses = getVariantClasses();
     const sizeClasses = getSizeClasses();
 
-    const combinedClasses =
-        `${baseClasses} ${variantClasses} ${sizeClasses} ${className}`.trim();
-
     return (
-        <button className={combinedClasses} {...props}>
+        <button
+            className={cn(baseClasses, variantClasses, sizeClasses, className)}
+            {...props}
+        >
             {children}
         </button>
     );

@@ -1,5 +1,6 @@
 import type { ChildItemProps } from "../types";
 import Button from "./Button";
+import DragHandle from "./DragHandle";
 
 export function ChildItem({
     parentIndex,
@@ -10,8 +11,9 @@ export function ChildItem({
     return (
         <div
             data-testid="child-item"
-            className="mb-2 flex items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2"
+            className="flex items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2"
         >
+            <DragHandle data-testid="drag-handle" />
             <input
                 {...register(
                     `parentArray.${parentIndex}.childArray.${childIndex}.childKey` as const
