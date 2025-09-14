@@ -94,16 +94,24 @@ test.describe("ソート可能フォーム - 親要素", () => {
     });
 
     test("親要素の追加と削除ができる", async ({ page }) => {
-        // 初期数
+        // 初期数（フォームとサイドバー）
         let parentItems = page.locator('[data-testid="parent-item"]');
+        let sidebarParentItems = page.locator(
+            '[data-testid="sidebar"] [data-testid="sidebar-parent-item"]'
+        );
         await expect(parentItems).toHaveCount(2);
+        await expect(sidebarParentItems).toHaveCount(2);
 
         // 親要素を追加
         await page.click('button:text("Add Parent")');
 
         // 新しい数を確認（条件ベース待機）
         parentItems = page.locator('[data-testid="parent-item"]');
+        sidebarParentItems = page.locator(
+            '[data-testid="sidebar"] [data-testid="sidebar-parent-item"]'
+        );
         await expect(parentItems).toHaveCount(3, { timeout: 10000 });
+        await expect(sidebarParentItems).toHaveCount(3, { timeout: 10000 });
 
         // 親要素を削除
         await page
@@ -114,6 +122,10 @@ test.describe("ソート可能フォーム - 親要素", () => {
 
         // 削除後の数を確認（条件ベース待機）
         parentItems = page.locator('[data-testid="parent-item"]');
+        sidebarParentItems = page.locator(
+            '[data-testid="sidebar"] [data-testid="sidebar-parent-item"]'
+        );
         await expect(parentItems).toHaveCount(2, { timeout: 10000 });
+        await expect(sidebarParentItems).toHaveCount(2, { timeout: 10000 });
     });
 });

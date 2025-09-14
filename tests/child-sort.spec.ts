@@ -83,7 +83,7 @@ test.describe("ソート可能フォーム - 子要素", () => {
         expect(newSecondChildKey).toBe("child1-1");
     });
 
-    test.skip("サイドバー内で同じ親内での子要素並び替えができる", async ({
+    test("サイドバー内で同じ親内での子要素並び替えができる", async ({
         page,
     }) => {
         // 初期サイドバー子要素順序を確認
@@ -285,25 +285,42 @@ test.describe("ソート可能フォーム - 子要素", () => {
 
     test("子要素の追加と削除ができる", async ({ page }) => {
         const firstParent = page.locator('[data-testid="parent-item"]').first();
+        const firstParentSidebar = page
+            .locator(
+                '[data-testid="sidebar"] [data-testid="sidebar-parent-item"]'
+            )
+            .first();
 
-        // 初期数
+        // 初期数（フォームとサイドバー）
         let children = firstParent.locator('[data-testid="child-item"]');
+        let sidebarChildren = firstParentSidebar.locator(
+            '[data-testid="sidebar-child-item"]'
+        );
         await expect(children).toHaveCount(2);
+        await expect(sidebarChildren).toHaveCount(2);
 
         // 子要素を追加
         await firstParent.locator('button:text("Add Child")').click();
         await page.waitForTimeout(200);
 
-        // 新しい数を確認
+        // 新しい数を確認（フォームとサイドバー）
         children = firstParent.locator('[data-testid="child-item"]');
+        sidebarChildren = firstParentSidebar.locator(
+            '[data-testid="sidebar-child-item"]'
+        );
         await expect(children).toHaveCount(3);
+        await expect(sidebarChildren).toHaveCount(3);
 
         // 子要素を削除
         await children.first().locator('button:text("×")').click();
         await page.waitForTimeout(200);
 
-        // 削除後の数を確認
+        // 削除後の数を確認（フォームとサイドバー）
         children = firstParent.locator('[data-testid="child-item"]');
+        sidebarChildren = firstParentSidebar.locator(
+            '[data-testid="sidebar-child-item"]'
+        );
         await expect(children).toHaveCount(2);
+        await expect(sidebarChildren).toHaveCount(2);
     });
 });
