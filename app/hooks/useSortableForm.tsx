@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import {
     DragEndEvent,
@@ -332,12 +332,6 @@ export function useSortableForm() {
                 newChildArray,
                 { shouldValidate: true, shouldDirty: true, shouldTouch: true }
             );
-
-            // サイドバーデータを強制的に更新
-            const currentFormData = getValues();
-            setSidebarData({
-                parentArray: [...currentFormData.parentArray],
-            });
         }
 
         // 異なるParent間の移動は後のフェーズで実装
@@ -345,27 +339,6 @@ export function useSortableForm() {
             "Cross-parent child move will be implemented in next phase"
         );
     };
-
-    // サイドバー用のデータ状態
-    const [sidebarData, setSidebarData] = useState<Data>(() => ({
-        parentArray: [...initialData.parentArray],
-    }));
-
-    // フォームデータとサイドバーデータの同期（usePrevious pattern）
-    const prevWatchedDataRef = useRef<string>("");
-
-    useEffect(() => {
-        const currentFormDataString = JSON.stringify(watchedData.parentArray);
-
-        if (prevWatchedDataRef.current !== currentFormDataString) {
-            setSidebarData({
-                parentArray: JSON.parse(
-                    JSON.stringify(watchedData.parentArray)
-                ),
-            });
-            prevWatchedDataRef.current = currentFormDataString;
-        }
-    }, [watchedData.parentArray]);
 
     const addParent = () => {
         appendParent({
@@ -483,10 +456,11 @@ export function useSortableForm() {
             childKey: `child${parentIndex}-${currentParent.childArray.length + 1}`,
             childValue: `Child ${parentIndex}-${currentParent.childArray.length + 1}`,
         };
-        setValue(`parentArray.${parentIndex}.childArray`, [
-            ...currentParent.childArray,
-            newChild,
-        ]);
+        setValue(
+            `parentArray.${parentIndex}.childArray`,
+            [...currentParent.childArray, newChild],
+            { shouldValidate: true, shouldDirty: true, shouldTouch: true }
+        );
     };
 
     const removeChild = (parentIndex: number, childIndex: number) => {
@@ -494,7 +468,11 @@ export function useSortableForm() {
         const newChildArray = currentParent.childArray.filter(
             (_, index) => index !== childIndex
         );
-        setValue(`parentArray.${parentIndex}.childArray`, newChildArray);
+        setValue(`parentArray.${parentIndex}.childArray`, newChildArray, {
+            shouldValidate: true,
+            shouldDirty: true,
+            shouldTouch: true,
+        });
     };
 
     const onSubmit = (data: Data) => {
@@ -507,7 +485,6 @@ export function useSortableForm() {
         handleSubmit,
         parentFields,
         watchedData,
-        sidebarData,
         addParent,
         addChild,
         removeChild,

@@ -20,7 +20,6 @@ export default function Index() {
         handleSubmit,
         parentFields,
         watchedData,
-        sidebarData,
         addParent,
         addChild,
         removeChild,
@@ -190,7 +189,7 @@ export default function Index() {
                                 data-testid="index-list"
                                 className="flex list-none flex-col gap-2 p-0"
                             >
-                                {sidebarData.parentArray.map(
+                                {watchedData.parentArray.map(
                                     (parent: Parent, parentIndex: number) => (
                                         <SidebarParentItem
                                             key={
