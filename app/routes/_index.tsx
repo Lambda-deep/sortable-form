@@ -11,6 +11,7 @@ import { DragOverlayChildItem } from "../components/DragOverlayChildItem";
 import { ClientOnly } from "../components/ClientOnly";
 import Button from "../components/Button";
 import type { Parent } from "../types";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 
 export default function Index() {
     const {
@@ -48,6 +49,7 @@ export default function Index() {
         >
             <DndContext
                 sensors={sensors}
+                modifiers={[restrictToVerticalAxis]}
                 onDragStart={dragHandlers.onDragStart}
                 onDragOver={dragHandlers.onDragOver}
                 onDragEnd={dragHandlers.onDragEnd}
