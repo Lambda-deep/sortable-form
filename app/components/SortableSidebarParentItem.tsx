@@ -4,17 +4,17 @@ import {
     SortableContext,
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import type { Child, SortableSidebarParentItemProps } from "../types";
-import { SortableSidebarChildItem } from "./SortableSidebarChildItem";
+import type { Child, SidebarParentItemProps } from "../types";
+import { SidebarChildItem } from "./SortableSidebarChildItem";
 
-export function SortableSidebarParentItem({
+export function SidebarParentItem({
     parentField,
     parent,
     parentIndex,
     dragSource,
     getSidebarChildId = (parentIndex, childIndex) =>
         `sidebar-${parentIndex}-${childIndex}`,
-}: SortableSidebarParentItemProps) {
+}: SidebarParentItemProps) {
     const { attributes, listeners, setNodeRef, transform, transition } =
         useSortable({ id: parentField.id });
 
@@ -62,7 +62,7 @@ export function SortableSidebarParentItem({
                     >
                         {parent.childArray.map(
                             (child: Child, childIndex: number) => (
-                                <SortableSidebarChildItem
+                                <SidebarChildItem
                                     key={`sidebar-child-${parentIndex}-${child.childKey}`}
                                     id={getSidebarChildId(
                                         parentIndex,
@@ -85,7 +85,7 @@ export function SortableSidebarParentItem({
                 >
                     {parent.childArray.map(
                         (child: Child, childIndex: number) => (
-                            <SortableSidebarChildItem
+                            <SidebarChildItem
                                 key={`sidebar-child-${parentIndex}-${child.childKey}`}
                                 id={getSidebarChildId(parentIndex, childIndex)}
                                 child={child}

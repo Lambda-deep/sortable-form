@@ -1,8 +1,8 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { SortableChildItemProps } from "../types";
+import type { ChildItemProps } from "../types";
 
-export function SortableChildItem({
+export function ChildItem({
     id,
     child,
     parentIndex,
@@ -10,7 +10,7 @@ export function SortableChildItem({
     register,
     removeChild,
     dragSource,
-}: SortableChildItemProps) {
+}: ChildItemProps) {
     const { attributes, listeners, setNodeRef, transform, transition } =
         useSortable({ id });
 

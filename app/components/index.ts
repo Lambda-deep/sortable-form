@@ -1,4 +1,4 @@
 export { ParentItem as SortableParentItem } from "./ParentItem";
-export { SortableChildItem } from "./SortableChildItem";
-export { SortableSidebarParentItem } from "./SortableSidebarParentItem";
-export { SortableSidebarChildItem } from "./SortableSidebarChildItem";
+export { ChildItem as SortableChildItem } from "./SortableChildItem";
+export { SidebarParentItem as SortableSidebarParentItem } from "./SortableSidebarParentItem";
+export { SidebarChildItem as SortableSidebarChildItem } from "./SortableSidebarChildItem";

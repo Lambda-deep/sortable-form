@@ -5,7 +5,7 @@ import {
 } from "@dnd-kit/sortable";
 import { useSortableForm } from "../hooks/useSortableForm";
 import { ParentItem } from "../components/ParentItem";
-import { SortableSidebarParentItem } from "../components/SortableSidebarParentItem";
+import { SidebarParentItem } from "../components/SortableSidebarParentItem";
 import type { Parent } from "../types";
 
 export default function Index() {
@@ -141,7 +141,7 @@ export default function Index() {
                             >
                                 {watchedData.parentArray.map(
                                     (parent: Parent, parentIndex: number) => (
-                                        <SortableSidebarParentItem
+                                        <SidebarParentItem
                                             key={getSidebarParentId(
                                                 parentIndex
                                             )}
@@ -167,7 +167,7 @@ export default function Index() {
                         <ul data-testid="index-list" className="list-none p-0">
                             {watchedData.parentArray.map(
                                 (parent: Parent, parentIndex: number) => (
-                                    <SortableSidebarParentItem
+                                    <SidebarParentItem
                                         key={getSidebarParentId(parentIndex)}
                                         parentField={{
                                             ...parentFields[parentIndex],

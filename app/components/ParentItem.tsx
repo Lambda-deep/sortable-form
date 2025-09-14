@@ -6,7 +6,7 @@ import {
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import type { Data, Child, ParentItemProps } from "../types";
-import { SortableChildItem } from "./SortableChildItem";
+import { ChildItem } from "./SortableChildItem";
 
 export function ParentItem({
     parentField,
@@ -131,7 +131,7 @@ export function ParentItem({
                     >
                         {watchedData.parentArray[parentIndex]?.childArray.map(
                             (child: Child, childIndex: number) => (
-                                <SortableChildItem
+                                <ChildItem
                                     key={getChildId(parentIndex, childIndex)}
                                     id={getChildId(parentIndex, childIndex)}
                                     child={child}
@@ -149,7 +149,7 @@ export function ParentItem({
                     <div>
                         {watchedData.parentArray[parentIndex]?.childArray.map(
                             (child: Child, childIndex: number) => (
-                                <SortableChildItem
+                                <ChildItem
                                     key={getChildId(parentIndex, childIndex)}
                                     id={getChildId(parentIndex, childIndex)}
                                     child={child}

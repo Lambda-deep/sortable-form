@@ -1,14 +1,14 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { SortableSidebarChildItemProps } from "../types";
+import type { SidebarChildItemProps } from "../types";
 
-export function SortableSidebarChildItem({
+export function SidebarChildItem({
     id,
     child,
     parentIndex,
     childIndex,
     dragSource,
-}: SortableSidebarChildItemProps) {
+}: SidebarChildItemProps) {
     const { attributes, listeners, setNodeRef, transform, transition } =
         useSortable({ id });
 

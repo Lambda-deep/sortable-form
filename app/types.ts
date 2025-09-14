@@ -26,7 +26,7 @@ export type ParentItemProps = {
     getChildId?: (parentIndex: number, childIndex: number) => string;
 };
 
-export type SortableChildItemProps = {
+export type ChildItemProps = {
     id: string;
     child: Child;
     parentIndex: number;
@@ -36,7 +36,7 @@ export type SortableChildItemProps = {
     dragSource: "form" | "sidebar" | null;
 };
 
-export type SortableSidebarParentItemProps = {
+export type SidebarParentItemProps = {
     parentField: any;
     parent: Parent;
     parentIndex: number;
@@ -44,7 +44,7 @@ export type SortableSidebarParentItemProps = {
     getSidebarChildId?: (parentIndex: number, childIndex: number) => string;
 };
 
-export type SortableSidebarChildItemProps = {
+export type SidebarChildItemProps = {
     id: string;
     child: Child;
     parentIndex: number;
