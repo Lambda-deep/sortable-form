@@ -14,48 +14,113 @@ export function SidebarParentItem({
     dragSource,
     getSidebarChildId = (parentIndex, childIndex) =>
         `sidebar-${parentIndex}-${childIndex}`,
+    dragOverId,
+    dragOverPosition,
 }: SidebarParentItemProps) {
-    const { attributes, listeners, setNodeRef, transform, transition } =
-        useSortable({ id: parentField.id });
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+        isOver,
+    } = useSortable({
+        id: parentField.id,
+        animateLayoutChanges: () => false, // アニメーションを無効にしてスナップを防ぐ
+        disabled: false, // ドラッグを有効化
+        transition: null, // トランジションを完全に無効化
+    });
+
+    // ドロップインジケーターの条件を正確に判定
+    const shouldShowDropIndicator =
+        dragOverId === parentField.id && !isDragging;
+    const showBeforeIndicator =
+        shouldShowDropIndicator && dragOverPosition === "before";
+    const showAfterIndicator =
+        shouldShowDropIndicator && dragOverPosition === "after";
 
     const style = {
+        // ドラッグ中はカーソルに追従させる
         transform: CSS.Transform.toString(transform),
-        transition,
+        transition: "none", // 常にトランジションを無効
+        // ドラッグ中は要素を見えるようにし、zIndexで前面に表示
+        ...(isDragging && {
+            zIndex: 1000,
+            opacity: 0.9,
+            boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+        }),
     };
 
     return (
-        <li
-            ref={setNodeRef}
-            style={style}
-            data-testid="index-item"
-            data-sortable-id={parentField.id}
-            data-drag-source="sidebar"
-            className="p-2 mb-1 bg-gray-100 border border-gray-400 rounded text-sm"
-        >
-            <div
-                className="flex items-center gap-2 cursor-move"
-                {...attributes}
-                {...listeners}
+        <>
+            {/* Before ドロップインジケーター */}
+            {showBeforeIndicator && (
+                <div
+                    style={{
+                        height: "3px",
+                        backgroundColor: "#007bff",
+                        marginBottom: "4px",
+                        borderRadius: "1px",
+                    }}
+                />
+            )}
+
+            <li
+                ref={setNodeRef}
+                style={style}
+                data-testid="index-item"
+                data-sortable-id={parentField.id}
+                data-drag-source="sidebar"
+                className="p-2 mb-1 bg-gray-100 border border-gray-400 rounded text-sm"
             >
-                <span
-                    data-testid="sidebar-parent-drag-handle"
-                    className="cursor-move text-gray-600 text-base"
+                <div
+                    className="flex items-center gap-2 cursor-move"
+                    {...attributes}
+                    {...listeners}
                 >
-                    ⋮⋮
-                </span>
-                <strong>
-                    [{parentIndex}] {parent.parentKey}
-                </strong>
-            </div>
-            {dragSource !== "form" && (
-                <SortableContext
-                    items={
-                        parent.childArray?.map((_, childIndex) =>
-                            getSidebarChildId(parentIndex, childIndex)
-                        ) || []
-                    }
-                    strategy={verticalListSortingStrategy}
-                >
+                    <span
+                        data-testid="sidebar-parent-drag-handle"
+                        className="cursor-move text-gray-600 text-base"
+                    >
+                        ⋮⋮
+                    </span>
+                    <strong>
+                        [{parentIndex}] {parent.parentKey}
+                    </strong>
+                </div>
+                {dragSource !== "form" && (
+                    <SortableContext
+                        items={
+                            parent.childArray?.map((_, childIndex) =>
+                                getSidebarChildId(parentIndex, childIndex)
+                            ) || []
+                        }
+                        strategy={verticalListSortingStrategy}
+                    >
+                        <div
+                            data-testid="nested-index"
+                            className="ml-5 mt-1 text-xs text-gray-600"
+                        >
+                            {parent.childArray.map(
+                                (child: Child, childIndex: number) => (
+                                    <SidebarChildItem
+                                        key={`sidebar-child-${parentIndex}-${child.childKey}`}
+                                        id={getSidebarChildId(
+                                            parentIndex,
+                                            childIndex
+                                        )}
+                                        child={child}
+                                        parentIndex={parentIndex}
+                                        childIndex={childIndex}
+                                        dragSource={dragSource}
+                                    />
+                                )
+                            )}
+                        </div>
+                    </SortableContext>
+                )}
+                {dragSource === "form" && (
                     <div
                         data-testid="nested-index"
                         className="ml-5 mt-1 text-xs text-gray-600"
@@ -76,27 +141,20 @@ export function SidebarParentItem({
                             )
                         )}
                     </div>
-                </SortableContext>
-            )}
-            {dragSource === "form" && (
+                )}
+            </li>
+
+            {/* After ドロップインジケーター */}
+            {showAfterIndicator && (
                 <div
-                    data-testid="nested-index"
-                    className="ml-5 mt-1 text-xs text-gray-600"
-                >
-                    {parent.childArray.map(
-                        (child: Child, childIndex: number) => (
-                            <SidebarChildItem
-                                key={`sidebar-child-${parentIndex}-${child.childKey}`}
-                                id={getSidebarChildId(parentIndex, childIndex)}
-                                child={child}
-                                parentIndex={parentIndex}
-                                childIndex={childIndex}
-                                dragSource={dragSource}
-                            />
-                        )
-                    )}
-                </div>
+                    style={{
+                        height: "3px",
+                        backgroundColor: "#007bff",
+                        marginTop: "4px",
+                        borderRadius: "1px",
+                    }}
+                />
             )}
-        </li>
+        </>
     );
 }

@@ -1,4 +1,4 @@
-import { DndContext, DragOverlay } from "@dnd-kit/core";
+import { DndContext } from "@dnd-kit/core";
 import {
     SortableContext,
     verticalListSortingStrategy,
@@ -14,12 +14,16 @@ export default function Index() {
         handleSubmit,
         parentFields,
         watchedData,
+        sidebarData,
         activeId,
         dragSource,
+        dragOverId,
+        dragOverPosition,
         sensors,
         customCollisionDetection,
         handleDragStart,
         handleDragEnd,
+        handleSidebarDragEnd,
         addParent,
         addChild,
         removeChild,
@@ -31,21 +35,36 @@ export default function Index() {
         getSidebarChildId,
     } = useSortableForm();
 
+    // ドラッグソースに基づいて適切なハンドラーを選択
+    const currentDragHandler =
+        dragSource === "sidebar" ? handleSidebarDragEnd : handleDragEnd;
+
+    // カスタムmodifier - ドラッグ中の自動並び替えを無効にする
+    const noAutoSortModifier = () => {
+        return {
+            x: 0,
+            y: 0,
+        };
+    };
+
     return (
         <DndContext
             id="sortable-form-dnd-context"
             sensors={sensors}
             collisionDetection={customCollisionDetection}
             onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
+            onDragEnd={currentDragHandler}
+            autoScroll={true}
         >
             <div
                 data-testid="container"
                 className="max-w-6xl mx-auto grid grid-cols-[1fr_300px] gap-5"
+                style={{ overflow: "visible" }} // ドラッグ要素が範囲外にも表示できるように
             >
                 <div
                     data-testid="form-section"
                     className="bg-white p-5 rounded-lg shadow-sm"
+                    style={{ overflow: "visible" }} // ドラッグ要素が範囲外にも表示できるように
                 >
                     <h2>Sortable Form</h2>
                     <form onSubmit={handleSubmit(onSubmit)}>
@@ -73,6 +92,8 @@ export default function Index() {
                                             removeChild={removeChild}
                                             dragSource={dragSource}
                                             getChildId={getChildId}
+                                            dragOverId={dragOverId}
+                                            dragOverPosition={dragOverPosition}
                                         />
                                     )
                                 )}
@@ -96,6 +117,8 @@ export default function Index() {
                                             removeChild={removeChild}
                                             dragSource={dragSource}
                                             getChildId={getChildId}
+                                            dragOverId={dragOverId}
+                                            dragOverPosition={dragOverPosition}
                                         />
                                     )
                                 )}
@@ -125,12 +148,13 @@ export default function Index() {
                 <div
                     data-testid="sidebar"
                     className="bg-white p-5 rounded-lg shadow-sm h-fit"
+                    style={{ overflow: "visible" }} // ドラッグ要素が範囲外にも表示できるように
                 >
                     <h3>Index Information</h3>
                     {dragSource !== "form" && (
                         <SortableContext
                             id="sidebar-sortable-context"
-                            items={parentFields.map((_, index) =>
+                            items={sidebarData.parentArray.map((_, index) =>
                                 getSidebarParentId(index)
                             )}
                             strategy={verticalListSortingStrategy}
@@ -139,14 +163,13 @@ export default function Index() {
                                 data-testid="index-list"
                                 className="list-none p-0"
                             >
-                                {watchedData.parentArray.map(
+                                {sidebarData.parentArray.map(
                                     (parent: Parent, parentIndex: number) => (
                                         <SidebarParentItem
                                             key={getSidebarParentId(
                                                 parentIndex
                                             )}
                                             parentField={{
-                                                ...parentFields[parentIndex],
                                                 id: getSidebarParentId(
                                                     parentIndex
                                                 ),
@@ -157,6 +180,8 @@ export default function Index() {
                                             getSidebarChildId={
                                                 getSidebarChildId
                                             }
+                                            dragOverId={dragOverId}
+                                            dragOverPosition={dragOverPosition}
                                         />
                                     )
                                 )}
@@ -165,18 +190,19 @@ export default function Index() {
                     )}
                     {dragSource === "form" && (
                         <ul data-testid="index-list" className="list-none p-0">
-                            {watchedData.parentArray.map(
+                            {sidebarData.parentArray.map(
                                 (parent: Parent, parentIndex: number) => (
                                     <SidebarParentItem
                                         key={getSidebarParentId(parentIndex)}
                                         parentField={{
-                                            ...parentFields[parentIndex],
                                             id: getSidebarParentId(parentIndex),
                                         }}
                                         parent={parent}
                                         parentIndex={parentIndex}
                                         dragSource={dragSource}
                                         getSidebarChildId={getSidebarChildId}
+                                        dragOverId={dragOverId}
+                                        dragOverPosition={dragOverPosition}
                                     />
                                 )
                             )}

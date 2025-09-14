@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import {
     useSensors,
@@ -58,6 +58,58 @@ export function useSortableForm() {
     const [dragSource, setDragSource] = useState<"form" | "sidebar" | null>(
         null
     );
+    const [dragOverId, setDragOverId] = useState<string | null>(null);
+    const [dragOverPosition, setDragOverPosition] = useState<
+        "before" | "after" | null
+    >(null);
+
+    // サイドバー専用の独立した状態
+    const [sidebarData, setSidebarData] = useState<Data>(() => ({
+        parentArray: [...initialData.parentArray],
+    }));
+
+    // フォームデータとサイドバーデータの双方向同期
+    const [lastFormData, setLastFormData] = useState<Data>(initialData);
+    const [lastSidebarData, setLastSidebarData] = useState<Data>(initialData);
+    const [isSyncing, setIsSyncing] = useState(false);
+
+    // フォーム→サイドバーの同期（フォームが変更されたとき）
+    useEffect(() => {
+        if (
+            !isSyncing &&
+            JSON.stringify(watchedData) !== JSON.stringify(lastFormData)
+        ) {
+            setIsSyncing(true);
+            const newData = {
+                parentArray: [...watchedData.parentArray],
+            };
+            setSidebarData(newData);
+            setLastFormData(watchedData);
+            setLastSidebarData(newData);
+            // 次のティックでフラグをリセット
+            setTimeout(() => setIsSyncing(false), 0);
+        }
+    }, [watchedData, lastFormData, isSyncing]);
+
+    // サイドバー→フォームの同期（サイドバーが変更されたとき）
+    useEffect(() => {
+        if (
+            !isSyncing &&
+            JSON.stringify(sidebarData) !== JSON.stringify(lastSidebarData)
+        ) {
+            setIsSyncing(true);
+            const newFormData = [...sidebarData.parentArray];
+            setValue("parentArray", newFormData, {
+                shouldDirty: false,
+                shouldTouch: false,
+                shouldValidate: false,
+            });
+            setLastSidebarData(sidebarData);
+            setLastFormData(sidebarData);
+            // 次のティックでフラグをリセット
+            setTimeout(() => setIsSyncing(false), 0);
+        }
+    }, [sidebarData, lastSidebarData, isSyncing, setValue]);
 
     // インデックスベースの安定したIDを生成
     const getParentId = (index: number) => `parent-${index}`;
@@ -71,39 +123,75 @@ export function useSortableForm() {
     const isSidebarId = (id: string) => id.startsWith("sidebar-");
 
     const sensors = useSensors(
-        useSensor(PointerSensor),
+        useSensor(PointerSensor, {
+            // activationConstraintを削除して自由なドラッグを可能に
+        }),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
         })
     );
 
-    // カスタム衝突検出：親要素同士の検出を優先
+    // カスタム衝突検出：正確なドロップ位置を計算
     const customCollisionDetection = (args: any) => {
+        const {
+            active,
+            droppableRects,
+            droppableContainers,
+            pointerCoordinates,
+        } = args;
+
         // 子要素のIDパターン: 数字-数字
         const childIdPattern = /^\d+-\d+$/;
         const isDraggingParent =
-            typeof args.active.id === "string" &&
-            !childIdPattern.test(args.active.id);
+            typeof active.id === "string" && !childIdPattern.test(active.id);
 
         // 親要素のドラッグ時は親要素のみをターゲットにする
         if (isDraggingParent) {
             const parentRects = new Map();
-            for (const [id, rect] of args.droppableRects) {
+            for (const [id, rect] of droppableRects) {
                 if (typeof id === "string" && !childIdPattern.test(id)) {
                     parentRects.set(id, rect);
                 }
             }
 
             if (parentRects.size > 0) {
-                return closestCenter({
+                const collisions = closestCenter({
                     ...args,
                     droppableRects: parentRects,
                 });
+
+                // ドロップ位置（before/after）を計算
+                if (collisions && collisions.length > 0 && pointerCoordinates) {
+                    const collision = collisions[0];
+                    const targetRect = parentRects.get(collision.id);
+                    if (targetRect) {
+                        const centerY = targetRect.top + targetRect.height / 2;
+                        const position =
+                            pointerCoordinates.y < centerY ? "before" : "after";
+                        setDragOverId(String(collision.id));
+                        setDragOverPosition(position);
+                    }
+                }
+
+                return collisions;
             }
         }
 
         // デフォルトの衝突検出
-        return closestCenter(args);
+        const collisions = closestCenter(args);
+        if (collisions && collisions.length > 0 && pointerCoordinates) {
+            const collision = collisions[0];
+            const targetRect = droppableRects.get(collision.id);
+            if (targetRect) {
+                const centerY = targetRect.top + targetRect.height / 2;
+                const position =
+                    pointerCoordinates.y < centerY ? "before" : "after";
+                setDragOverId(String(collision.id));
+                setDragOverPosition(position);
+            }
+        }
+
+        return collisions;
     };
 
     function handleDragStart(event: DragStartEvent) {
@@ -149,6 +237,12 @@ export function useSortableForm() {
 
     function handleDragEnd(event: DragEndEvent) {
         const { active, over } = event;
+
+        // ドラッグ終了時にドロップ位置をリセット
+        setActiveId(null);
+        setDragOverId(null);
+        setDragOverPosition(null);
+
         console.log("Drag end:", { activeId: active.id, overId: over?.id });
         console.log(
             "Active ID type:",
@@ -379,6 +473,119 @@ export function useSortableForm() {
         setDragSource(null);
     }
 
+    // サイドバー専用のドラッグハンドラー
+    function handleSidebarDragEnd(event: DragEndEvent) {
+        const { active, over } = event;
+
+        // ドラッグ終了時にドロップ位置をリセット
+        setActiveId(null);
+        setDragOverId(null);
+        setDragOverPosition(null);
+
+        console.log("Sidebar drag end:", {
+            activeId: active.id,
+            overId: over?.id,
+        });
+
+        if (active.id !== over?.id) {
+            if (typeof active.id === "string" && typeof over?.id === "string") {
+                const childIdPattern = /^\d+-\d+$/;
+                const sidebarChildIdPattern = /^sidebar-\d+-\d+$/;
+                const isActiveChild =
+                    childIdPattern.test(active.id) ||
+                    sidebarChildIdPattern.test(active.id);
+                const isOverChild =
+                    childIdPattern.test(over.id) ||
+                    sidebarChildIdPattern.test(over.id);
+
+                if (!isActiveChild && !isOverChild) {
+                    // Parent item drag in sidebar
+                    const oldIndex = parseInt(
+                        active.id.replace("sidebar-parent-", "")
+                    );
+                    const newIndex = parseInt(
+                        over.id.replace("sidebar-parent-", "")
+                    );
+
+                    if (
+                        oldIndex !== -1 &&
+                        newIndex !== -1 &&
+                        oldIndex < sidebarData.parentArray.length &&
+                        newIndex < sidebarData.parentArray.length
+                    ) {
+                        const newParentArray = arrayMove(
+                            sidebarData.parentArray,
+                            oldIndex,
+                            newIndex
+                        );
+                        setSidebarData({ parentArray: newParentArray });
+                    }
+                } else if (isActiveChild && isOverChild) {
+                    // Child item drag in sidebar
+                    const activeParentIndex = parseInt(
+                        active.id.replace("sidebar-", "").split("-")[0]
+                    );
+                    const activeChildIndex = parseInt(
+                        active.id.replace("sidebar-", "").split("-")[1]
+                    );
+                    const overParentIndex = parseInt(
+                        over.id.replace("sidebar-", "").split("-")[0]
+                    );
+                    const overChildIndex = parseInt(
+                        over.id.replace("sidebar-", "").split("-")[1]
+                    );
+
+                    const newParentArray = [...sidebarData.parentArray];
+
+                    if (activeParentIndex === overParentIndex) {
+                        // Same parent reordering in sidebar
+                        const newChildArray = arrayMove(
+                            newParentArray[activeParentIndex].childArray,
+                            activeChildIndex,
+                            overChildIndex
+                        );
+                        newParentArray[activeParentIndex] = {
+                            ...newParentArray[activeParentIndex],
+                            childArray: newChildArray,
+                        };
+                    } else {
+                        // Different parent reordering in sidebar
+                        const childToMove = {
+                            ...newParentArray[activeParentIndex].childArray[
+                                activeChildIndex
+                            ],
+                        };
+
+                        // Remove child from source parent
+                        const sourceChildArray = [
+                            ...newParentArray[activeParentIndex].childArray,
+                        ];
+                        sourceChildArray.splice(activeChildIndex, 1);
+                        newParentArray[activeParentIndex] = {
+                            ...newParentArray[activeParentIndex],
+                            childArray: sourceChildArray,
+                        };
+
+                        // Add child to target parent
+                        const targetChildArray = [
+                            ...newParentArray[overParentIndex].childArray,
+                        ];
+                        targetChildArray.splice(overChildIndex, 0, childToMove);
+                        newParentArray[overParentIndex] = {
+                            ...newParentArray[overParentIndex],
+                            childArray: targetChildArray,
+                        };
+                    }
+
+                    setSidebarData({ parentArray: newParentArray });
+                }
+            }
+        }
+
+        setActiveId(null);
+        setDragSource(null);
+    }
+
     const addParent = () => {
         appendParent({
             parentKey: `parent${Date.now()}`,
@@ -436,14 +643,18 @@ export function useSortableForm() {
 
         // State
         watchedData,
+        sidebarData,
         activeId,
         dragSource,
+        dragOverId,
+        dragOverPosition,
 
         // Drag & Drop
         sensors,
         customCollisionDetection,
         handleDragStart,
         handleDragEnd,
+        handleSidebarDragEnd,
 
         // Helper functions
         addParent,

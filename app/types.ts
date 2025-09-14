@@ -24,6 +24,8 @@ export type ParentItemProps = {
     removeChild: (parentIndex: number, childIndex: number) => void;
     dragSource: "form" | "sidebar" | null;
     getChildId?: (parentIndex: number, childIndex: number) => string;
+    dragOverId?: string | null;
+    dragOverPosition?: "before" | "after" | null;
 };
 
 export type ChildItemProps = {
@@ -34,6 +36,8 @@ export type ChildItemProps = {
     register: any;
     removeChild: (parentIndex: number, childIndex: number) => void;
     dragSource: "form" | "sidebar" | null;
+    dragOverId?: string | null;
+    dragOverPosition?: "before" | "after" | null;
 };
 
 export type SidebarParentItemProps = {
@@ -42,6 +46,8 @@ export type SidebarParentItemProps = {
     parentIndex: number;
     dragSource: "form" | "sidebar" | null;
     getSidebarChildId?: (parentIndex: number, childIndex: number) => string;
+    dragOverId?: string | null;
+    dragOverPosition?: "before" | "after" | null;
 };
 
 export type SidebarChildItemProps = {
@@ -50,4 +56,6 @@ export type SidebarChildItemProps = {
     parentIndex: number;
     childIndex: number;
     dragSource: "form" | "sidebar" | null;
+    dragOverId?: string | null;
+    dragOverPosition?: "before" | "after" | null;
 };
