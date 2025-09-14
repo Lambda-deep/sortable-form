@@ -1,6 +1,7 @@
 import { forwardRef } from "react";
 import type { Parent } from "../types";
 import { ParentItemView } from "./ParentItemView";
+import { ChildItemView } from "./ChildItemView";
 
 interface DragOverlayParentItemProps {
     parent: Parent;
@@ -20,26 +21,12 @@ export const DragOverlayParentItem = forwardRef<
             className="z-50"
         >
             {parent.childArray?.map((child, childIndex) => (
-                <div
+                <ChildItemView
                     key={childIndex}
-                    className="mb-2 flex items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2 shadow-sm"
-                >
-                    <div className="h-4 w-4" /> {/* DragHandle placeholder */}
-                    <input
-                        value={child.childKey}
-                        readOnly
-                        className="flex-1 rounded-sm border border-gray-400 px-1 py-1 text-sm"
-                        placeholder="Child Key"
-                    />
-                    <input
-                        value={child.childValue}
-                        readOnly
-                        className="flex-1 rounded-sm border border-gray-400 px-1 py-1 text-sm"
-                        placeholder="Child Value"
-                    />
-                    <div className="px-2 py-1 text-sm">×</div>{" "}
-                    {/* Button placeholder */}
-                </div>
+                    child={child}
+                    isReadOnly={true}
+                    style={{ opacity: 0.8 }}
+                />
             ))}
         </ParentItemView>
     );
