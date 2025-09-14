@@ -10,7 +10,7 @@ import {
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates, arrayMove } from "@dnd-kit/sortable";
 import { closestCenter } from "@dnd-kit/core";
-import type { Data, Parent, Child } from "../types";
+import type { Data, Child } from "../types";
 
 const initialData: Data = {
     parentArray: [
@@ -133,12 +133,7 @@ export function useSortableForm() {
 
     // カスタム衝突検出：正確なドロップ位置を計算
     const customCollisionDetection = (args: any) => {
-        const {
-            active,
-            droppableRects,
-            droppableContainers,
-            pointerCoordinates,
-        } = args;
+        const { active, droppableRects, pointerCoordinates } = args;
 
         // 子要素のIDパターン: 数字-数字
         const childIdPattern = /^\d+-\d+$/;

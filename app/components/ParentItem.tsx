@@ -5,7 +5,7 @@ import {
     SortableContext,
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import type { Data, Child, ParentItemProps } from "../types";
+import type { Child, ParentItemProps } from "../types";
 import { ChildItem } from "./ChildItem";
 
 export function ParentItem({
@@ -21,20 +21,13 @@ export function ParentItem({
     dragOverId,
     dragOverPosition,
 }: ParentItemProps) {
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging,
-        isOver,
-    } = useSortable({
-        id: parentField.id,
-        animateLayoutChanges: () => false, // アニメーションを無効にしてスナップを防ぐ
-        disabled: false, // ドラッグを有効化
-        transition: null, // トランジションを完全に無効化
-    });
+    const { attributes, listeners, setNodeRef, transform, isDragging } =
+        useSortable({
+            id: parentField.id,
+            animateLayoutChanges: () => false, // アニメーションを無効にしてスナップを防ぐ
+            disabled: false, // ドラッグを有効化
+            transition: null, // トランジションを完全に無効化
+        });
     const elementRef = useRef<HTMLDivElement>(null);
     const [originalSize, setOriginalSize] = useState<{
         width: number;
@@ -85,17 +78,6 @@ export function ParentItem({
             opacity: 0.9,
             boxShadow: "0 8px 16px rgba(0,0,0,0.2)",
         }),
-    };
-
-    // プレースホルダーのスタイル（ドラッグ中の空白用）
-    const placeholderStyle = {
-        ...(isDragging &&
-            originalSize && {
-                width: `${originalSize.width}px`,
-                height: `${originalSize.height}px`,
-                visibility: "hidden" as const,
-                pointerEvents: "none" as const,
-            }),
     };
 
     // refを結合する
@@ -171,7 +153,7 @@ export function ParentItem({
                             items={
                                 watchedData.parentArray[
                                     parentIndex
-                                ]?.childArray?.map((child, childIndex) =>
+                                ]?.childArray?.map((_, childIndex) =>
                                     getChildId(parentIndex, childIndex)
                                 ) || []
                             }

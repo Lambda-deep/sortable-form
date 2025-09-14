@@ -15,7 +15,6 @@ export default function Index() {
         parentFields,
         watchedData,
         sidebarData,
-        activeId,
         dragSource,
         dragOverId,
         dragOverPosition,
@@ -38,14 +37,6 @@ export default function Index() {
     // ドラッグソースに基づいて適切なハンドラーを選択
     const currentDragHandler =
         dragSource === "sidebar" ? handleSidebarDragEnd : handleDragEnd;
-
-    // カスタムmodifier - ドラッグ中の自動並び替えを無効にする
-    const noAutoSortModifier = () => {
-        return {
-            x: 0,
-            y: 0,
-        };
-    };
 
     return (
         <DndContext

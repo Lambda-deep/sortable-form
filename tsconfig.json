@@ -13,7 +13,9 @@
         "noEmit": true,
         "jsx": "react-jsx",
         "target": "ES2022",
-        "module": "ESNext"
+        "module": "ESNext",
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
     },
     "include": ["app/**/*", "vite.config.ts"]
 }

@@ -17,20 +17,13 @@ export function SidebarParentItem({
     dragOverId,
     dragOverPosition,
 }: SidebarParentItemProps) {
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging,
-        isOver,
-    } = useSortable({
-        id: parentField.id,
-        animateLayoutChanges: () => false, // アニメーションを無効にしてスナップを防ぐ
-        disabled: false, // ドラッグを有効化
-        transition: null, // トランジションを完全に無効化
-    });
+    const { attributes, listeners, setNodeRef, transform, isDragging } =
+        useSortable({
+            id: parentField.id,
+            animateLayoutChanges: () => false, // アニメーションを無効にしてスナップを防ぐ
+            disabled: false, // ドラッグを有効化
+            transition: null, // トランジションを完全に無効化
+        });
 
     // ドロップインジケーターの条件を正確に判定
     const shouldShowDropIndicator =

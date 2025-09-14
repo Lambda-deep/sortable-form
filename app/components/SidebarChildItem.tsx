@@ -7,22 +7,14 @@ export function SidebarChildItem({
     child,
     parentIndex,
     childIndex,
-    dragSource,
 }: SidebarChildItemProps) {
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging,
-        isOver,
-    } = useSortable({
-        id,
-        animateLayoutChanges: () => false, // アニメーションを無効にしてスナップを防ぐ
-        disabled: false, // ドラッグを有効化
-        transition: null, // トランジションを完全に無効化
-    });
+    const { attributes, listeners, setNodeRef, transform, isDragging, isOver } =
+        useSortable({
+            id,
+            animateLayoutChanges: () => false, // アニメーションを無効にしてスナップを防ぐ
+            disabled: false, // ドラッグを有効化
+            transition: null, // トランジションを完全に無効化
+        });
 
     const style = {
         // ドラッグ中はカーソルに追従させる
