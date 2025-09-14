@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import Sortable from "sortablejs";
 import { useSortableForm } from "../hooks/useSortableForm";
-import { SortableParentItem } from "../components/SortableParentItem";
-import { SortableSidebarParentItem } from "../components/SortableSidebarParentItem";
+import { ParentItem } from "../components/ParentItem";
+import { SidebarParentItem } from "../components/SidebarParentItem";
 import Button from "../components/Button";
 import type { Parent } from "../types";
 
@@ -107,7 +107,7 @@ export default function Index() {
                         className="flex flex-col gap-4"
                     >
                         {parentFields.map((parentField, parentIndex) => (
-                            <SortableParentItem
+                            <ParentItem
                                 key={parentField.id}
                                 parentIndex={parentIndex}
                                 register={register}
@@ -156,7 +156,7 @@ export default function Index() {
                 >
                     {sidebarData.parentArray.map(
                         (parent: Parent, parentIndex: number) => (
-                            <SortableSidebarParentItem
+                            <SidebarParentItem
                                 key={`${parentIndex}-${parent.parentKey}`}
                                 parent={parent}
                                 parentIndex={parentIndex}

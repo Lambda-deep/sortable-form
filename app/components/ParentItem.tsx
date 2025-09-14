@@ -1,7 +1,17 @@
+import { useEffect, useRef } from "react";
+import Sortable from "sortablejs";
 import type { ParentItemProps } from "../types";
 import { ChildItem } from "./ChildItem";
 import Button from "./Button";
 import DragHandle from "./DragHandle";
+
+interface ExtendedParentItemProps extends ParentItemProps {
+    updateParentOrder?: (oldIndex: number, newIndex: number) => void;
+    updateChildOrder?: (parentIndex: number, oldIndex: number, newIndex: number) => void;
+    moveChildBetweenParents?: (fromParentIndex: number, toParentIndex: number, fromChildIndex: number, toChildIndex: number) => void;
+    commonSortableConfig?: any;
+    childSortableRefs?: React.MutableRefObject<{ [key: number]: Sortable }>;
+}
 
 export function ParentItem({
     parentIndex,
@@ -10,8 +20,60 @@ export function ParentItem({
     watchedData,
     addChild,
     removeChild,
-}: ParentItemProps) {
+    updateChildOrder,
+    moveChildBetweenParents,
+    commonSortableConfig,
+    childSortableRefs,
+}: ExtendedParentItemProps) {
     const currentParent = watchedData.parentArray[parentIndex];
+    const childrenContainerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        // Only run on client side to avoid hydration issues
+        if (typeof window === 'undefined') return;
+        if (!childrenContainerRef.current) return;
+        if (!updateChildOrder || !commonSortableConfig || !childSortableRefs) return;
+
+        // 既存のSortableインスタンスをクリーンアップ
+        if (childSortableRefs.current[parentIndex]) {
+            childSortableRefs.current[parentIndex].destroy();
+        }
+
+        // 子要素用のSortable設定
+        const childSortableConfig = {
+            ...commonSortableConfig,
+            group: "children", // 同じグループ名で親間移動を可能に
+            onEnd: (evt: any) => {
+                const fromParentIndex = parseInt(evt.from.dataset.parentIndex || "0", 10);
+                const toParentIndex = parseInt(evt.to.dataset.parentIndex || "0", 10);
+                const oldIndex = evt.oldIndex;
+                const newIndex = evt.newIndex;
+
+                if (fromParentIndex === toParentIndex && oldIndex !== newIndex) {
+                    // 同じ親内での移動（かつ実際に位置が変わった場合のみ）
+                    updateChildOrder(fromParentIndex, oldIndex, newIndex);
+                } else if (fromParentIndex !== toParentIndex) {
+                    // 異なる親間での移動
+                    moveChildBetweenParents!(fromParentIndex, toParentIndex, oldIndex, newIndex);
+                }
+            },
+        };
+
+        try {
+            // Sortableインスタンスを作成
+            const sortableInstance = Sortable.create(childrenContainerRef.current, childSortableConfig);
+            childSortableRefs.current[parentIndex] = sortableInstance;
+        } catch (error) {
+            console.error('Error creating Sortable instance:', error);
+        }
+
+        return () => {
+            if (childSortableRefs.current && childSortableRefs.current[parentIndex]) {
+                childSortableRefs.current[parentIndex].destroy();
+                delete childSortableRefs.current[parentIndex];
+            }
+        };
+    }, [parentIndex, commonSortableConfig]);
 
     return (
         <div
@@ -41,12 +103,14 @@ export function ParentItem({
             </div>
 
             <div
+                ref={childrenContainerRef}
                 data-testid="children-container"
+                data-parent-index={parentIndex}
                 className="mt-2 flex flex-col gap-2 rounded border border-gray-300 bg-white p-2"
             >
                 {currentParent?.childArray?.map((_, childIndex: number) => (
                     <ChildItem
-                        key={childIndex}
+                        key={`${parentIndex}-${childIndex}`}
                         parentIndex={parentIndex}
                         childIndex={childIndex}
                         register={register}
