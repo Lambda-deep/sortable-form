@@ -50,10 +50,15 @@ export function ParentItem({
     return (
         <div className="relative">
             {/* ドロップインジケーター - 前 */}
-            <DropIndicator
-                position="before"
-                isVisible={showDropIndicator && dropPosition === "before"}
-            />
+            <div
+                className="absolute -top-1 right-0 left-0 z-10"
+                data-testid="drop-indicator-before"
+            >
+                <DropIndicator
+                    position="before"
+                    isVisible={showDropIndicator && dropPosition === "before"}
+                />
+            </div>
 
             <div
                 ref={setNodeRef}
@@ -119,10 +124,15 @@ export function ParentItem({
             </div>
 
             {/* ドロップインジケーター - 後 */}
-            <DropIndicator
-                position="after"
-                isVisible={showDropIndicator && dropPosition === "after"}
-            />
+            <div
+                className="absolute right-0 -bottom-1 left-0 z-10"
+                data-testid="drop-indicator-after"
+            >
+                <DropIndicator
+                    position="after"
+                    isVisible={showDropIndicator && dropPosition === "after"}
+                />
+            </div>
         </div>
     );
 }
