@@ -7,7 +7,7 @@ import DragHandle from "../ui/DragHandle";
 import { DropIndicator } from "../ui/DropIndicator";
 
 interface ChildItemViewProps {
-    child: Child;
+    child?: Child;
     dragHandleProps?: {
         attributes: DraggableAttributes;
         listeners: SyntheticListenerMap | undefined;
@@ -21,7 +21,6 @@ interface ChildItemViewProps {
     style?: CSSProperties;
     registerChildKey?: Record<string, unknown>;
     registerChildValue?: Record<string, unknown>;
-    isReadOnly?: boolean;
 }
 
 export const ChildItemView = forwardRef<HTMLDivElement, ChildItemViewProps>(
@@ -35,7 +34,6 @@ export const ChildItemView = forwardRef<HTMLDivElement, ChildItemViewProps>(
             style,
             registerChildKey,
             registerChildValue,
-            isReadOnly = false,
         },
         ref
     ) => {
@@ -62,15 +60,13 @@ export const ChildItemView = forwardRef<HTMLDivElement, ChildItemViewProps>(
                     />
                     <input
                         {...(registerChildKey || {})}
-                        value={isReadOnly ? child.childKey : undefined}
-                        readOnly={isReadOnly}
+                        value={child?.childKey}
                         className="flex-1 rounded-sm border border-gray-400 px-1 py-1"
                         placeholder="Child Key"
                     />
                     <input
                         {...(registerChildValue || {})}
-                        value={isReadOnly ? child.childValue : undefined}
-                        readOnly={isReadOnly}
+                        value={child?.childValue}
                         className="flex-1 rounded-sm border border-gray-400 px-1 py-1"
                         placeholder="Child Value"
                     />

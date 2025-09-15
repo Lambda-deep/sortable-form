@@ -1,3 +1,5 @@
+import { cn } from "../../lib/utils";
+
 interface DropIndicatorProps {
     position: "before" | "after" | "inside";
     isVisible: boolean;
@@ -18,5 +20,5 @@ export function DropIndicator({ position, isVisible }: DropIndicatorProps) {
               ? "-bottom-1"
               : "";
 
-    return <div className={`${indicatorClass} ${positionClass}`} />;
+    return <div className={cn(indicatorClass, positionClass)} />;
 }

@@ -41,10 +41,6 @@ export function ChildItem({
     return (
         <ChildItemView
             ref={setNodeRef}
-            child={{
-                childKey: "",
-                childValue: "",
-            }} // これはregisterで実際の値が管理される
             style={style}
             className={isDragging ? "z-50" : ""}
             showDropIndicator={showDropIndicatorStates}

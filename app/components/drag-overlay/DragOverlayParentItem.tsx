@@ -16,7 +16,6 @@ export const DragOverlayParentItem = forwardRef<
         <ParentItemView
             ref={ref}
             parent={parent}
-            isReadOnly={true}
             style={{ opacity: 0.8 }}
             className="z-50"
         >
@@ -24,7 +23,6 @@ export const DragOverlayParentItem = forwardRef<
                 <ChildItemView
                     key={childIndex}
                     child={child}
-                    isReadOnly={true}
                     style={{ opacity: 0.8 }}
                 />
             ))}

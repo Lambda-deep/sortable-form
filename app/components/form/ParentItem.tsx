@@ -58,7 +58,6 @@ export function ParentItem({
     return (
         <ParentItemView
             ref={setNodeRef}
-            parent={currentParent}
             style={style}
             className={isDragging ? "z-50" : ""}
             showDropIndicator={showDropIndicatorStates}

@@ -7,7 +7,7 @@ import DragHandle from "../ui/DragHandle";
 import { DropIndicator } from "../ui/DropIndicator";
 
 interface ParentItemViewProps {
-    parent: Parent;
+    parent?: Parent;
     children?: ReactNode;
     dragHandleProps?: {
         attributes: DraggableAttributes;
@@ -24,7 +24,6 @@ interface ParentItemViewProps {
     style?: CSSProperties;
     registerParentKey?: Record<string, unknown>;
     registerParentValue?: Record<string, unknown>;
-    isReadOnly?: boolean;
     childrenContainerRef?: (node: HTMLDivElement | null) => void;
 }
 
@@ -41,7 +40,6 @@ export const ParentItemView = forwardRef<HTMLDivElement, ParentItemViewProps>(
             style,
             registerParentKey,
             registerParentValue,
-            isReadOnly = false,
             childrenContainerRef,
         },
         ref
@@ -76,15 +74,13 @@ export const ParentItemView = forwardRef<HTMLDivElement, ParentItemViewProps>(
                         />
                         <input
                             {...(registerParentKey || {})}
-                            value={isReadOnly ? parent.parentKey : undefined}
-                            readOnly={isReadOnly}
+                            value={parent?.parentKey}
                             className="flex-1 rounded border border-gray-400 px-2 py-1"
                             placeholder="Parent Key"
                         />
                         <input
                             {...(registerParentValue || {})}
-                            value={isReadOnly ? parent.parentValue : undefined}
-                            readOnly={isReadOnly}
+                            value={parent?.parentValue}
                             className="flex-1 rounded border border-gray-400 px-2 py-1"
                             placeholder="Parent Value"
                         />
