@@ -38,8 +38,8 @@ export const ParentItemView = forwardRef<HTMLDivElement, ParentItemViewProps>(
             showDropIndicator = {},
             className = "",
             style,
-            registerParentKey,
-            registerParentValue,
+            registerParentKey = {},
+            registerParentValue = {},
             childrenContainerRef,
         },
         ref
@@ -73,13 +73,13 @@ export const ParentItemView = forwardRef<HTMLDivElement, ParentItemViewProps>(
                             listeners={dragHandleProps?.listeners}
                         />
                         <input
-                            {...(registerParentKey || {})}
+                            {...registerParentKey}
                             value={parent?.parentKey}
                             className="flex-1 rounded border border-gray-400 px-2 py-1"
                             placeholder="Parent Key"
                         />
                         <input
-                            {...(registerParentValue || {})}
+                            {...registerParentValue}
                             value={parent?.parentValue}
                             className="flex-1 rounded border border-gray-400 px-2 py-1"
                             placeholder="Parent Value"
@@ -88,7 +88,7 @@ export const ParentItemView = forwardRef<HTMLDivElement, ParentItemViewProps>(
                             type="button"
                             variant="remove"
                             size="sm"
-                            onClick={onRemove || (() => {})}
+                            onClick={onRemove}
                         >
                             Remove
                         </Button>
@@ -107,7 +107,7 @@ export const ParentItemView = forwardRef<HTMLDivElement, ParentItemViewProps>(
                         variant="add"
                         size="sm"
                         className="mt-2"
-                        onClick={onAddChild || (() => {})}
+                        onClick={onAddChild}
                     >
                         Add Child
                     </Button>

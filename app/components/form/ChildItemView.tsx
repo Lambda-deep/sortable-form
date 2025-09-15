@@ -32,8 +32,8 @@ export const ChildItemView = forwardRef<HTMLDivElement, ChildItemViewProps>(
             showDropIndicator = {},
             className = "",
             style,
-            registerChildKey,
-            registerChildValue,
+            registerChildKey = {},
+            registerChildValue = {},
         },
         ref
     ) => {
@@ -59,13 +59,13 @@ export const ChildItemView = forwardRef<HTMLDivElement, ChildItemViewProps>(
                         listeners={dragHandleProps?.listeners}
                     />
                     <input
-                        {...(registerChildKey || {})}
+                        {...registerChildKey}
                         value={child?.childKey}
                         className="flex-1 rounded-sm border border-gray-400 px-1 py-1"
                         placeholder="Child Key"
                     />
                     <input
-                        {...(registerChildValue || {})}
+                        {...registerChildValue}
                         value={child?.childValue}
                         className="flex-1 rounded-sm border border-gray-400 px-1 py-1"
                         placeholder="Child Value"
@@ -74,7 +74,7 @@ export const ChildItemView = forwardRef<HTMLDivElement, ChildItemViewProps>(
                         type="button"
                         variant="remove"
                         size="sm"
-                        onClick={onRemove || (() => {})}
+                        onClick={onRemove}
                     >
                         ×
                     </Button>

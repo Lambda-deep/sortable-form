@@ -35,7 +35,7 @@ export function ParentItem({
     } = useSortable({ id: parentId });
 
     // 子コンテナ用のドロップ可能エリア
-    const { setNodeRef: setDropRef, isOver: isOverContainer } = useDroppable({
+    const { setNodeRef: setDropRef } = useDroppable({
         id: `${parentId}-container`,
     });
 
