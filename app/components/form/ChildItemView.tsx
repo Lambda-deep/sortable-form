@@ -37,6 +37,7 @@ export const ChildItemView = forwardRef<HTMLDivElement, ChildItemViewProps>(
         },
         ref
     ) => {
+        const isReadOnly = Boolean(child);
         return (
             <div className="relative mb-2">
                 {/* ドロップインジケーター - 前 */}
@@ -61,12 +62,14 @@ export const ChildItemView = forwardRef<HTMLDivElement, ChildItemViewProps>(
                     <input
                         {...registerChildKey}
                         value={child?.childKey}
+                        readOnly={isReadOnly}
                         className="flex-1 rounded-sm border border-gray-400 px-1 py-1"
                         placeholder="Child Key"
                     />
                     <input
                         {...registerChildValue}
                         value={child?.childValue}
+                        readOnly={isReadOnly}
                         className="flex-1 rounded-sm border border-gray-400 px-1 py-1"
                         placeholder="Child Value"
                     />
