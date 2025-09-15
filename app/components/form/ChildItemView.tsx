@@ -39,7 +39,7 @@ export const ChildItemView = forwardRef<HTMLDivElement, ChildItemViewProps>(
     ) => {
         const isReadOnly = Boolean(child);
         return (
-            <div className="relative mb-2">
+            <div className="relative">
                 {/* ドロップインジケーター - 前 */}
                 <div className="absolute -top-1 right-0 left-0 z-10">
                     <DropIndicator

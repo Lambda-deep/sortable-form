@@ -38,7 +38,7 @@ export const SidebarChildItemView = forwardRef<
         ref
     ) => {
         return (
-            <div className="relative mb-1">
+            <div className="relative">
                 {/* ドロップインジケーター - 前 */}
                 <div className="absolute -top-0.5 right-0 left-0 z-10">
                     <DropIndicator
@@ -51,7 +51,7 @@ export const SidebarChildItemView = forwardRef<
                     ref={ref}
                     style={style}
                     data-testid="sidebar-child-item"
-                    className={`flex items-center gap-2 rounded border border-gray-300 bg-gray-50 p-1 ${className}`}
+                    className={`flex items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2 ${className}`}
                 >
                     <DragHandle
                         data-testid="sidebar-child-drag-handle"

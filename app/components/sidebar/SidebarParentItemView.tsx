@@ -40,7 +40,7 @@ export const SidebarParentItemView = forwardRef<
         ref
     ) => {
         return (
-            <div className="relative mb-2">
+            <div className="relative">
                 {/* ドロップインジケーター - 前 */}
                 <div className="absolute -top-1 right-0 left-0 z-10">
                     <DropIndicator
@@ -53,7 +53,7 @@ export const SidebarParentItemView = forwardRef<
                     ref={ref}
                     style={style}
                     data-testid="sidebar-parent-item"
-                    className={`relative rounded border border-gray-300 bg-gray-50 p-1 ${className}`}
+                    className={`relative rounded border border-gray-300 bg-gray-50 p-2 ${className}`}
                 >
                     <div className="flex items-center gap-2">
                         <DragHandle
@@ -68,7 +68,7 @@ export const SidebarParentItemView = forwardRef<
                     <div
                         ref={childrenContainerRef}
                         data-testid="sidebar-children-container"
-                        className="mt-1 ml-5 flex flex-col gap-1 rounded border border-gray-300 bg-white p-1"
+                        className="mt-1 ml-5 flex flex-col gap-1 rounded border border-gray-300 bg-white p-2"
                     >
                         {children}
                     </div>

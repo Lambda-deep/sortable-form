@@ -45,7 +45,7 @@ export const ParentItemView = forwardRef<HTMLDivElement, ParentItemViewProps>(
     ) => {
         const isReadOnly = Boolean(parent);
         return (
-            <div className="relative mb-4">
+            <div className="relative">
                 {/* ドロップインジケーター - 前 */}
                 <div className="absolute -top-2 right-0 left-0 z-10">
                     <DropIndicator
@@ -58,7 +58,7 @@ export const ParentItemView = forwardRef<HTMLDivElement, ParentItemViewProps>(
                     ref={ref}
                     style={style}
                     data-testid="parent-item"
-                    className={`relative rounded border border-gray-300 bg-gray-50 p-4 ${className}`}
+                    className={`relative flex flex-col gap-4 rounded border border-gray-300 bg-gray-50 p-4 ${className}`}
                 >
                     <div className="flex items-center gap-2">
                         <DragHandle
@@ -93,7 +93,7 @@ export const ParentItemView = forwardRef<HTMLDivElement, ParentItemViewProps>(
                     <div
                         ref={childrenContainerRef}
                         data-testid="children-container"
-                        className="mt-2 flex flex-col rounded border border-gray-300 bg-white p-2"
+                        className="flex flex-col gap-4 rounded border border-gray-300 bg-white p-4"
                     >
                         {children}
                     </div>
@@ -102,7 +102,6 @@ export const ParentItemView = forwardRef<HTMLDivElement, ParentItemViewProps>(
                         type="button"
                         variant="add"
                         size="sm"
-                        className="mt-2"
                         onClick={onAddChild}
                     >
                         Add Child

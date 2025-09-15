@@ -4,9 +4,12 @@ import { sidebarChildPattern } from "./drag-patterns";
 /**
  * サイドバー用のカスタム衝突検出
  */
-export const sidebarCollisionDetection: CollisionDetection = args => {
-    const { active, collisionRect, droppableRects, droppableContainers } = args;
-
+export const sidebarCollisionDetection: CollisionDetection = ({
+    active,
+    collisionRect,
+    droppableRects,
+    droppableContainers,
+}) => {
     if (!active) return [];
 
     const activeIdStr = active.id as string;

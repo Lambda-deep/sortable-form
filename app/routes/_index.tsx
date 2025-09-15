@@ -41,7 +41,7 @@ export default function Index() {
     return (
         <ClientOnly
             fallback={
-                <div className="mx-auto grid max-w-6xl grid-cols-[1fr_300px] gap-5">
+                <div className="mx-auto grid max-w-6xl grid-cols-[1fr_350px] gap-5">
                     <div className="rounded-lg bg-white p-5">
                         <p>Loading...</p>
                     </div>
@@ -53,7 +53,7 @@ export default function Index() {
         >
             <div
                 data-testid="container"
-                className="mx-auto grid max-w-6xl grid-cols-[1fr_300px] gap-5"
+                className="mx-auto grid max-w-6xl grid-cols-[1fr_350px] gap-5"
             >
                 {/* フォーム側のDndContext */}
                 <DndContext
@@ -132,7 +132,7 @@ export default function Index() {
                 {/* サイドバー側のDndContext */}
                 <DndContext
                     sensors={sidebarSensors}
-                    collisionDetection={sidebarCollisionDetection}
+                    // collisionDetection={sidebarCollisionDetection}
                     modifiers={[restrictToVerticalAxis]}
                     onDragStart={dragHandlers.onSidebarDragStart}
                     onDragOver={dragHandlers.onSidebarDragOver}
