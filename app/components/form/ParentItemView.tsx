@@ -18,7 +18,6 @@ interface ParentItemViewProps {
     showDropIndicator?: {
         before?: boolean;
         after?: boolean;
-        inside?: boolean;
     };
     className?: string;
     style?: CSSProperties;
@@ -33,8 +32,8 @@ export const ParentItemView = forwardRef<HTMLDivElement, ParentItemViewProps>(
             parent,
             children,
             dragHandleProps,
-            onRemove,
-            onAddChild,
+            onRemove = () => {},
+            onAddChild = () => {},
             showDropIndicator = {},
             className = "",
             style,
@@ -60,12 +59,6 @@ export const ParentItemView = forwardRef<HTMLDivElement, ParentItemViewProps>(
                     data-testid="parent-item"
                     className={`relative rounded border border-gray-300 bg-gray-50 p-4 ${className}`}
                 >
-                    {/* ドロップインジケーター - 内部 */}
-                    <DropIndicator
-                        position="inside"
-                        isVisible={showDropIndicator.inside || false}
-                    />
-
                     <div className="flex items-center gap-2">
                         <DragHandle
                             data-testid="parent-drag-handle"

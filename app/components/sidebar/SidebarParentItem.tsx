@@ -53,7 +53,6 @@ export function SidebarParentItem({
     const showDropIndicatorStates = {
         before: showDropIndicator && dropPosition === "before",
         after: showDropIndicator && dropPosition === "after",
-        inside: showDropIndicator && dropPosition === "inside",
     };
 
     // サイドバーChild要素のIDリストを生成

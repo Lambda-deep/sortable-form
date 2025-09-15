@@ -52,7 +52,6 @@ export function ParentItem({
     const showDropIndicatorStates = {
         before: showDropIndicator && dropPosition === "before",
         after: showDropIndicator && dropPosition === "after",
-        inside: showDropIndicator && dropPosition === "inside",
     };
 
     return (

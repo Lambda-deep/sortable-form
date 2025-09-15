@@ -357,10 +357,7 @@ export function useSortableForm() {
             // Child要素の移動処理 - dropIndicatorの位置情報を利用
             const dropPosition = dragState.dropIndicator?.position;
             const dropIndicatorTargetId = dragState.dropIndicator?.targetId;
-            // "inside"は除外して、"before"または"after"のみを渡す
-            const validPosition =
-                dropPosition === "inside" ? undefined : dropPosition;
-            handleChildMove(active, over, validPosition, dropIndicatorTargetId);
+            handleChildMove(active, over, dropPosition, dropIndicatorTargetId);
         }
 
         // 状態をクリーンアップ
@@ -607,12 +604,10 @@ export function useSortableForm() {
             // サイドバーChild要素の移動処理
             const dropPosition = dragState.dropIndicator?.position;
             const dropIndicatorTargetId = dragState.dropIndicator?.targetId;
-            const validPosition =
-                dropPosition === "inside" ? undefined : dropPosition;
             handleSidebarChildMove(
                 active,
                 over,
-                validPosition,
+                dropPosition,
                 dropIndicatorTargetId
             );
         } else if (isActiveChild && !isOverChild) {
@@ -631,12 +626,10 @@ export function useSortableForm() {
                 if (targetParentIndex !== -1) {
                     // dropIndicatorの位置情報を渡す
                     const dropPosition = dragState.dropIndicator?.position;
-                    const validPosition =
-                        dropPosition === "inside" ? undefined : dropPosition;
                     handleSidebarChildToParentEnd(
                         active,
                         targetParentIndex,
-                        validPosition
+                        dropPosition
                     );
                 }
             }

@@ -34,7 +34,7 @@ export interface DraggedItem {
 
 export interface DropIndicator {
     targetId: string;
-    position: "before" | "after" | "inside";
+    position: "before" | "after";
 }
 
 // Component Props Types

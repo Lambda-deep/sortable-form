@@ -16,7 +16,6 @@ interface SidebarParentItemViewProps {
     showDropIndicator?: {
         before?: boolean;
         after?: boolean;
-        inside?: boolean;
     };
     className?: string;
     style?: CSSProperties;
@@ -56,12 +55,6 @@ export const SidebarParentItemView = forwardRef<
                     data-testid="sidebar-parent-item"
                     className={`relative rounded border border-gray-300 bg-gray-50 p-1 ${className}`}
                 >
-                    {/* ドロップインジケーター - 内部 */}
-                    <DropIndicator
-                        position="inside"
-                        isVisible={showDropIndicator.inside || false}
-                    />
-
                     <div className="flex items-center gap-2">
                         <DragHandle
                             data-testid="sidebar-parent-drag-handle"

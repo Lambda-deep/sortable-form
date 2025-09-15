@@ -28,7 +28,7 @@ export const ChildItemView = forwardRef<HTMLDivElement, ChildItemViewProps>(
         {
             child,
             dragHandleProps,
-            onRemove,
+            onRemove = () => {},
             showDropIndicator = {},
             className = "",
             style,

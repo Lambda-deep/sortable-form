@@ -1,24 +1,21 @@
 import { cn } from "../../lib/utils";
 
 interface DropIndicatorProps {
-    position: "before" | "after" | "inside";
+    position: "before" | "after";
     isVisible: boolean;
 }
 
 export function DropIndicator({ position, isVisible }: DropIndicatorProps) {
     if (!isVisible) return null;
 
-    const indicatorClass =
-        position === "inside"
-            ? "absolute inset-0 border-2 border-dashed border-blue-500 bg-blue-50 bg-opacity-30 rounded"
-            : "absolute left-0 right-0 h-1 bg-blue-500 rounded-full z-20";
+    const positionClass = position === "before" ? "-top-1" : "-bottom-1";
 
-    const positionClass =
-        position === "before"
-            ? "-top-1"
-            : position === "after"
-              ? "-bottom-1"
-              : "";
-
-    return <div className={cn(indicatorClass, positionClass)} />;
+    return (
+        <div
+            className={cn(
+                "absolute right-0 left-0 z-20 h-1 rounded-full bg-blue-500",
+                positionClass
+            )}
+        />
+    );
 }
