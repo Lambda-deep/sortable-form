@@ -321,6 +321,55 @@ export function useSortableForm() {
         });
     };
 
+    // サイドバー専用のドラッグハンドラー
+    const handleSidebarDragStart = (event: DragStartEvent) => {
+        const { active } = event;
+        setDragState(prev => ({
+            ...prev,
+            sidebarActiveId: active.id as string,
+        }));
+
+        const activeIdStr = active.id as string;
+
+        // サイドバーのChild要素かどうかの判定
+        const isSidebarChild = isSidebarChildId(activeIdStr);
+
+        if (isSidebarChild) {
+            // Child要素のドラッグ
+            const [parentIndex, childIndex] = activeIdStr
+                .replace(/^sidebar-/, "")
+                .split("-")
+                .map(Number);
+
+            setDragState(prev => ({
+                ...prev,
+                sidebarDraggedItem: {
+                    type: "child",
+                    parentIndex,
+                    childIndex,
+                    data: watchedData.parentArray[parentIndex].childArray[
+                        childIndex
+                    ],
+                },
+            }));
+        } else {
+            // Parent要素のドラッグ
+            const parentIndex = parentFields.findIndex(
+                field => field.id === activeIdStr.replace(/^sidebar-/, "")
+            );
+            if (parentIndex !== -1) {
+                setDragState(prev => ({
+                    ...prev,
+                    sidebarDraggedItem: {
+                        type: "parent",
+                        parentIndex,
+                        data: watchedData.parentArray[parentIndex],
+                    },
+                }));
+            }
+        }
+    };
+
     // サイドバー専用のドラッグ中ハンドラー
     const handleSidebarDragOver = (event: DragOverEvent) => {
         const { over, active } = event;
@@ -497,55 +546,6 @@ export function useSortableForm() {
         } else {
             // その他の無効なドラッグ
             setDragState(prev => ({ ...prev, dropIndicator: null }));
-        }
-    };
-
-    // サイドバー専用のドラッグハンドラー
-    const handleSidebarDragStart = (event: DragStartEvent) => {
-        const { active } = event;
-        setDragState(prev => ({
-            ...prev,
-            sidebarActiveId: active.id as string,
-        }));
-
-        const activeIdStr = active.id as string;
-
-        // サイドバーのChild要素かどうかの判定
-        const isSidebarChild = isSidebarChildId(activeIdStr);
-
-        if (isSidebarChild) {
-            // Child要素のドラッグ
-            const [parentIndex, childIndex] = activeIdStr
-                .replace(/^sidebar-/, "")
-                .split("-")
-                .map(Number);
-
-            setDragState(prev => ({
-                ...prev,
-                sidebarDraggedItem: {
-                    type: "child",
-                    parentIndex,
-                    childIndex,
-                    data: watchedData.parentArray[parentIndex].childArray[
-                        childIndex
-                    ],
-                },
-            }));
-        } else {
-            // Parent要素のドラッグ
-            const parentIndex = parentFields.findIndex(
-                field => field.id === activeIdStr.replace(/^sidebar-/, "")
-            );
-            if (parentIndex !== -1) {
-                setDragState(prev => ({
-                    ...prev,
-                    sidebarDraggedItem: {
-                        type: "parent",
-                        parentIndex,
-                        data: watchedData.parentArray[parentIndex],
-                    },
-                }));
-            }
         }
     };
 
