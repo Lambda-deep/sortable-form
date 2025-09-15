@@ -1,4 +1,4 @@
-import { DndContext, DragOverlay } from "@dnd-kit/core";
+import { closestCenter, DndContext, DragOverlay } from "@dnd-kit/core";
 import {
     SortableContext,
     verticalListSortingStrategy,
@@ -58,6 +58,7 @@ export default function Index() {
                 {/* フォーム側のDndContext */}
                 <DndContext
                     sensors={formSensors}
+                    collisionDetection={closestCenter}
                     modifiers={[restrictToVerticalAxis]}
                     onDragStart={dragHandlers.onDragStart}
                     onDragOver={dragHandlers.onDragOver}
@@ -132,7 +133,7 @@ export default function Index() {
                 {/* サイドバー側のDndContext */}
                 <DndContext
                     sensors={sidebarSensors}
-                    collisionDetection={sidebarCollisionDetection}
+                    collisionDetection={closestCenter}
                     modifiers={[restrictToVerticalAxis]}
                     onDragStart={dragHandlers.onSidebarDragStart}
                     onDragOver={dragHandlers.onSidebarDragOver}
@@ -149,7 +150,7 @@ export default function Index() {
                         >
                             <ul
                                 data-testid="index-list"
-                                className="flex list-none flex-col gap-2 p-0"
+                                className="flex list-none flex-col gap-2 p-2"
                             >
                                 {watchedData.parentArray.map(
                                     (parent: Parent, parentIndex: number) => (

@@ -71,7 +71,9 @@ export async function dragChildElement(
     const sourceChildHandle = children
         .nth(sourceChildIndex)
         .locator('[data-testid="child-drag-handle"]');
-    const targetChild = children.nth(targetChildIndex);
+    const targetChild = children
+        .nth(targetChildIndex)
+        .locator('[data-testid="child-drag-handle"]');
 
     await performDragAndDrop(page, sourceChildHandle, targetChild);
 }
@@ -92,7 +94,9 @@ export async function dragParentElement(
     const sourceParentHandle = parents
         .nth(sourceParentIndex)
         .locator('[data-testid="parent-drag-handle"]');
-    const targetParent = parents.nth(targetParentIndex);
+    const targetParent = parents
+        .nth(targetParentIndex)
+        .locator('[data-testid="parent-drag-handle"]');
 
     await performDragAndDrop(page, sourceParentHandle, targetParent);
 }
@@ -124,7 +128,9 @@ export async function dragChildElementBetweenParents(
     // ドロップ先の子要素
     const targetParent = parents.nth(targetParentIndex);
     const targetChildren = targetParent.locator('[data-testid="child-item"]');
-    const targetChild = targetChildren.nth(targetChildIndex);
+    const targetChild = targetChildren
+        .nth(targetChildIndex)
+        .locator('[data-testid="child-drag-handle"]');
 
     await performDragAndDrop(page, sourceChildHandle, targetChild);
 }
@@ -162,7 +168,9 @@ export async function dragSidebarChildElementBetweenParents(
     const targetChildren = targetParent.locator(
         '[data-testid="sidebar-child-item"]'
     );
-    const targetChild = targetChildren.nth(targetChildIndex);
+    const targetChild = targetChildren
+        .nth(targetChildIndex)
+        .locator('[data-testid="sidebar-child-drag-handle"]');
 
     await performDragAndDrop(page, sourceChildHandle, targetChild);
 }
@@ -256,7 +264,9 @@ export async function dragSidebarParentElement(
     const sourceSidebarHandle = sidebarParents
         .nth(sourceParentIndex)
         .locator('[data-testid="sidebar-parent-drag-handle"]');
-    const targetSidebarParent = sidebarParents.nth(targetParentIndex);
+    const targetSidebarParent = sidebarParents
+        .nth(targetParentIndex)
+        .locator('[data-testid="sidebar-parent-drag-handle"]');
 
     await performDragAndDrop(page, sourceSidebarHandle, targetSidebarParent);
 }

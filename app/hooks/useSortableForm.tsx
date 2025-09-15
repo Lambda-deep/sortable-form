@@ -71,7 +71,7 @@ export function useSortableForm() {
         useSensor(KeyboardSensor)
     );
 
-    // ドラッグ開始ハンドラー
+    // フォーム専用のドラッグ開始ハンドラー
     const handleDragStart = (event: DragStartEvent) => {
         const { active } = event;
         setDragState(prev => ({
@@ -117,7 +117,7 @@ export function useSortableForm() {
         }
     };
 
-    // ドラッグ中ハンドラー
+    // フォーム専用のドラッグ中ハンドラー
     const handleDragOver = (event: DragOverEvent) => {
         const { over, active } = event;
 
@@ -136,108 +136,31 @@ export function useSortableForm() {
         const activeIdStr = active.id as string;
         const overIdStr = over.id as string;
 
-        const isActiveChild = isChildId(activeIdStr);
-        const isOverChild = isChildId(overIdStr);
+        const isActiveFormChild = isChildId(activeIdStr);
+        const isOverFormChild = isChildId(overIdStr);
 
-        // サイドバーかどうかの判定
-        const isActiveSidebar = activeIdStr.startsWith("sidebar-");
-        const isOverSidebar = overIdStr.startsWith("sidebar-");
-        // サイドバーChild要素かどうかの判定
-        const isActiveSidebarChild = isSidebarChildId(activeIdStr);
-        const isOverSidebarChild = isSidebarChildId(overIdStr);
+        if (isActiveFormChild && isOverFormChild) {
+            // フォーム内でのChild要素ドラッグのみ処理
+            const [activeParentIndex, activeChildIndex] = activeIdStr
+                .split("-")
+                .map(Number);
+            const [overParentIndex, overChildIndex] = overIdStr
+                .split("-")
+                .map(Number);
 
-        if (isActiveChild && isOverChild) {
-            // Child要素のドラッグ中
-            if (isActiveSidebarChild && isOverSidebarChild) {
-                // サイドバー内でのChild要素ドラッグ
-                const [activeParentIndex] = activeIdStr
-                    .replace("sidebar-", "")
-                    .split("-")
-                    .map(Number);
-                const [overParentIndex, overChildIndex] = overIdStr
-                    .replace("sidebar-", "")
-                    .split("-")
-                    .map(Number);
-
-                // 同一Parent内でのみドロップインジケーターを表示 - ドラッグ中の要素自体は除外
-                if (activeParentIndex === overParentIndex) {
-                    const [, activeChildIndex] = activeIdStr
-                        .replace("sidebar-", "")
-                        .split("-")
-                        .map(Number);
-
-                    // ドラッグ中の要素自体は除外
-                    if (activeChildIndex !== overChildIndex) {
-                        const position =
-                            activeChildIndex < overChildIndex
-                                ? "after"
-                                : "before";
-
-                        setDragState(prev => ({
-                            ...prev,
-                            dropIndicator: {
-                                targetId: overIdStr,
-                                position,
-                            },
-                        }));
-                    }
-                }
-            } else if (!isActiveSidebarChild && !isOverSidebarChild) {
-                // フォーム内でのChild要素ドラッグ
-                const [activeParentIndex, activeChildIndex] = activeIdStr
-                    .split("-")
-                    .map(Number);
-                const [overParentIndex, overChildIndex] = overIdStr
-                    .split("-")
-                    .map(Number);
-
-                // 異なるParent間でもドロップインジケーターを表示（拡張）
-                if (activeParentIndex === overParentIndex) {
-                    // 同一Parent内での移動 - ドラッグ中の要素自体は除外
-                    if (activeChildIndex !== overChildIndex) {
-                        const position =
-                            activeChildIndex < overChildIndex
-                                ? "after"
-                                : "before";
-
-                        setDragState(prev => ({
-                            ...prev,
-                            dropIndicator: {
-                                targetId: overIdStr,
-                                position,
-                            },
-                        }));
-                    }
-                } else {
-                    // 異なるParent間での移動（新機能）
-
-                    // 異なるParentへの移動では常に"before"ポジションを使用
-                    setDragState(prev => ({
-                        ...prev,
-                        dropIndicator: {
-                            targetId: overIdStr,
-                            position: "before",
-                        },
-                    }));
-                }
-            }
-        } else if (!isActiveChild && !isOverChild) {
-            // Parent要素のドラッグ中
-            if (isActiveSidebar && isOverSidebar) {
-                // サイドバー内でのParent要素ドラッグ
-                const activeId = activeIdStr.replace("sidebar-", "");
-                const overId = overIdStr.replace("sidebar-", "");
-
-                const activeIndex = parentFields.findIndex(
-                    field => field.id === activeId
-                );
-                const overIndex = parentFields.findIndex(
-                    field => field.id === overId
-                );
-
-                if (activeIndex !== -1 && overIndex !== -1) {
+            if (activeParentIndex === overParentIndex) {
+                // 同一Parent内での移動 - ドラッグ中の要素自体は除外
+                if (activeChildIndex !== overChildIndex) {
                     const position =
-                        activeIndex < overIndex ? "after" : "before";
+                        activeChildIndex < overChildIndex ? "after" : "before";
+
+                    console.log("handleDragOver Same Parent", {
+                        active,
+                        over,
+                        activeIdStr,
+                        overIdStr,
+                        position,
+                    });
 
                     setDragState(prev => ({
                         ...prev,
@@ -247,92 +170,111 @@ export function useSortableForm() {
                         },
                     }));
                 }
-            } else if (!isActiveSidebar && !isOverSidebar) {
-                // フォーム内でのParent要素ドラッグ
-                const activeIndex = parentFields.findIndex(
-                    field => field.id === active.id
-                );
-                const overIndex = parentFields.findIndex(
-                    field => field.id === over.id
-                );
+            } else {
+                // 異なるParentへの移動では常に"before"ポジションを使用
+                console.log("handleDragOver Different Parent", {
+                    active,
+                    over,
+                    activeIdStr,
+                    overIdStr,
+                });
 
-                if (activeIndex !== -1 && overIndex !== -1) {
-                    const position =
-                        activeIndex < overIndex ? "after" : "before";
-
-                    setDragState(prev => ({
-                        ...prev,
-                        dropIndicator: {
-                            targetId: overIdStr,
-                            position,
-                        },
-                    }));
-                }
+                setDragState(prev => ({
+                    ...prev,
+                    dropIndicator: {
+                        targetId: overIdStr,
+                        position: "before",
+                    },
+                }));
             }
-        } else if (isActiveChild && !isOverChild) {
-            // Child要素を親要素/コンテナにドラッグ（先頭/末尾挿入）
+        } else if (!isActiveFormChild && !isOverFormChild) {
+            // フォーム内でのParent要素ドラッグのみ処理
+            const activeIndex = parentFields.findIndex(
+                field => field.id === active.id
+            );
+            const overIndex = parentFields.findIndex(
+                field => field.id === over.id
+            );
 
-            if (!isActiveSidebarChild && !isOverSidebar) {
-                // フォーム内でのChild要素をコンテナにドラッグした場合のみインジケーターを表示
-                if (overIdStr.endsWith("-container")) {
-                    // コンテナIDから親IDを抽出
-                    const targetParentId = overIdStr.replace("-container", "");
+            if (activeIndex !== -1 && overIndex !== -1) {
+                const position = activeIndex < overIndex ? "after" : "before";
 
-                    const targetParent = parentFields.find(
+                console.log("handleDragOver Parent", {
+                    active,
+                    over,
+                    activeIdStr,
+                    overIdStr,
+                    position,
+                });
+
+                setDragState(prev => ({
+                    ...prev,
+                    dropIndicator: {
+                        targetId: overIdStr,
+                        position,
+                    },
+                }));
+            }
+        } else if (isActiveFormChild && !isOverFormChild) {
+            // フォーム内でのChild要素をコンテナにドラッグ（先頭/末尾挿入）
+            if (overIdStr.endsWith("-container")) {
+                // コンテナIDから親IDを抽出
+                const targetParentId = overIdStr.replace("-container", "");
+
+                const targetParent = parentFields.find(
+                    field => field.id === targetParentId
+                );
+                if (targetParent) {
+                    const targetParentIndex = parentFields.findIndex(
                         field => field.id === targetParentId
                     );
-                    if (targetParent) {
-                        const targetParentIndex = parentFields.findIndex(
-                            field => field.id === targetParentId
-                        );
-                        const targetParentData = getValues(
-                            `parentArray.${targetParentIndex}`
-                        );
+                    const targetParentData = getValues(
+                        `parentArray.${targetParentIndex}`
+                    );
 
-                        // マウス位置による先頭/末尾判定
-                        const rect = event.active.rect.current.translated;
-                        const overRect = event.over?.rect;
+                    // マウス位置による先頭/末尾判定
+                    const rect = event.active.rect.current.translated;
+                    const overRect = event.over?.rect;
 
-                        let isInsertAtEnd = true; // デフォルトは末尾挿入
+                    let isInsertAtEnd = true; // デフォルトは末尾挿入
 
-                        if (overRect && rect) {
-                            // ドロップターゲットの上半分なら先頭挿入、下半分なら末尾挿入
-                            const overCenter =
-                                overRect.top + overRect.height / 2;
-                            const dragCenter = rect.top + rect.height / 2;
-                            isInsertAtEnd = dragCenter > overCenter;
-                        }
+                    if (overRect && rect) {
+                        // ドロップターゲットの上半分なら先頭挿入、下半分なら末尾挿入
+                        const overCenter = overRect.top + overRect.height / 2;
+                        const dragCenter = rect.top + rect.height / 2;
+                        isInsertAtEnd = dragCenter > overCenter;
+                    }
 
-                        if (targetParentData.childArray.length > 0) {
-                            const targetChildIndex = isInsertAtEnd
-                                ? targetParentData.childArray.length - 1 // 末尾の子要素
-                                : 0; // 先頭の子要素
-                            const targetChildId = `${targetParentIndex}-${targetChildIndex}`;
-                            const position = isInsertAtEnd ? "after" : "before";
+                    if (targetParentData.childArray.length > 0) {
+                        const targetChildIndex = isInsertAtEnd
+                            ? targetParentData.childArray.length - 1 // 末尾の子要素
+                            : 0; // 先頭の子要素
+                        const targetChildId = `${targetParentIndex}-${targetChildIndex}`;
+                        const position = isInsertAtEnd ? "after" : "before";
 
-                            // ドラッグ中の要素自体は除外
-                            if (targetChildId !== active.id) {
-                                setDragState(prev => ({
-                                    ...prev,
-                                    dropIndicator: {
-                                        targetId: targetChildId,
-                                        position,
-                                    },
-                                }));
-                            }
-                        } else {
-                            // 子要素がない場合は親要素IDを使用してドロップ位置を設定
-                            const position = isInsertAtEnd ? "after" : "before";
-
+                        // ドラッグ中の要素自体は除外
+                        if (targetChildId !== active.id) {
                             setDragState(prev => ({
                                 ...prev,
                                 dropIndicator: {
-                                    targetId: targetParentId,
+                                    targetId: targetChildId,
                                     position,
                                 },
                             }));
                         }
+                    } else {
+                        // 子要素がない場合は親要素IDを使用してドロップ位置を設定
+                        // TODO: 現状親要素のインジケーターが表示されるので、コンテナにインジケーターを表示するように変更する
+                        setDragState(prev => ({
+                            ...prev,
+                            dropIndicator: null,
+                        }));
                     }
+                } else {
+                    setDragState(prev => ({
+                        ...prev,
+                        dropIndicator: null,
+                    }));
                 }
             }
         } else {
@@ -341,7 +283,7 @@ export function useSortableForm() {
         }
     };
 
-    // ドラッグ終了ハンドラー
+    // フォーム専用のドラッグ終了ハンドラー
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
 
@@ -356,13 +298,14 @@ export function useSortableForm() {
             return;
         }
 
-        const isDraggingChild = isChildId(active.id as string);
+        const activeIdStr = active.id as string;
+        const isDraggingChild = isChildId(activeIdStr);
 
         if (!isDraggingChild) {
-            // Parent要素の移動処理
+            // フォーム内のParent要素の移動処理
             handleParentMove(active, over);
         } else {
-            // Child要素の移動処理 - dropIndicatorの位置情報を利用
+            // フォーム内のChild要素の移動処理 - dropIndicatorの位置情報を利用
             const dropPosition = dragState.dropIndicator?.position;
             const dropIndicatorTargetId = dragState.dropIndicator?.targetId;
             handleChildMove(active, over, dropPosition, dropIndicatorTargetId);
@@ -403,7 +346,7 @@ export function useSortableForm() {
 
         if (isActiveSidebarChild && isOverSidebarChild) {
             // サイドバー内でのChild要素ドラッグ
-            const [activeParentIndex] = activeIdStr
+            const [activeParentIndex, activeChildIndex] = activeIdStr
                 .replace("sidebar-", "")
                 .split("-")
                 .map(Number);
@@ -412,29 +355,35 @@ export function useSortableForm() {
                 .split("-")
                 .map(Number);
 
-            // 同一Parent内または異なるParent間でもドロップインジケーターを表示（拡張）
             if (activeParentIndex === overParentIndex) {
                 // 同一Parent内での移動 - ドラッグ中の要素自体は除外
-                const [, activeChildIndex] = activeIdStr
-                    .replace("sidebar-", "")
-                    .split("-")
-                    .map(Number);
-
-                // ドラッグ中の要素自体は除外
                 if (activeChildIndex !== overChildIndex) {
                     const position =
                         activeChildIndex < overChildIndex ? "after" : "before";
 
+                    console.log("handleSidebarDragOver Same Parent", {
+                        active,
+                        over,
+                        activeIdStr,
+                        overIdStr,
+                        position,
+                    });
+
                     setDragState(prev => ({
                         ...prev,
                         dropIndicator: {
-                            targetId: over.id as string,
+                            targetId: overIdStr,
                             position,
                         },
                     }));
                 }
             } else {
-                // 異なるParent間での移動（新機能）
+                console.log("handleSidebarDragOver Different Parent", {
+                    active,
+                    over,
+                    activeIdStr,
+                    overIdStr,
+                });
 
                 // 異なるParentへの移動では常に"before"ポジションを使用
                 setDragState(prev => ({
@@ -459,6 +408,14 @@ export function useSortableForm() {
 
             if (activeIndex !== -1 && overIndex !== -1) {
                 const position = activeIndex < overIndex ? "after" : "before";
+
+                console.log("handleSidebarDragOver Parent", {
+                    active,
+                    over,
+                    activeIdStr,
+                    overIdStr,
+                    position,
+                });
 
                 setDragState(prev => ({
                     ...prev,
@@ -521,6 +478,7 @@ export function useSortableForm() {
                             }
                         } else {
                             // 子要素がない場合はインジケーターをクリア
+                            // TODO: コンテナにインジケーターを表示するように変更する
                             setDragState(prev => ({
                                 ...prev,
                                 dropIndicator: null,
@@ -611,36 +569,22 @@ export function useSortableForm() {
             // サイドバーChild要素の移動処理
             const dropPosition = dragState.dropIndicator?.position;
             const dropIndicatorTargetId = dragState.dropIndicator?.targetId;
+
+            console.log("handleSidebarDragEnd Child", {
+                active,
+                over,
+                activeIdStr,
+                overIdStr,
+                dragState,
+            });
+
             handleSidebarChildMove(
                 active,
                 over,
                 dropPosition,
                 dropIndicatorTargetId
             );
-        } else if (isActiveChild && !isOverChild) {
-            // Child要素をコンテナにドロップ（末尾挿入）
-            const containerPattern = /^sidebar-(.+)-container$/;
-            const containerMatch = overIdStr.match(containerPattern);
-
-            if (containerMatch) {
-                const targetParentId = containerMatch[1];
-
-                // ターゲット親のインデックスを取得
-                const targetParentIndex = parentFields.findIndex(
-                    field => field.id === targetParentId
-                );
-
-                if (targetParentIndex !== -1) {
-                    // dropIndicatorの位置情報を渡す
-                    const dropPosition = dragState.dropIndicator?.position;
-                    handleSidebarChildToParentEnd(
-                        active,
-                        targetParentIndex,
-                        dropPosition
-                    );
-                }
-            }
-        } else if (!isActiveChild && !isOverChild) {
+        } else {
             // サイドバーParent要素の移動処理（既存の処理）
 
             // sidebar-プレフィックスを削除して元のIDを取得
@@ -654,6 +598,13 @@ export function useSortableForm() {
             const overIndex = parentFields.findIndex(
                 field => field.id === overOriginalId
             );
+
+            console.log("handleSidebarDragEnd Parent", {
+                active,
+                over,
+                activeIndex,
+                overIndex,
+            });
 
             // 有効なインデックスで、かつ位置が異なる場合のみ移動を実行
             if (
