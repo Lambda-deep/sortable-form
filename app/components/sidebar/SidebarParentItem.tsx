@@ -53,7 +53,7 @@ export function SidebarParentItem({
     const style = {
         transform: isSorting ? undefined : CSS.Transform.toString(transform),
         transition,
-        opacity: isDragging ? 0.5 : 1,
+        opacity: isDragging ? 0 : 1,
     };
 
     const showDropIndicatorStates = {

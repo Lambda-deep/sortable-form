@@ -17,8 +17,7 @@ export const DragOverlaySidebarParentItem = forwardRef<
             ref={ref}
             parent={parent}
             parentIndex={parentIndex}
-            style={{ opacity: 0.9 }}
-            className="z-50"
+            className="z-50 opacity-70"
         >
             {parent.childArray?.map((child, childIndex) => (
                 <SidebarChildItemView

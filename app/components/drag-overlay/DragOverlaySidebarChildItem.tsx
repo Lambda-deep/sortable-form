@@ -17,7 +17,7 @@ export function DragOverlaySidebarChildItem({
             child={child}
             parentIndex={parentIndex}
             childIndex={childIndex}
-            className="z-50"
+            className="z-50 opacity-70"
         />
     );
 }

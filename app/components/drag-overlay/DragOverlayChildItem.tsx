@@ -11,12 +11,7 @@ export const DragOverlayChildItem = forwardRef<
     DragOverlayChildItemProps
 >(({ child }, ref) => {
     return (
-        <ChildItemView
-            ref={ref}
-            child={child}
-            style={{ opacity: 0.8 }}
-            className="z-50"
-        />
+        <ChildItemView ref={ref} child={child} className="z-50 opacity-70" />
     );
 });
 
