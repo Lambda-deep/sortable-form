@@ -32,6 +32,8 @@ export const isSidebarChildId = (id: string): boolean => {
  * IDがサイドバーのコンテナのパターンかどうかを判定
  */
 export const isSidebarContainerId = (id: string): boolean => {
+    console.log(`isSidebarContainerId: Checking ID "${id}"`);
+
     return sidebarContainerPattern.test(id);
 };
 

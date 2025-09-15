@@ -171,19 +171,34 @@ export function useSortableForm() {
                     }));
                 }
             } else {
-                // 異なるParentへの移動では常に"before"ポジションを使用
+                // 異なるParentへの移動 - マウス位置に基づいてbefore/afterを判定
+                const rect = event.active.rect.current.translated;
+                const overRect = event.over?.rect;
+
+                let position: "before" | "after" = "before"; // デフォルトは先頭挿入
+
+                if (overRect && rect) {
+                    // 末尾要素の場合は挿入範囲を拡張
+
+                    // 最後の子要素の場合、要素の中央より下ならafter挿入
+                    const overCenter = overRect.top + overRect.height * 0.4;
+                    const dragCenter = rect.top + rect.height / 2;
+                    position = dragCenter > overCenter ? "after" : "before";
+                }
+
                 console.log("handleDragOver Different Parent", {
                     active,
                     over,
                     activeIdStr,
                     overIdStr,
+                    position,
                 });
 
                 setDragState(prev => ({
                     ...prev,
                     dropIndicator: {
                         targetId: overIdStr,
-                        position: "before",
+                        position,
                     },
                 }));
             }
@@ -254,6 +269,15 @@ export function useSortableForm() {
 
                         // ドラッグ中の要素自体は除外
                         if (targetChildId !== active.id) {
+                            console.log("handleDragOver To Container", {
+                                active,
+                                over,
+                                activeIdStr,
+                                overIdStr,
+                                targetChildId,
+                                position,
+                            });
+
                             setDragState(prev => ({
                                 ...prev,
                                 dropIndicator: {
@@ -263,6 +287,14 @@ export function useSortableForm() {
                             }));
                         }
                     } else {
+                        console.log("handleDragOver To Container No Children", {
+                            active,
+                            over,
+                            activeIdStr,
+                            overIdStr,
+                            targetParentId,
+                        });
+
                         // 子要素がない場合は親要素IDを使用してドロップ位置を設定
                         // TODO: 現状親要素のインジケーターが表示されるので、コンテナにインジケーターを表示するように変更する
                         setDragState(prev => ({
@@ -271,6 +303,14 @@ export function useSortableForm() {
                         }));
                     }
                 } else {
+                    console.log("handleDragOver To Container Invalid Parent", {
+                        active,
+                        over,
+                        activeIdStr,
+                        overIdStr,
+                        targetParentId,
+                    });
+
                     setDragState(prev => ({
                         ...prev,
                         dropIndicator: null,
@@ -278,6 +318,13 @@ export function useSortableForm() {
                 }
             }
         } else {
+            console.log("handleDragOver Invalid Drag", {
+                active,
+                over,
+                activeIdStr,
+                overIdStr,
+            });
+
             // その他の無効なドラッグ
             setDragState(prev => ({ ...prev, dropIndicator: null }));
         }
@@ -302,9 +349,18 @@ export function useSortableForm() {
         const isDraggingChild = isChildId(activeIdStr);
 
         if (!isDraggingChild) {
+            console.log("handleDragEnd Parent", { active, over, activeIdStr });
+
             // フォーム内のParent要素の移動処理
             handleParentMove(active, over);
         } else {
+            console.log("handleDragEnd Child", {
+                active,
+                over,
+                activeIdStr,
+                dragState,
+            });
+
             // フォーム内のChild要素の移動処理 - dropIndicatorの位置情報を利用
             const dropPosition = dragState.dropIndicator?.position;
             const dropIndicatorTargetId = dragState.dropIndicator?.targetId;
@@ -427,19 +483,32 @@ export function useSortableForm() {
                     }));
                 }
             } else {
+                // 異なるParentへの移動 - マウス位置に基づいてbefore/afterを判定
+                const rect = event.active.rect.current.translated;
+                const overRect = event.over?.rect;
+
+                let position: "before" | "after" = "before"; // デフォルトは先頭挿入
+
+                if (overRect && rect) {
+                    // ドロップターゲットの上半分なら先頭挿入、下半分なら末尾挿入
+                    const overCenter = overRect.top + overRect.height / 2;
+                    const dragCenter = rect.top + rect.height / 2;
+                    position = dragCenter > overCenter ? "after" : "before";
+                }
+
                 console.log("handleSidebarDragOver Different Parent", {
                     active,
                     over,
                     activeIdStr,
                     overIdStr,
+                    position,
                 });
 
-                // 異なるParentへの移動では常に"before"ポジションを使用
                 setDragState(prev => ({
                     ...prev,
                     dropIndicator: {
                         targetId: overIdStr,
-                        position: "before",
+                        position,
                     },
                 }));
             }
@@ -517,6 +586,18 @@ export function useSortableForm() {
 
                             // ドラッグ中の要素自体は除外
                             if (targetChildId !== activeIdStr) {
+                                console.log(
+                                    "handleSidebarDragOver To Container",
+                                    {
+                                        active,
+                                        over,
+                                        activeIdStr,
+                                        overIdStr,
+                                        targetChildId,
+                                        position,
+                                    }
+                                );
+
                                 setDragState(prev => ({
                                     ...prev,
                                     dropIndicator: {
@@ -526,6 +607,17 @@ export function useSortableForm() {
                                 }));
                             }
                         } else {
+                            console.log(
+                                "handleSidebarDragOver To Container No Children",
+                                {
+                                    active,
+                                    over,
+                                    activeIdStr,
+                                    overIdStr,
+                                    targetParentId,
+                                }
+                            );
+
                             // 子要素がない場合はインジケーターをクリア
                             // TODO: コンテナにインジケーターを表示するように変更する
                             setDragState(prev => ({
@@ -534,16 +626,45 @@ export function useSortableForm() {
                             }));
                         }
                     } else {
+                        console.log(
+                            "handleSidebarDragOver To Container Invalid Parent",
+                            {
+                                active,
+                                over,
+                                activeIdStr,
+                                overIdStr,
+                                targetParentId,
+                            }
+                        );
+
                         setDragState(prev => ({
                             ...prev,
                             dropIndicator: null,
                         }));
                     }
                 } else {
+                    console.log(
+                        "handleSidebarDragOver To Container Invalid Parent",
+                        {
+                            active,
+                            over,
+                            activeIdStr,
+                            overIdStr,
+                            targetParentId,
+                        }
+                    );
+
                     setDragState(prev => ({ ...prev, dropIndicator: null }));
                 }
             }
         } else {
+            console.log("handleSidebarDragOver Invalid Drag", {
+                active,
+                over,
+                activeIdStr,
+                overIdStr,
+            });
+
             // その他の無効なドラッグ
             setDragState(prev => ({ ...prev, dropIndicator: null }));
         }
@@ -564,9 +685,10 @@ export function useSortableForm() {
         // サイドバーChild要素かどうかの判定
         const isActiveChild = isSidebarChildId(activeIdStr);
         const isOverChild = isSidebarChildId(overIdStr);
+        const isOverContainer = isSidebarContainerId(overIdStr);
 
-        if (isActiveChild && isOverChild) {
-            // サイドバーChild要素の移動処理
+        if (isActiveChild && (isOverChild || isOverContainer)) {
+            // サイドバーChild要素の移動処理（子要素またはコンテナへのドロップ）
             const dropPosition = dragState.dropIndicator?.position;
             const dropIndicatorTargetId = dragState.dropIndicator?.targetId;
 
@@ -575,6 +697,8 @@ export function useSortableForm() {
                 over,
                 activeIdStr,
                 overIdStr,
+                isOverChild,
+                isOverContainer,
                 dragState,
             });
 
@@ -584,7 +708,7 @@ export function useSortableForm() {
                 dropPosition,
                 dropIndicatorTargetId
             );
-        } else {
+        } else if (!isActiveChild && !isOverChild && !isOverContainer) {
             // サイドバーParent要素の移動処理（既存の処理）
 
             // sidebar-プレフィックスを削除して元のIDを取得

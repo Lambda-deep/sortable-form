@@ -58,7 +58,7 @@ export default function Index() {
                 {/* フォーム側のDndContext */}
                 <DndContext
                     sensors={formSensors}
-                    collisionDetection={closestCenter}
+                    // collisionDetection={closestCenter}
                     modifiers={[restrictToVerticalAxis]}
                     onDragStart={dragHandlers.onDragStart}
                     onDragOver={dragHandlers.onDragOver}
@@ -133,7 +133,7 @@ export default function Index() {
                 {/* サイドバー側のDndContext */}
                 <DndContext
                     sensors={sidebarSensors}
-                    collisionDetection={closestCenter}
+                    // collisionDetection={closestCenter}
                     modifiers={[restrictToVerticalAxis]}
                     onDragStart={dragHandlers.onSidebarDragStart}
                     onDragOver={dragHandlers.onSidebarDragOver}

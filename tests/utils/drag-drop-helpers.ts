@@ -197,15 +197,43 @@ export async function dragChildElementToParentEnd(
         .nth(sourceChildIndex)
         .locator('[data-testid="child-drag-handle"]');
 
-    // ドロップ先の親要素の子コンテナ（末尾への投下）
+    // ドロップ先の親要素の末尾の子要素を取得
     const targetParent = parents.nth(targetParentIndex);
-    const targetContainer = targetParent.locator(
-        '[data-testid="children-container"]'
-    );
+    const targetChildren = targetParent.locator('[data-testid="child-item"]');
 
-    await performDragAndDrop(page, sourceChildHandle, targetContainer, {
-        targetOffset: { y: -10 }, // コンテナの下端近くにドロップ
-    });
+    // 子要素の数を確認
+    const childCount = await targetChildren.count();
+
+    if (childCount > 0) {
+        // 末尾の子要素にドロップ
+        const lastChild = targetChildren.nth(childCount - 1);
+        const lastChildHandle = lastChild.locator(
+            '[data-testid="child-drag-handle"]'
+        );
+
+        // 子要素の高さを取得して動的にオフセットを計算
+        const lastChildBox = await lastChildHandle.boundingBox();
+        console.log(
+            `Child element height: ${lastChildBox?.height}, width: ${lastChildBox?.width}`
+        );
+
+        // 要素の高さが18pxの場合、30px（高さ × 1.67）が適切
+        // 安全を考慮して高さ × 1.5 + 最小値5pxを使用
+        const dynamicOffset = lastChildBox
+            ? Math.max(Math.floor(lastChildBox.height * 1.5), 25)
+            : 30;
+        console.log(`Calculated dynamic offset: ${dynamicOffset}`);
+
+        await performDragAndDrop(page, sourceChildHandle, lastChildHandle, {
+            targetOffset: { y: dynamicOffset }, // 計算されたオフセットを使用
+        });
+    } else {
+        // 子要素がない場合はコンテナにドロップ（既存の動作）
+        const targetContainer = targetParent.locator(
+            '[data-testid="children-container"]'
+        );
+        await performDragAndDrop(page, sourceChildHandle, targetContainer);
+    }
 }
 
 /**
@@ -234,16 +262,51 @@ export async function dragSidebarChildElementToParentEnd(
         .nth(sourceChildIndex)
         .locator('[data-testid="sidebar-child-drag-handle"]');
 
-    // ドロップ先の親要素の子コンテナ（末尾への投下）
+    // ドロップ先の親要素の末尾の子要素を取得
     const targetParent = sidebarParents.nth(targetParentIndex);
-    const targetContainer = targetParent.locator(
-        '[data-testid="sidebar-children-container"]'
+    const targetChildren = targetParent.locator(
+        '[data-testid="sidebar-child-item"]'
     );
 
-    // コンテナの下部にドロップするように調整
-    await performDragAndDrop(page, sourceChildHandle, targetContainer, {
-        targetOffset: { y: -10 }, // コンテナの下部寄りにドロップ
-    });
+    // 子要素の数を確認
+    const childCount = await targetChildren.count();
+
+    console.log(
+        `dragSidebarChildElementToParentEnd: targetParentIndex=${targetParentIndex}, childCount=${childCount}`
+    );
+
+    if (childCount > 0) {
+        // 末尾の子要素にドロップ
+        const lastChild = targetChildren.nth(childCount - 1);
+        const lastChildHandle = lastChild.locator(
+            '[data-testid="sidebar-child-drag-handle"]'
+        );
+
+        console.log(`Dropping to last child at index ${childCount - 1}`);
+
+        // 子要素の高さを取得して動的にオフセットを計算
+        const lastChildBox = await lastChildHandle.boundingBox();
+        console.log(
+            `Sidebar child element height: ${lastChildBox?.height}, width: ${lastChildBox?.width}`
+        );
+
+        // サイドバーの要素も同様の計算を適用
+        const dynamicOffset = lastChildBox
+            ? Math.max(Math.floor(lastChildBox.height * 1.5), 25)
+            : 40;
+        console.log(`Calculated sidebar dynamic offset: ${dynamicOffset}`);
+
+        await performDragAndDrop(page, sourceChildHandle, lastChildHandle, {
+            targetOffset: { y: dynamicOffset }, // 計算されたオフセットを使用
+        });
+    } else {
+        // 子要素がない場合はコンテナにドロップ（既存の動作）
+        const targetContainer = targetParent.locator(
+            '[data-testid="sidebar-children-container"]'
+        );
+        console.log("Dropping to container (no children)");
+        await performDragAndDrop(page, sourceChildHandle, targetContainer);
+    }
 }
 
 /**

@@ -90,7 +90,7 @@ export const ParentItemView = forwardRef<HTMLDivElement, ParentItemViewProps>(
                     <div
                         ref={childrenContainerRef}
                         data-testid="children-container"
-                        className="flex flex-col gap-4 rounded border border-gray-300 bg-white p-4"
+                        className="flex flex-col gap-4 rounded border border-gray-300 bg-white p-4 py-6"
                     >
                         {children}
                     </div>
