@@ -1,0 +1,86 @@
+import { forwardRef, type ReactNode, type CSSProperties } from "react";
+import type { DraggableAttributes } from "@dnd-kit/core";
+import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
+import type { Parent, ShowDropIndicator } from "../../types";
+import DragHandle from "../ui/DragHandle";
+import { DropIndicator } from "../ui/DropIndicator";
+
+interface SidebarParentItemViewProps {
+    parent: Parent;
+    parentIndex: number;
+    children?: ReactNode;
+    dragHandleProps?: {
+        attributes: DraggableAttributes;
+        listeners: SyntheticListenerMap | undefined;
+    };
+    showDropIndicator?: ShowDropIndicator;
+    className?: string;
+    style?: CSSProperties;
+    childrenContainerRef?: (node: HTMLDivElement | null) => void;
+}
+
+export const SidebarParentItemView = forwardRef<
+    HTMLDivElement,
+    SidebarParentItemViewProps
+>(
+    (
+        {
+            parent,
+            parentIndex,
+            children,
+            dragHandleProps,
+            showDropIndicator = {},
+            className = "",
+            style,
+            childrenContainerRef,
+        },
+        ref
+    ) => {
+        return (
+            <div className="relative">
+                {/* ドロップインジケーター - 前 */}
+                <div className="absolute -top-1 right-0 left-0 z-10">
+                    <DropIndicator
+                        position="before"
+                        isVisible={showDropIndicator === "before"}
+                    />
+                </div>
+
+                <div
+                    ref={ref}
+                    style={style}
+                    data-testid="sidebar-parent-item"
+                    className={`relative rounded border border-gray-300 bg-gray-50 p-2 ${className}`}
+                >
+                    <div className="flex items-center gap-2">
+                        <DragHandle
+                            data-testid="sidebar-parent-drag-handle"
+                            attributes={dragHandleProps?.attributes}
+                            listeners={dragHandleProps?.listeners}
+                        />
+                        <strong>
+                            [{parentIndex}] {parent.parentKey}
+                        </strong>
+                    </div>
+                    <div
+                        ref={childrenContainerRef}
+                        data-testid="sidebar-children-container"
+                        className="mt-1 ml-5 flex flex-col gap-1 rounded border border-gray-300 bg-white p-2"
+                    >
+                        {children}
+                    </div>
+                </div>
+
+                {/* ドロップインジケーター - 後 */}
+                <div className="absolute right-0 -bottom-1 left-0 z-10">
+                    <DropIndicator
+                        position="after"
+                        isVisible={showDropIndicator === "after"}
+                    />
+                </div>
+            </div>
+        );
+    }
+);
+
+SidebarParentItemView.displayName = "SidebarParentItemView";
