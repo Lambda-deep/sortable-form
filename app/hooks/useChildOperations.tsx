@@ -442,8 +442,8 @@ export const useChildOperations = ({
     const addChild = (parentIndex: number) => {
         const currentParent = getValues(`parentArray.${parentIndex}`);
         const newChild: Child = {
-            childKey: `child${parentIndex}-${currentParent.childArray.length + 1}`,
-            childValue: `Child ${parentIndex}-${currentParent.childArray.length + 1}`,
+            childKey: `child${parentIndex + 1}-${currentParent.childArray.length + 1}`,
+            childValue: `Child ${parentIndex + 1}-${currentParent.childArray.length + 1}`,
         };
         setValue(
             `parentArray.${parentIndex}.childArray`,

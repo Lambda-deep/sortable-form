@@ -38,7 +38,7 @@ export const SidebarChildItemView = forwardRef<
         ref
     ) => {
         return (
-            <div className="relative">
+            <div className="relative mb-1">
                 {/* ドロップインジケーター - 前 */}
                 <div className="absolute -top-0.5 right-0 left-0 z-10">
                     <DropIndicator
