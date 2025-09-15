@@ -18,12 +18,6 @@ export function SidebarParentItem({
     // parentIdをそのまま使用（プレフィックスは_index.tsxで追加済み）
     const sidebarId = parentId;
 
-    console.log(`🔍 SidebarParentItem[${parentIndex}]:`, {
-        parentId,
-        sidebarId,
-        parentKey: parent.parentKey,
-    });
-
     const {
         attributes,
         listeners,
@@ -61,13 +55,6 @@ export function SidebarParentItem({
         after: showDropIndicator && dropPosition === "after",
         inside: showDropIndicator && dropPosition === "inside",
     };
-
-    console.log(`🔍 SidebarParentItem[${parentIndex}] render:`, {
-        sidebarId,
-        isDragging,
-        isSorting,
-        transform: transform ? "exists" : "null",
-    });
 
     // サイドバーChild要素のIDリストを生成
     const sidebarChildIds = parent.childArray.map(

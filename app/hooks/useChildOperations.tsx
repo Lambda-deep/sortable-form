@@ -41,12 +41,6 @@ export const useChildOperations = ({
         } else {
             // コンテナにドロップ（親要素への直接ドロップは無効）
             if (!overChildId.endsWith("-container")) {
-                console.warn(
-                    "🚨 handleChildMove: 子要素は親要素に直接ドロップできません",
-                    {
-                        overChildId,
-                    }
-                );
                 return;
             }
 
@@ -57,10 +51,6 @@ export const useChildOperations = ({
                 field => field.id === targetParentId
             );
             if (!targetParent) {
-                console.warn("🚨 handleChildMove: 対象親要素が見つかりません", {
-                    overChildId,
-                    targetParentId,
-                });
                 return;
             }
             overParentIndex = parentFields.findIndex(
@@ -71,14 +61,6 @@ export const useChildOperations = ({
             const targetParentData = getValues(
                 `parentArray.${overParentIndex}`
             );
-
-            console.log("🎯 コンテナドロップ位置決定:", {
-                targetParentId,
-                overChildId,
-                dropPosition,
-                dropIndicatorTargetId,
-                childArrayLength: targetParentData.childArray.length,
-            });
 
             // ドロップインジケーターのターゲットが子要素の場合、その位置を使用
             if (
@@ -112,15 +94,6 @@ export const useChildOperations = ({
             }
         }
 
-        console.log("🎯 handleChildMove:", {
-            activeParentIndex,
-            activeChildIndex,
-            overParentIndex,
-            overChildIndex,
-            isOverChild,
-            isDropToEnd: !isOverChild,
-        });
-
         if (activeParentIndex === overParentIndex) {
             // 同一Parent内での並び替え（既存機能）
             const currentParent = getValues(`parentArray.${activeParentIndex}`);
@@ -130,12 +103,6 @@ export const useChildOperations = ({
             const [movedChild] = newChildArray.splice(activeChildIndex, 1);
             newChildArray.splice(overChildIndex, 0, movedChild);
 
-            console.log("🎯 同一Parent内移動実行:", {
-                parentIndex: activeParentIndex,
-                oldArray: currentParent.childArray,
-                newArray: newChildArray,
-            });
-
             // フォームに反映
             setValue(
                 `parentArray.${activeParentIndex}.childArray`,
@@ -144,13 +111,6 @@ export const useChildOperations = ({
             );
         } else {
             // 異なるParent間での移動（新機能）
-            console.log("🎯 異なるParent間移動実行:", {
-                fromParent: activeParentIndex,
-                fromChild: activeChildIndex,
-                toParent: overParentIndex,
-                toChild: overChildIndex,
-                isDropToEnd: !isOverChild,
-            });
 
             // 移動元と移動先の親要素データを取得
             const sourceParent = getValues(`parentArray.${activeParentIndex}`);
@@ -166,14 +126,6 @@ export const useChildOperations = ({
             // 移動先に要素を挿入
             const newTargetChildArray = [...targetParent.childArray];
             newTargetChildArray.splice(overChildIndex, 0, movedChild);
-
-            console.log("🎯 異なるParent間移動データ:", {
-                movedChild,
-                sourceOld: sourceParent.childArray,
-                sourceNew: newSourceChildArray,
-                targetOld: targetParent.childArray,
-                targetNew: newTargetChildArray,
-            });
 
             // フォームに反映（両方の親を更新）
             setValue(
@@ -203,13 +155,6 @@ export const useChildOperations = ({
             .split("-")
             .map(Number);
 
-        console.log("🎯 サイドバー: 位置指定挿入処理", {
-            activeParentIndex,
-            activeChildIndex,
-            targetParentIndex,
-            dropPosition,
-        });
-
         if (activeParentIndex === targetParentIndex) {
             // 同一Parent内での移動
             const currentParent = getValues(`parentArray.${activeParentIndex}`);
@@ -224,12 +169,6 @@ export const useChildOperations = ({
             } else {
                 newChildArray.push(movedChild); // 末尾に挿入（デフォルト）
             }
-
-            console.log("🎯 サイドバー: 同一Parent内移動実行", {
-                oldArray: currentParent.childArray,
-                newArray: newChildArray,
-                dropPosition,
-            });
 
             // フォームに反映
             setValue(
@@ -257,15 +196,6 @@ export const useChildOperations = ({
             } else {
                 newTargetChildArray.push(movedChild); // 末尾に挿入（デフォルト）
             }
-
-            console.log("🎯 サイドバー: 異なるParent間位置指定移動実行", {
-                sourceParentIndex: activeParentIndex,
-                targetParentIndex,
-                movedChild,
-                dropPosition,
-                newSourceLength: newSourceChildArray.length,
-                newTargetLength: newTargetChildArray.length,
-            });
 
             // 両方の親を更新
             setValue(
@@ -313,9 +243,6 @@ export const useChildOperations = ({
             // コンテナにドロップ（末尾挿入）
             const containerMatch = overChildId.match(sidebarContainerPattern);
             if (!containerMatch) {
-                console.warn("🚨 handleSidebarChildMove: コンテナIDが不正", {
-                    overChildId,
-                });
                 return;
             }
             const targetParentId = containerMatch[1];
@@ -323,10 +250,6 @@ export const useChildOperations = ({
                 field => field.id === targetParentId
             );
             if (overParentIndex === -1) {
-                console.warn(
-                    "🚨 handleSidebarChildMove: 対象親要素が見つかりません",
-                    { targetParentId }
-                );
                 return;
             }
             // 末尾への挿入なので、その親の子要素数を取得
@@ -340,9 +263,6 @@ export const useChildOperations = ({
             const sidebarParentPattern = /^sidebar-(.+)$/;
             const match = overChildId.match(sidebarParentPattern);
             if (!match) {
-                console.warn("🚨 handleSidebarChildMove: 対象親要素IDが不正", {
-                    overChildId,
-                });
                 return;
             }
             const targetParentId = match[1];
@@ -350,10 +270,6 @@ export const useChildOperations = ({
                 field => field.id === targetParentId
             );
             if (overParentIndex === -1) {
-                console.warn(
-                    "🚨 handleSidebarChildMove: 対象親要素が見つかりません",
-                    { targetParentId }
-                );
                 return;
             }
             // 末尾への挿入なので、その親の子要素数を取得
@@ -362,15 +278,6 @@ export const useChildOperations = ({
             );
             overChildIndex = targetParentData.childArray.length;
         }
-
-        console.log("🎯 サイドバー: handleSidebarChildMove", {
-            activeParentIndex,
-            activeChildIndex,
-            overParentIndex,
-            overChildIndex,
-            isOverChild,
-            isOverContainer,
-        });
 
         if (activeParentIndex === overParentIndex) {
             // 同一Parent内での並び替え
@@ -381,12 +288,6 @@ export const useChildOperations = ({
             const [movedChild] = newChildArray.splice(activeChildIndex, 1);
             newChildArray.splice(overChildIndex, 0, movedChild);
 
-            console.log("🎯 サイドバー: 同一Parent内移動実行", {
-                parentIndex: activeParentIndex,
-                oldArray: currentParent.childArray,
-                newArray: newChildArray,
-            });
-
             // フォームに反映
             setValue(
                 `parentArray.${activeParentIndex}.childArray`,
@@ -395,12 +296,6 @@ export const useChildOperations = ({
             );
         } else {
             // 異なるParent間での移動
-            console.log("🎯 サイドバー: 異なるParent間移動実行", {
-                fromParent: activeParentIndex,
-                fromChild: activeChildIndex,
-                toParent: overParentIndex,
-                toChild: overChildIndex,
-            });
 
             // 移動元と移動先の親要素データを取得
             const sourceParent = getValues(`parentArray.${activeParentIndex}`);
@@ -416,14 +311,6 @@ export const useChildOperations = ({
             // 移動先に要素を挿入
             const newTargetChildArray = [...targetParent.childArray];
             newTargetChildArray.splice(overChildIndex, 0, movedChild);
-
-            console.log("🎯 サイドバー: 異なるParent間移動データ", {
-                movedChild,
-                sourceOld: sourceParent.childArray,
-                sourceNew: newSourceChildArray,
-                targetOld: targetParent.childArray,
-                targetNew: newTargetChildArray,
-            });
 
             // フォームに反映（両方の親を更新）
             setValue(

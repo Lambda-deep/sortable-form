@@ -38,15 +38,6 @@ export default function Index() {
     const parentIds = parentFields.map(field => field.id);
     const sidebarParentIds = parentFields.map(field => `sidebar-${field.id}`);
 
-    console.log("🔍 Debug Info:", {
-        parentIds,
-        sidebarParentIds,
-        parentFieldsLength: parentFields.length,
-        sidebarParentIdsValues: sidebarParentIds.map(
-            (id, index) => `[${index}]: ${id}`
-        ),
-    });
-
     return (
         <ClientOnly
             fallback={
@@ -156,13 +147,6 @@ export default function Index() {
                             items={sidebarParentIds}
                             strategy={verticalListSortingStrategy}
                         >
-                            {(() => {
-                                console.log(
-                                    "🔍 SortableContext items:",
-                                    sidebarParentIds
-                                );
-                                return null;
-                            })()}
                             <ul
                                 data-testid="index-list"
                                 className="flex list-none flex-col gap-2 p-0"
