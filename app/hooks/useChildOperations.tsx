@@ -1,7 +1,12 @@
 import { UseFormReturn } from "react-hook-form";
 import { Active, Over } from "@dnd-kit/core";
 import { Data, Child } from "../types";
-import { childIdPattern, sidebarChildPattern } from "../lib/drag-patterns";
+import {
+    isChildId,
+    isSidebarChildId,
+    isSidebarContainerId,
+    sidebarContainerPattern,
+} from "../lib/drag-patterns";
 
 interface UseChildOperationsProps {
     form: UseFormReturn<Data>;
@@ -29,7 +34,7 @@ export const useChildOperations = ({
             .map(Number);
 
         // overの種類を判定（子要素か親要素か）
-        const isOverChild = childIdPattern.test(overChildId);
+        const isOverChild = isChildId(overChildId);
         let overParentIndex: number;
         let overChildIndex: number;
 
@@ -63,10 +68,7 @@ export const useChildOperations = ({
             );
 
             // ドロップインジケーターのターゲットが子要素の場合、その位置を使用
-            if (
-                dropIndicatorTargetId &&
-                childIdPattern.test(dropIndicatorTargetId)
-            ) {
+            if (dropIndicatorTargetId && isChildId(dropIndicatorTargetId)) {
                 const [, targetChildIndex] = dropIndicatorTargetId
                     .split("-")
                     .map(Number);
@@ -227,9 +229,8 @@ export const useChildOperations = ({
             .map(Number);
 
         // overの種類を判定（子要素か、コンテナか、親要素か）
-        const sidebarContainerPattern = /^sidebar-(.+)-container$/;
-        const isOverChild = sidebarChildPattern.test(overChildId);
-        const isOverContainer = sidebarContainerPattern.test(overChildId);
+        const isOverChild = isSidebarChildId(overChildId);
+        const isOverContainer = isSidebarContainerId(overChildId);
         let overParentIndex: number;
         let overChildIndex: number;
 

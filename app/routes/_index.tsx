@@ -132,7 +132,7 @@ export default function Index() {
                 {/* サイドバー側のDndContext */}
                 <DndContext
                     sensors={sidebarSensors}
-                    // collisionDetection={sidebarCollisionDetection}
+                    collisionDetection={sidebarCollisionDetection}
                     modifiers={[restrictToVerticalAxis]}
                     onDragStart={dragHandlers.onSidebarDragStart}
                     onDragOver={dragHandlers.onSidebarDragOver}

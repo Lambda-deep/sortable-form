@@ -11,7 +11,12 @@ import {
 } from "@dnd-kit/core";
 import type { Data, DragState } from "../types";
 import { initialData } from "../lib/initial-data";
-import { childIdPattern, sidebarChildPattern } from "../lib/drag-patterns";
+import {
+    isChildId,
+    isSidebarChildId,
+    isSidebarContainerId,
+    sidebarContainerPattern,
+} from "../lib/drag-patterns";
 import { sidebarCollisionDetection } from "../lib/collision-detection";
 import { useParentOperations } from "./useParentOperations";
 import { useChildOperations } from "./useChildOperations";
@@ -75,7 +80,7 @@ export function useSortableForm() {
             activeId: active.id as string,
         }));
 
-        const isDraggingChild = childIdPattern.test(active.id as string);
+        const isDraggingChild = isChildId(active.id as string);
 
         if (isDraggingChild) {
             const [parentIndex, childIndex] = (active.id as string)
@@ -122,8 +127,8 @@ export function useSortableForm() {
             return;
         }
 
-        const isDraggingChild = childIdPattern.test(active.id as string);
-        const isOverChild = childIdPattern.test(over.id as string);
+        const isDraggingChild = isChildId(active.id as string);
+        const isOverChild = isChildId(over.id as string);
 
         // サイドバーかどうかの判定
         const isActiveSidebar = (active.id as string).startsWith("sidebar-");
@@ -183,8 +188,8 @@ export function useSortableForm() {
             const overIdStr = over.id as string;
 
             // サイドバーChild要素かどうかの判定
-            const isActiveSidebarChild = sidebarChildPattern.test(activeIdStr);
-            const isOverSidebarChild = sidebarChildPattern.test(overIdStr);
+            const isActiveSidebarChild = isSidebarChildId(activeIdStr);
+            const isOverSidebarChild = isSidebarChildId(overIdStr);
 
             if (isActiveSidebarChild && isOverSidebarChild) {
                 // サイドバー内でのChild要素ドラッグ
@@ -265,7 +270,7 @@ export function useSortableForm() {
             const overIdStr = over.id as string;
 
             // サイドバーChild要素かどうかの判定
-            const isActiveSidebarChild = sidebarChildPattern.test(activeIdStr);
+            const isActiveSidebarChild = isSidebarChildId(activeIdStr);
 
             if (!isActiveSidebarChild && !isOverSidebar) {
                 // フォーム内でのChild要素をコンテナにドラッグした場合のみインジケーターを表示
@@ -348,7 +353,7 @@ export function useSortableForm() {
             return;
         }
 
-        const isDraggingChild = childIdPattern.test(active.id as string);
+        const isDraggingChild = isChildId(active.id as string);
 
         if (!isDraggingChild) {
             // Parent要素の移動処理
@@ -391,8 +396,8 @@ export function useSortableForm() {
         const overIdStr = over.id as string;
 
         // サイドバーChild要素かどうかの判定
-        const isActiveSidebarChild = sidebarChildPattern.test(activeIdStr);
-        const isOverSidebarChild = sidebarChildPattern.test(overIdStr);
+        const isActiveSidebarChild = isSidebarChildId(activeIdStr);
+        const isOverSidebarChild = isSidebarChildId(overIdStr);
 
         if (isActiveSidebarChild && isOverSidebarChild) {
             // サイドバー内でのChild要素ドラッグ
@@ -465,10 +470,9 @@ export function useSortableForm() {
             // サイドバーChild要素をコンテナにドラッグした場合のみインジケーターを表示
 
             // コンテナパターンをチェック
-            const sidebarContainerPattern = /^sidebar-(.+)-container$/;
             let targetParentId: string | null = null;
 
-            if (sidebarContainerPattern.test(overIdStr)) {
+            if (isSidebarContainerId(overIdStr)) {
                 // コンテナにドロップした場合のみ処理
                 const containerMatch = overIdStr.match(sidebarContainerPattern);
                 targetParentId = containerMatch?.[1] || null;
@@ -547,7 +551,7 @@ export function useSortableForm() {
         const activeIdStr = active.id as string;
 
         // サイドバーのChild要素かどうかの判定
-        const isSidebarChild = sidebarChildPattern.test(activeIdStr);
+        const isSidebarChild = isSidebarChildId(activeIdStr);
 
         if (isSidebarChild) {
             // "sidebar-0-1" -> [0, 1]
@@ -597,8 +601,8 @@ export function useSortableForm() {
         const overIdStr = over.id as string;
 
         // サイドバーChild要素かどうかの判定
-        const isActiveChild = sidebarChildPattern.test(activeIdStr);
-        const isOverChild = sidebarChildPattern.test(overIdStr);
+        const isActiveChild = isSidebarChildId(activeIdStr);
+        const isOverChild = isSidebarChildId(overIdStr);
 
         if (isActiveChild && isOverChild) {
             // サイドバーChild要素の移動処理

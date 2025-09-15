@@ -1,5 +1,9 @@
 import { CollisionDetection } from "@dnd-kit/core";
-import { sidebarChildPattern } from "./drag-patterns";
+import {
+    isSidebarChildId,
+    isSidebarContainerId,
+    isSidebarParentId,
+} from "./drag-patterns";
 
 /**
  * サイドバー用のカスタム衝突検出
@@ -13,17 +17,16 @@ export const sidebarCollisionDetection: CollisionDetection = ({
     if (!active) return [];
 
     const activeIdStr = active.id as string;
-    const isActiveSidebarChild = sidebarChildPattern.test(activeIdStr);
+    const isActiveSidebarChild = isSidebarChildId(activeIdStr);
 
     // アクティブな要素がサイドバーChild要素の場合
     if (isActiveSidebarChild) {
         // Child要素は同じタイプの要素（他のChild要素）とコンテナに衝突
-        const sidebarContainerPattern = /^sidebar-.+-container$/;
         const validContainers = droppableContainers.filter(container => {
             const containerIdStr = container.id as string;
             return (
-                sidebarChildPattern.test(containerIdStr) ||
-                sidebarContainerPattern.test(containerIdStr)
+                isSidebarChildId(containerIdStr) ||
+                isSidebarContainerId(containerIdStr)
             );
         });
 
@@ -42,14 +45,9 @@ export const sidebarCollisionDetection: CollisionDetection = ({
             .map(container => ({ id: container.id }));
     } else {
         // Parent要素は他のParent要素のみに衝突（コンテナは除外）
-        const sidebarContainerPattern = /^sidebar-.+-container$/;
         const validContainers = droppableContainers.filter(container => {
             const containerIdStr = container.id as string;
-            return (
-                containerIdStr.startsWith("sidebar-") &&
-                !sidebarChildPattern.test(containerIdStr) &&
-                !sidebarContainerPattern.test(containerIdStr)
-            );
+            return isSidebarParentId(containerIdStr);
         });
 
         return validContainers
