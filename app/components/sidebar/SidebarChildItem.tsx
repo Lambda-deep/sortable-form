@@ -40,10 +40,7 @@ export function SidebarChildItem({
         opacity: isDragging ? 0 : 1,
     };
 
-    const showDropIndicatorStates = {
-        before: showDropIndicator && dropPosition === "before",
-        after: showDropIndicator && dropPosition === "after",
-    };
+    const showDropIndicatorState = showDropIndicator ? dropPosition : null;
 
     return (
         <SidebarChildItemView
@@ -53,7 +50,7 @@ export function SidebarChildItem({
             childIndex={childIndex}
             style={style}
             className={isDragging ? "z-50" : ""}
-            showDropIndicator={showDropIndicatorStates}
+            showDropIndicator={showDropIndicatorState}
             dragHandleProps={{ attributes, listeners }}
         />
     );

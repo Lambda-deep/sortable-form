@@ -50,10 +50,7 @@ export function SidebarParentItem({
         opacity: isDragging ? 0 : 1,
     };
 
-    const showDropIndicatorStates = {
-        before: showDropIndicator && dropPosition === "before",
-        after: showDropIndicator && dropPosition === "after",
-    };
+    const showDropIndicatorState = showDropIndicator ? dropPosition : null;
 
     // サイドバーChild要素のIDリストを生成
     const sidebarChildIds = parent.childArray.map(
@@ -67,7 +64,7 @@ export function SidebarParentItem({
                 parent={parent}
                 parentIndex={parentIndex}
                 style={style}
-                showDropIndicator={showDropIndicatorStates}
+                showDropIndicator={showDropIndicatorState}
                 dragHandleProps={{
                     attributes,
                     listeners,

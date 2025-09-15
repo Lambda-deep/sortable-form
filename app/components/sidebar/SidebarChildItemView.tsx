@@ -1,7 +1,7 @@
 import { forwardRef, type CSSProperties } from "react";
 import type { DraggableAttributes } from "@dnd-kit/core";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
-import type { Child } from "../../types";
+import type { Child, ShowDropIndicator } from "../../types";
 import DragHandle from "../ui/DragHandle";
 import { DropIndicator } from "../ui/DropIndicator";
 
@@ -13,10 +13,7 @@ interface SidebarChildItemViewProps {
         attributes: DraggableAttributes;
         listeners: SyntheticListenerMap | undefined;
     };
-    showDropIndicator?: {
-        before?: boolean;
-        after?: boolean;
-    };
+    showDropIndicator?: ShowDropIndicator;
     className?: string;
     style?: CSSProperties;
 }
@@ -43,7 +40,7 @@ export const SidebarChildItemView = forwardRef<
                 <div className="absolute -top-0.5 right-0 left-0 z-10">
                     <DropIndicator
                         position="before"
-                        isVisible={showDropIndicator.before || false}
+                        isVisible={showDropIndicator === "before"}
                     />
                 </div>
 
@@ -67,7 +64,7 @@ export const SidebarChildItemView = forwardRef<
                 <div className="absolute right-0 -bottom-0.5 left-0 z-10">
                     <DropIndicator
                         position="after"
-                        isVisible={showDropIndicator.after || false}
+                        isVisible={showDropIndicator === "after"}
                     />
                 </div>
             </div>

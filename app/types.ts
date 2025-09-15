@@ -37,6 +37,8 @@ export interface DropIndicator {
     position: "before" | "after";
 }
 
+export type ShowDropIndicator = "before" | "after" | null;
+
 // Component Props Types
 export type ParentItemProps = {
     parentIndex: number;
